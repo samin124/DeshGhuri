@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
 const app = new Hono();
+const port = 3000;
 
 app.use(logger());
 app.use(
@@ -23,4 +24,7 @@ app.get("/", (c) => {
   return c.text("OK");
 });
 
-export default app;
+export default {
+  port,
+  fetch: app.fetch,
+};
