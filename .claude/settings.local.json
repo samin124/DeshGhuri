@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s /b \"E:\\\\Learn-Typescript\\\\DeshGhuri\")",
+      "WebSearch",
+      "WebFetch(domain:www.better-auth.com)",
+      "Bash(bun pm ls:*)",
+      "Bash(bun install)",
+      "Bash(bun:*)",
+      "Bash(grep:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 21940 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 24348 -Force\")",
+      "Bash(powershell:*)",
+      "Bash(node -e:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}

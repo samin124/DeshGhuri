@@ -15,10 +15,13 @@
     "@DeshGhuri/env": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
+    "nodemailer": "catalog:",
+    "resend": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@DeshGhuri/config": "workspace:*",
+    "@types/nodemailer": "catalog:",
     "typescript": "catalog:"
   }
 }

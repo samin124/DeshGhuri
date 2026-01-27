@@ -9,6 +9,17 @@ export const env = createEnv({
     BETTER_AUTH_URL: z.url(),
     CORS_ORIGIN: z.url(),
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+
+    // Email configuration (Gmail SMTP)
+    EMAIL_HOST: z.string().default("smtp.gmail.com"),
+    EMAIL_PORT: z.coerce.number().default(587),
+    EMAIL_USER: z.string().email(),
+    EMAIL_PASSWORD: z.string().min(1),
+    EMAIL_FROM: z.string().email(),
+
+    // Google OAuth configuration (optional for now)
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
