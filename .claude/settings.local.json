@@ -16,7 +16,11 @@
       "Bash(node -e:*)",
       "Bash(find:*)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(dir:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npx:*)",
+      "Bash(timeout 15 bun run dev:*)"
     ]
   }
 }
