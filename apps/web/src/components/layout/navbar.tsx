@@ -101,6 +101,13 @@ export default function Navbar() {
               </Button>
             </div>
 
+            {/* Become a Seller Link - Desktop */}
+            <div className="hidden lg:block">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/seller/register">Become a Seller</Link>
+              </Button>
+            </div>
+
             {/* Theme Toggle */}
             <ThemeToggle />
 
@@ -185,6 +192,10 @@ export default function Navbar() {
 
               <Button variant="outline" className="w-full justify-start" asChild>
                 <Link to="/help">Help</Link>
+              </Button>
+
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <Link to="/seller/register">Become a Seller</Link>
               </Button>
 
               <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>

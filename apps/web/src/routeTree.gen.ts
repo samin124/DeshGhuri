@@ -16,6 +16,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SellerVerificationStatusRouteImport } from './routes/seller/verification-status'
+import { Route as SellerRegisterRouteImport } from './routes/seller/register'
+import { Route as SellerOnboardingRouteImport } from './routes/seller/onboarding'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -52,6 +55,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellerVerificationStatusRoute =
+  SellerVerificationStatusRouteImport.update({
+    id: '/seller/verification-status',
+    path: '/seller/verification-status',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SellerRegisterRoute = SellerRegisterRouteImport.update({
+  id: '/seller/register',
+  path: '/seller/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerOnboardingRoute = SellerOnboardingRouteImport.update({
+  id: '/seller/onboarding',
+  path: '/seller/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +80,9 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/seller/onboarding': typeof SellerOnboardingRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/seller/verification-status': typeof SellerVerificationStatusRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +92,9 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/seller/onboarding': typeof SellerOnboardingRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/seller/verification-status': typeof SellerVerificationStatusRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +105,9 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/seller/onboarding': typeof SellerOnboardingRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/seller/verification-status': typeof SellerVerificationStatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +119,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/verify-email'
+    | '/seller/onboarding'
+    | '/seller/register'
+    | '/seller/verification-status'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +131,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/verify-email'
+    | '/seller/onboarding'
+    | '/seller/register'
+    | '/seller/verification-status'
   id:
     | '__root__'
     | '/'
@@ -109,6 +143,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/verify-email'
+    | '/seller/onboarding'
+    | '/seller/register'
+    | '/seller/verification-status'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +156,9 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
+  SellerOnboardingRoute: typeof SellerOnboardingRoute
+  SellerRegisterRoute: typeof SellerRegisterRoute
+  SellerVerificationStatusRoute: typeof SellerVerificationStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +212,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seller/verification-status': {
+      id: '/seller/verification-status'
+      path: '/seller/verification-status'
+      fullPath: '/seller/verification-status'
+      preLoaderRoute: typeof SellerVerificationStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/register': {
+      id: '/seller/register'
+      path: '/seller/register'
+      fullPath: '/seller/register'
+      preLoaderRoute: typeof SellerRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/onboarding': {
+      id: '/seller/onboarding'
+      path: '/seller/onboarding'
+      fullPath: '/seller/onboarding'
+      preLoaderRoute: typeof SellerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +244,9 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   VerifyEmailRoute: VerifyEmailRoute,
+  SellerOnboardingRoute: SellerOnboardingRoute,
+  SellerRegisterRoute: SellerRegisterRoute,
+  SellerVerificationStatusRoute: SellerVerificationStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
