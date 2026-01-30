@@ -118,6 +118,42 @@ function RouteComponent() {
       return;
     }
 
+    // Validate required business information
+    const businessInfo = formData.businessInfo;
+    const missingBusinessFields = [];
+    
+    if (!businessInfo.businessName?.trim()) missingBusinessFields.push('Business Name');
+    if (!businessInfo.category) missingBusinessFields.push('Business Category');
+    if (!businessInfo.registrationNumber?.trim()) missingBusinessFields.push('Registration Number');
+    if (!businessInfo.address?.street?.trim()) missingBusinessFields.push('Street Address');
+    if (!businessInfo.address?.city?.trim()) missingBusinessFields.push('City');
+    if (!businessInfo.address?.district?.trim()) missingBusinessFields.push('District');
+    if (!businessInfo.contactPhone?.trim()) missingBusinessFields.push('Contact Phone');
+    if (!businessInfo.contactEmail?.trim()) missingBusinessFields.push('Contact Email');
+
+    // Validate required bank account information
+    const bankAccount = formData.bankAccount;
+    const missingBankFields = [];
+    
+    if (!bankAccount.bankName?.trim()) missingBankFields.push('Bank Name');
+    if (!bankAccount.branchName?.trim()) missingBankFields.push('Branch Name');
+    if (!bankAccount.accountHolderName?.trim()) missingBankFields.push('Account Holder Name');
+    if (!bankAccount.accountNumber?.trim()) missingBankFields.push('Account Number');
+    if (!bankAccount.accountType) missingBankFields.push('Account Type');
+
+    // If any required fields are missing, show error and return
+    if (missingBusinessFields.length > 0 || missingBankFields.length > 0) {
+      const errorMessage = [
+        missingBusinessFields.length > 0 && `Business Info: ${missingBusinessFields.join(', ')}`,
+        missingBankFields.length > 0 && `Bank Account: ${missingBankFields.join(', ')}`
+      ].filter(Boolean).join('\n');
+      
+      toast.error('Please complete all required fields:\n' + errorMessage, {
+        duration: 8000,
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {

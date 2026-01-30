@@ -31,54 +31,7 @@ export const Route = createFileRoute('/seller/verification-status')({
   validateSearch: searchSchema,
 });
 
-// Mock data - replace with actual API call
-const mockVerificationStatus: VerificationStatus = 'in-review';
 
-const mockDocuments: SellerDocument[] = [
-  {
-    id: '1',
-    type: 'trade-license',
-    fileName: 'trade_license.pdf',
-    fileUrl: '',
-    fileSize: 2048000,
-    uploadedAt: '2026-01-25T10:00:00Z',
-    status: 'approved',
-  },
-  {
-    id: '2',
-    type: 'nid',
-    fileName: 'national_id.jpg',
-    fileUrl: '',
-    fileSize: 1536000,
-    uploadedAt: '2026-01-25T10:05:00Z',
-    status: 'approved',
-  },
-  {
-    id: '3',
-    type: 'tin-certificate',
-    fileName: 'tin_certificate.pdf',
-    fileUrl: '',
-    fileSize: 1024000,
-    uploadedAt: '2026-01-25T10:10:00Z',
-    status: 'pending',
-  },
-];
-
-const mockTimeline: VerificationTimeline[] = [
-  {
-    id: '1',
-    status: 'pending',
-    message: 'Application submitted successfully',
-    timestamp: '2026-01-25T10:00:00Z',
-  },
-  {
-    id: '2',
-    status: 'in-review',
-    message: 'Documents are being reviewed by our team',
-    timestamp: '2026-01-26T09:00:00Z',
-    performedBy: 'Verification Team',
-  },
-];
 
 const statusConfig = {
   pending: {
@@ -184,7 +137,7 @@ function RouteComponent() {
         }
 
         // Fetch verification status
-        const result = await getVerificationStatus(sellerId);
+        const result = await getVerificationStatus(sellerId!);
         if (result.error) {
           toast.error(result.error);
           return;
@@ -192,7 +145,25 @@ function RouteComponent() {
 
         if (result.data) {
           setSellerData(result.data.seller);
-          setDocuments(result.data.documents);
+          
+          // Group documents by type and show only the latest one of each type
+          const uniqueDocuments = result.data.documents.reduce((acc: SellerDocument[], doc) => {
+            const existingDocIndex = acc.findIndex(d => d.documentType === doc.documentType);
+            if (existingDocIndex === -1) {
+              acc.push(doc);
+            } else {
+              // Keep the more recently uploaded document
+              if (new Date(doc.uploadedAt) > new Date(acc[existingDocIndex].uploadedAt)) {
+                acc[existingDocIndex] = doc;
+              }
+            }
+            return acc;
+          }, []);
+          
+          // Sort by upload date (newest first)
+          uniqueDocuments.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
+          
+          setDocuments(uniqueDocuments);
           setTimeline(result.data.timeline);
         }
       } catch (error) {
@@ -224,9 +195,9 @@ function RouteComponent() {
             <p className="text-muted-foreground mb-4">
               You don't have a seller account yet. Please register to get started.
             </p>
-            <Button asChild>
-              <Link to="/seller/register">Register as Seller</Link>
-            </Button>
+            <Link to="/seller/register">
+              <Button>Register as Seller</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -277,9 +248,9 @@ function RouteComponent() {
 
             {status === 'approved' && (
               <div className="mt-6">
-                <Button asChild className="w-full sm:w-auto">
-                  <Link to="/dashboard">Go to Seller Dashboard</Link>
-                </Button>
+                <Link to="/dashboard">
+                  <Button className="w-full sm:w-auto">Go to Seller Dashboard</Button>
+                </Link>
               </div>
             )}
 
@@ -288,12 +259,26 @@ function RouteComponent() {
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Your application was not approved. Please review the document status below and resubmit the required documents.
+                    Your application was not approved. Please review document status below and resubmit the required documents.
                   </AlertDescription>
                 </Alert>
-                <Button asChild variant="outline" className="w-full sm:w-auto mt-4">
-                  <Link to="/seller/onboarding">Resubmit Application</Link>
-                </Button>
+                <Link to="/seller/onboarding">
+                  <Button variant="outline" className="w-full sm:w-auto mt-4">Resubmit Application</Button>
+                </Link>
+              </div>
+            )}
+
+            {status === 'incomplete' && (
+              <div className="mt-6">
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Please upload missing or rejected documents to continue with the verification process.
+                  </AlertDescription>
+                </Alert>
+                <Link to="/seller/onboarding">
+                  <Button variant="outline" className="w-full sm:w-auto mt-4">Complete Application</Button>
+                </Link>
               </div>
             )}
 
@@ -305,9 +290,9 @@ function RouteComponent() {
                     Please upload the missing or rejected documents to continue with the verification process.
                   </AlertDescription>
                 </Alert>
-                <Button asChild variant="outline" className="w-full sm:w-auto mt-4">
-                  <Link to="/seller/onboarding">Complete Application</Link>
-                </Button>
+                <Link to="/seller/onboarding">
+                  <Button variant="outline" className="w-full sm:w-auto mt-4">Complete Application</Button>
+                </Link>
               </div>
             )}
           </CardContent>
@@ -338,7 +323,7 @@ function RouteComponent() {
                               <div className="flex items-center gap-2 mb-1">
                                 <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                                 <h4 className="font-medium truncate">
-                                  {documentTypeLabels[doc.documentType]}
+                                  {documentTypeLabels[doc.documentType as keyof typeof documentTypeLabels]}
                                 </h4>
                               </div>
                               <p className="text-sm text-muted-foreground truncate">{doc.fileName}</p>
@@ -397,7 +382,7 @@ function RouteComponent() {
                         <div className="flex-1 pb-4">
                           <p className="text-sm font-medium">{event.message}</p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {formatDate(event.createdAt)}
+                            {formatDate(event.timestamp)}
                           </p>
                           {event.performedBy && (
                             <p className="text-xs text-muted-foreground">by Admin</p>
@@ -491,12 +476,12 @@ function RouteComponent() {
                 <CardTitle className="text-base">Need Help?</CardTitle>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" asChild>
-                  <a href="mailto:seller-support@deshghuri.com">
+                <a href="mailto:seller-support@deshghuri.com">
+                  <Button variant="outline" className="w-full">
                     <Mail className="h-4 w-4 mr-2" />
                     Contact Support
-                  </a>
-                </Button>
+                  </Button>
+                </a>
               </CardContent>
             </Card>
           </div>

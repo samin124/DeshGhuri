@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+import { env } from "@DeshGhuri/env/web";
+
+const API_BASE_URL = `${env.VITE_SERVER_URL}/api`;
 
 export interface ApiResponse<T> {
   data?: T;

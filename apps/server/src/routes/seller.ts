@@ -150,36 +150,86 @@ app.post('/documents/upload', async (c) => {
     }
     console.log('✅ Seller verified:', existingSeller.id);
 
-    console.log('☁️ Uploading to Cloudinary...');
-    // Upload to Cloudinary
-    const uploadResult = await uploadFile(arrayBuffer, {
-      folder: 'seller-documents',
-      documentType,
-      sellerId,
+    // Check if document of this type already exists for this seller
+    console.log('🔍 Checking for existing document of type:', documentType);
+    const existingDocument = await db.query.sellerDocument.findFirst({
+      where: eq(sellerDocument.sellerId, sellerId) && eq(sellerDocument.documentType, documentType),
     });
-    console.log('✅ Cloudinary upload successful:', uploadResult.url);
 
-    console.log('💾 Saving to database...');
-    // Save document record to database
-    const documentId = generateId('doc');
-    await db.insert(sellerDocument).values({
-      id: documentId,
-      sellerId,
-      documentType,
-      fileName: file.name,
-      fileUrl: uploadResult.url,
-      fileSize: file.size,
-      cloudinaryPublicId: uploadResult.publicId,
-      status: 'pending',
-    });
-    console.log('✅ Database save successful, documentId:', documentId);
+    let documentId: string;
+    let uploadResult: any;
+
+    if (existingDocument) {
+      console.log('📄 Existing document found, updating:', existingDocument.id);
+      
+      // Delete old file from Cloudinary if exists
+      if (existingDocument.cloudinaryPublicId) {
+        try {
+          await deleteFile(existingDocument.cloudinaryPublicId, 'auto' as any);
+          console.log('🗑️ Old file deleted from Cloudinary');
+        } catch (error) {
+          console.error('Failed to delete old file:', error);
+          // Continue anyway
+        }
+      }
+
+      // Upload new file
+      console.log('☁️ Uploading new file to Cloudinary...');
+      uploadResult = await uploadFile(arrayBuffer, {
+        folder: 'seller-documents',
+        documentType,
+        sellerId,
+      });
+      console.log('✅ Cloudinary upload successful:', uploadResult.url);
+
+      // Update existing document record
+      documentId = existingDocument.id;
+      await db
+        .update(sellerDocument)
+        .set({
+          fileName: file.name,
+          fileUrl: uploadResult.url,
+          fileSize: file.size,
+          cloudinaryPublicId: uploadResult.publicId,
+          status: 'pending',
+          rejectionReason: null,
+          uploadedAt: new Date(),
+        })
+        .where(eq(sellerDocument.id, documentId));
+      console.log('✅ Database update successful, documentId:', documentId);
+    } else {
+      console.log('📄 No existing document, creating new one');
+      
+      // Upload new file
+      console.log('☁️ Uploading to Cloudinary...');
+      uploadResult = await uploadFile(arrayBuffer, {
+        folder: 'seller-documents',
+        documentType,
+        sellerId,
+      });
+      console.log('✅ Cloudinary upload successful:', uploadResult.url);
+
+      // Save new document record to database
+      documentId = generateId('doc');
+      await db.insert(sellerDocument).values({
+        id: documentId,
+        sellerId,
+        documentType,
+        fileName: file.name,
+        fileUrl: uploadResult.url,
+        fileSize: file.size,
+        cloudinaryPublicId: uploadResult.publicId,
+        status: 'pending',
+      });
+      console.log('✅ Database save successful, documentId:', documentId);
+    }
 
     return c.json({
       documentId,
       url: uploadResult.url,
       fileName: file.name,
       fileSize: file.size,
-    }, 201);
+      }, 201);
   } catch (error) {
     console.error('Upload document error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

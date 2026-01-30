@@ -36,7 +36,7 @@ export default function FAQSection() {
             />
           </div>
 
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion className="w-full">
             {filteredFAQs.map((faq, index) => (
               <AccordionItem key={faq.id} value={`item-${index}`}>
                 <AccordionTrigger>{faq.question}</AccordionTrigger>
