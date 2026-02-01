@@ -11,6 +11,7 @@
     "@DeshGhuri/auth": "workspace:*",
     "@DeshGhuri/env": "workspace:*",
     "@base-ui/react": "^1.0.0",
+    "hono": "^4.8.2",
     "@tailwindcss/vite": "^4.1.8",
     "@tanstack/react-form": "^1.23.5",
     "@tanstack/react-query": "^5.80.6",
@@ -47,8 +48,14 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.0.4",
     "jsdom": "^26.0.0",
+    "msw": "^2.12.7",
     "typescript": "catalog:",
     "vite": "^7.0.2",
     "web-vitals": "^5.0.3"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

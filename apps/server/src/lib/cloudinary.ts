@@ -98,7 +98,7 @@ export async function uploadFile(
 /**
  * Delete a file from Cloudinary
  * @param publicId - The public ID of the file to delete
- * @param resourceType - The resource type (image, video, raw)
+ * @param resourceType - The resource type (image, video, raw). Use 'raw' for PDFs.
  */
 export async function deleteFile(
   publicId: string,
@@ -110,10 +110,12 @@ export async function deleteFile(
   }
 
   try {
+    console.log(`🗑️ Deleting file from Cloudinary: ${publicId} (type: ${resourceType})`);
     await cloudinary.uploader.destroy(publicId, {
       resource_type: resourceType,
       invalidate: true,
     });
+    console.log('✅ File deleted successfully');
   } catch (error) {
     console.error('Cloudinary delete error:', error);
     throw new Error('Failed to delete file from cloud storage');

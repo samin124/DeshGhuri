@@ -1,4 +1,7 @@
 {
+  "references": [
+    { "path": "../server" }
+  ],
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "target": "ES2022",

@@ -1,10 +1,12 @@
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { useEffect } from "react";
 
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+import { initMocks } from "@/mocks";
 import appCss from "../index.css?url";
 
 export interface RouterAppContext {}
@@ -35,6 +37,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootDocument() {
+  // Initialize MSW in the browser only (client-side)
+  useEffect(() => {
+    initMocks();
+  }, []);
+
   return (
     <html lang="en">
       <head>

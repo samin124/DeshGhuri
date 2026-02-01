@@ -13,6 +13,8 @@
     "@DeshGhuri/auth": "workspace:*",
     "@DeshGhuri/db": "workspace:*",
     "@DeshGhuri/env": "workspace:*",
+    "@hono/zod-openapi": "^1.2.0",
+    "@scalar/hono-api-reference": "^0.9.39",
     "better-auth": "catalog:",
     "cloudinary": "^2.9.0",
     "dotenv": "catalog:",

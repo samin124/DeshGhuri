@@ -23,7 +23,31 @@
       "Bash(timeout 15 bun run dev:*)",
       "Bash(tree:*)",
       "Bash(ls:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "WebFetch(domain:hono.dev)",
+      "Bash(bunx tsc:*)",
+      "Bash(git -C /home/abdullah/Projects/DeshGhuri status --short)",
+      "Bash(chmod:*)",
+      "Bash(./verify-rpc.sh:*)",
+      "Bash(curl:*)",
+      "Bash(git -C /home/abdullah/Projects/DeshGhuri diff apps/server/src/index.ts)",
+      "Bash(for file in *.md)",
+      "Bash(do if [ \"$file\" != \"README.md\" ])",
+      "Bash(then mv \"$file\" docs/)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(bunx msw init:*)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__list_console_messages",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__wait_for",
+      "mcp__chrome-devtools__fill",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__list_network_requests",
+      "mcp__chrome-devtools__get_network_request"
     ]
   }
 }
