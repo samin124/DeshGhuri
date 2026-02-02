@@ -15,6 +15,7 @@
     "@DeshGhuri/env": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
+    "nanoid": "^5.1.6",
     "nodemailer": "catalog:",
     "resend": "catalog:",
     "zod": "catalog:"

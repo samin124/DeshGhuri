@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { db, seller, sellerDocument, sellerBankAccount, verificationTimeline, eq, desc } from '@DeshGhuri/db';
+import { db, seller, sellerDocument, sellerBankAccount, verificationTimeline, userRole, eq, desc } from '@DeshGhuri/db';
 import { uploadFile, deleteFile, isCloudinaryConfigured } from '../lib/cloudinary';
 import { z } from 'zod';
 
@@ -53,6 +53,20 @@ app.post('/register', async (c) => {
 
     if (!userId) {
       return c.json({ error: 'User ID is required' }, 400);
+    }
+
+    // Check if user has admin or super_admin role
+    const userRoles = await db.query.userRole.findMany({
+      where: eq(userRole.userId, userId),
+    });
+
+    const roles = userRoles.map((r) => r.role);
+    const isAdmin = roles.some((role) => role === 'admin' || role === 'super_admin');
+
+    if (isAdmin) {
+      return c.json({
+        error: 'Admin users cannot register as sellers. Please use a separate account for seller activities.'
+      }, 403);
     }
 
     // Check if seller already exists for this user

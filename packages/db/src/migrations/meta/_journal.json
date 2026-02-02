@@ -8,6 +8,20 @@
       "when": 1769692618838,
       "tag": "0000_noisy_norrin_radd",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769975640666,
+      "tag": "0001_unknown_lester",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769980320439,
+      "tag": "0002_eager_warlock",
+      "breakpoints": true
     }
   ]
 }

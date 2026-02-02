@@ -7,6 +7,15 @@ import { secureHeaders } from "hono/secure-headers";
 import { apiReference } from "@scalar/hono-api-reference";
 import sellerUploadRoutes from "./routes/seller-uploads";
 import openAPIRoutes from "./routes/seller.openapi-handlers";
+import { requireAdmin } from "./middleware/admin-auth";
+import adminDashboard from "./routes/admin/dashboard";
+import adminUsers from "./routes/admin/users";
+import adminSellers from "./routes/admin/sellers";
+import adminDocuments from "./routes/admin/documents";
+import adminAuditLogs from "./routes/admin/audit-logs";
+import adminListings from "./routes/admin/listings";
+import adminBookings from "./routes/admin/bookings";
+import adminTransactions from "./routes/admin/transactions";
 
 const app = new Hono();
 const port = 3000;
@@ -33,6 +42,19 @@ app.route("/", openAPIRoutes);
 // Mount file upload routes (FormData endpoints - not in OpenAPI spec)
 // Includes: POST /documents/upload, PATCH /documents/:documentId
 app.route("/api/seller", sellerUploadRoutes);
+
+// Protect all admin routes with authentication middleware
+app.use("/api/admin/*", requireAdmin);
+
+// Mount admin routes
+app.route("/api/admin/dashboard", adminDashboard);
+app.route("/api/admin/users", adminUsers);
+app.route("/api/admin/sellers", adminSellers);
+app.route("/api/admin/documents", adminDocuments);
+app.route("/api/admin/audit-logs", adminAuditLogs);
+app.route("/api/admin/listings", adminListings);
+app.route("/api/admin/bookings", adminBookings);
+app.route("/api/admin/transactions", adminTransactions);
 
 // Serve OpenAPI documentation UI
 app.get(

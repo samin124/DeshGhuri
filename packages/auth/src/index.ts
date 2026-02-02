@@ -1,9 +1,16 @@
-import { db } from "@DeshGhuri/db";
+import { db, userRole } from "@DeshGhuri/db";
 import * as schema from "@DeshGhuri/db/schema/auth";
 import { env } from "@DeshGhuri/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { sendVerificationEmail, sendResetPasswordEmail } from "./email";
+import { customAlphabet } from "nanoid";
+
+const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 16);
+
+function generateId(prefix: string): string {
+  return `${prefix}_${nanoid()}`;
+}
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -15,7 +22,23 @@ export const auth = betterAuth({
   // Enhanced email & password configuration
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true, // Require verification before sign-in
+    requireEmailVerification: false, // Disabled for now due to email verification issues
+    async onSignUp({ user }) {
+      // Assign default 'customer' role to new users
+      try {
+        await db.insert(userRole).values({
+          id: generateId("role"),
+          userId: user.id,
+          role: "customer",
+          createdAt: new Date(),
+          createdBy: null,
+        });
+        console.log(`✅ Assigned 'customer' role to new user: ${user.email}`);
+      } catch (error) {
+        console.error("❌ Error assigning role to new user:", error);
+        // Don't throw - allow signup to continue even if role assignment fails
+      }
+    },
     sendResetPassword: async ({ user, url, token }) => {
       console.log("\n=== PASSWORD RESET TRIGGERED ===");
       console.log("📧 User:", user.email);
@@ -82,8 +105,8 @@ export const auth = betterAuth({
 
   advanced: {
     defaultCookieAttributes: {
-      sameSite: "none",
-      secure: true,
+      sameSite: "lax",
+      secure: env.NODE_ENV === "production",
       httpOnly: true,
     },
   },

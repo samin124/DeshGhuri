@@ -1,6 +1,7 @@
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/theme-provider";
@@ -37,6 +38,19 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootDocument() {
+  // Create QueryClient instance
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000, // 1 minute
+            retry: 1,
+          },
+        },
+      })
+  );
+
   // Initialize MSW in the browser only (client-side)
   useEffect(() => {
     initMocks();
@@ -48,15 +62,17 @@ function RootDocument() {
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider>
-          <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
-            <Navbar />
-            <Outlet />
-            <Footer />
-          </div>
-          <Toaster richColors />
-          <TanStackRouterDevtools position="bottom-left" />
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
+              <Navbar />
+              <Outlet />
+              <Footer />
+            </div>
+            <Toaster richColors />
+            <TanStackRouterDevtools position="bottom-left" />
+          </ThemeProvider>
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>

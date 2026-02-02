@@ -7,6 +7,9 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+  banned: boolean("banned").default(false).notNull(),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -76,6 +79,7 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  roles: many(userRole),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -88,6 +92,34 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
+export const userRole = pgTable(
+  "user_role",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text("role").notNull(), // 'customer' | 'seller' | 'admin' | 'super_admin'
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdBy: text("created_by").references(() => user.id),
+  },
+  (table) => [
+    index("userRole_userId_idx").on(table.userId),
+    index("userRole_role_idx").on(table.role),
+  ],
+);
+
+export const userRoleRelations = relations(userRole, ({ one }) => ({
+  user: one(user, {
+    fields: [userRole.userId],
+    references: [user.id],
+  }),
+  creator: one(user, {
+    fields: [userRole.createdBy],
     references: [user.id],
   }),
 }));

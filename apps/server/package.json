@@ -19,6 +19,7 @@
     "cloudinary": "^2.9.0",
     "dotenv": "catalog:",
     "hono": "^4.8.2",
+    "nanoid": "^5.1.6",
     "zod": "catalog:"
   },
   "devDependencies": {

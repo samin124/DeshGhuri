@@ -80,6 +80,13 @@ function RouteComponent() {
           toast.error(result.error);
           // Clear any stale sellerId
           localStorage.removeItem('sellerId');
+
+          // If admin user tried to register as seller, redirect to dashboard
+          if (result.error.includes('Admin users cannot register')) {
+            setTimeout(() => {
+              navigate({ to: '/dashboard' });
+            }, 3000);
+          }
           return;
         }
 
