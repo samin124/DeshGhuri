@@ -5,9 +5,7 @@ import {
   getSellerByUserRoute,
   completeOnboardingRoute,
   getVerificationStatusRoute,
-  testCloudinaryRoute,
 } from './seller.openapi';
-import { isCloudinaryConfigured } from '../lib/cloudinary';
 
 // Create OpenAPIHono app for documented routes
 const app = new OpenAPIHono();
@@ -155,15 +153,6 @@ app.openapi(getVerificationStatusRoute, async (c) => {
   }
 });
 
-// Test Cloudinary endpoint
-app.openapi(testCloudinaryRoute, async (c) => {
-  return c.json({
-    configured: isCloudinaryConfigured,
-    message: isCloudinaryConfigured
-      ? 'Cloudinary is configured and ready'
-      : 'Cloudinary is not configured. Add credentials to .env file.',
-  });
-});
 
 // Generate OpenAPI documentation
 app.doc31('/openapi.json', {

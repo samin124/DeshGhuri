@@ -136,15 +136,15 @@ const DocumentSchema = z.object({
     description: 'Original filename'
   }),
   fileUrl: z.string().url().openapi({
-    example: 'https://res.cloudinary.com/deshghuri/image/upload/v1234567890/seller-documents/doc.pdf',
-    description: 'Cloudinary URL to access the document'
+    example: 'http://127.0.0.1:54321/storage/v1/object/sign/seller-documents/sel_abc/doc.pdf?token=xyz&exp=1738746000',
+    description: 'Signed URL to access the document from Supabase Storage'
   }),
   fileSize: z.number().openapi({
     example: 1048576,
     description: 'File size in bytes'
   }),
-  cloudinaryPublicId: z.string().openapi({
-    description: 'Cloudinary public ID for file management'
+  storageKey: z.string().openapi({
+    description: 'Supabase Storage key for file management (e.g., sellerId/documentType_timestamp.ext)'
   }),
   status: z.enum(['pending', 'approved', 'rejected']).openapi({
     description: 'Document verification status',
@@ -413,28 +413,3 @@ export const getVerificationStatusRoute = createRoute({
   },
 });
 
-export const testCloudinaryRoute = createRoute({
-  method: 'get',
-  path: '/api/seller/test-cloudinary',
-  tags: ['System Health'],
-  summary: 'Test Cloudinary configuration',
-  description: 'Checks if Cloudinary is properly configured for file uploads. This endpoint is useful for verifying that environment variables are set correctly before attempting file uploads.',
-  responses: {
-    200: {
-      description: 'Cloudinary configuration status.',
-      content: {
-        'application/json': {
-          schema: z.object({
-            configured: z.boolean().openapi({
-              description: 'True if Cloudinary is configured, false otherwise'
-            }),
-            message: z.string().openapi({
-              example: 'Cloudinary is configured and ready',
-              description: 'Human-readable status message'
-            }),
-          }),
-        },
-      },
-    },
-  },
-});

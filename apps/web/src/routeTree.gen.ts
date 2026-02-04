@@ -19,13 +19,18 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SellerVerificationStatusRouteImport } from './routes/seller/verification-status'
 import { Route as SellerRegisterRouteImport } from './routes/seller/register'
 import { Route as SellerOnboardingRouteImport } from './routes/seller/onboarding'
+import { Route as ListingListingIdRouteImport } from './routes/listing/$listingId'
 import { Route as AdminAdminRouteImport } from './routes/admin/_admin'
+import { Route as SellerSellerIdProfileRouteImport } from './routes/seller/$sellerId/profile'
 import { Route as AdminAdminDashboardRouteImport } from './routes/admin/_admin/dashboard'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/admin/_admin/users/index'
 import { Route as AdminAdminTransactionsIndexRouteImport } from './routes/admin/_admin/transactions/index'
 import { Route as AdminAdminSellersIndexRouteImport } from './routes/admin/_admin/sellers/index'
+import { Route as AdminAdminReportsIndexRouteImport } from './routes/admin/_admin/reports/index'
+import { Route as AdminAdminPromotionsIndexRouteImport } from './routes/admin/_admin/promotions/index'
 import { Route as AdminAdminListingsIndexRouteImport } from './routes/admin/_admin/listings/index'
 import { Route as AdminAdminDocumentsIndexRouteImport } from './routes/admin/_admin/documents/index'
+import { Route as AdminAdminContentIndexRouteImport } from './routes/admin/_admin/content/index'
 import { Route as AdminAdminBookingsIndexRouteImport } from './routes/admin/_admin/bookings/index'
 import { Route as AdminAdminAuditLogsIndexRouteImport } from './routes/admin/_admin/audit-logs/index'
 import { Route as AdminAdminUsersUserIdRouteImport } from './routes/admin/_admin/users/$userId'
@@ -83,9 +88,19 @@ const SellerOnboardingRoute = SellerOnboardingRouteImport.update({
   path: '/seller/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ListingListingIdRoute = ListingListingIdRouteImport.update({
+  id: '/listing/$listingId',
+  path: '/listing/$listingId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAdminRoute = AdminAdminRouteImport.update({
   id: '/admin/_admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerSellerIdProfileRoute = SellerSellerIdProfileRouteImport.update({
+  id: '/seller/$sellerId/profile',
+  path: '/seller/$sellerId/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminAdminDashboardRoute = AdminAdminDashboardRouteImport.update({
@@ -109,6 +124,17 @@ const AdminAdminSellersIndexRoute = AdminAdminSellersIndexRouteImport.update({
   path: '/sellers/',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const AdminAdminReportsIndexRoute = AdminAdminReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminPromotionsIndexRoute =
+  AdminAdminPromotionsIndexRouteImport.update({
+    id: '/promotions/',
+    path: '/promotions/',
+    getParentRoute: () => AdminAdminRoute,
+  } as any)
 const AdminAdminListingsIndexRoute = AdminAdminListingsIndexRouteImport.update({
   id: '/listings/',
   path: '/listings/',
@@ -120,6 +146,11 @@ const AdminAdminDocumentsIndexRoute =
     path: '/documents/',
     getParentRoute: () => AdminAdminRoute,
   } as any)
+const AdminAdminContentIndexRoute = AdminAdminContentIndexRouteImport.update({
+  id: '/content/',
+  path: '/content/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AdminAdminBookingsIndexRoute = AdminAdminBookingsIndexRouteImport.update({
   id: '/bookings/',
   path: '/bookings/',
@@ -158,17 +189,22 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/verify-email': typeof VerifyEmailRoute
   '/admin': typeof AdminAdminRouteWithChildren
+  '/listing/$listingId': typeof ListingListingIdRoute
   '/seller/onboarding': typeof SellerOnboardingRoute
   '/seller/register': typeof SellerRegisterRoute
   '/seller/verification-status': typeof SellerVerificationStatusRoute
   '/admin/dashboard': typeof AdminAdminDashboardRoute
+  '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
   '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
   '/admin/audit-logs/': typeof AdminAdminAuditLogsIndexRoute
   '/admin/bookings/': typeof AdminAdminBookingsIndexRoute
+  '/admin/content/': typeof AdminAdminContentIndexRoute
   '/admin/documents/': typeof AdminAdminDocumentsIndexRoute
   '/admin/listings/': typeof AdminAdminListingsIndexRoute
+  '/admin/promotions/': typeof AdminAdminPromotionsIndexRoute
+  '/admin/reports/': typeof AdminAdminReportsIndexRoute
   '/admin/sellers/': typeof AdminAdminSellersIndexRoute
   '/admin/transactions/': typeof AdminAdminTransactionsIndexRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
@@ -182,17 +218,22 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/verify-email': typeof VerifyEmailRoute
   '/admin': typeof AdminAdminRouteWithChildren
+  '/listing/$listingId': typeof ListingListingIdRoute
   '/seller/onboarding': typeof SellerOnboardingRoute
   '/seller/register': typeof SellerRegisterRoute
   '/seller/verification-status': typeof SellerVerificationStatusRoute
   '/admin/dashboard': typeof AdminAdminDashboardRoute
+  '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
   '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
   '/admin/audit-logs': typeof AdminAdminAuditLogsIndexRoute
   '/admin/bookings': typeof AdminAdminBookingsIndexRoute
+  '/admin/content': typeof AdminAdminContentIndexRoute
   '/admin/documents': typeof AdminAdminDocumentsIndexRoute
   '/admin/listings': typeof AdminAdminListingsIndexRoute
+  '/admin/promotions': typeof AdminAdminPromotionsIndexRoute
+  '/admin/reports': typeof AdminAdminReportsIndexRoute
   '/admin/sellers': typeof AdminAdminSellersIndexRoute
   '/admin/transactions': typeof AdminAdminTransactionsIndexRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
@@ -207,17 +248,22 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/verify-email': typeof VerifyEmailRoute
   '/admin/_admin': typeof AdminAdminRouteWithChildren
+  '/listing/$listingId': typeof ListingListingIdRoute
   '/seller/onboarding': typeof SellerOnboardingRoute
   '/seller/register': typeof SellerRegisterRoute
   '/seller/verification-status': typeof SellerVerificationStatusRoute
   '/admin/_admin/dashboard': typeof AdminAdminDashboardRoute
+  '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
   '/admin/_admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/_admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
   '/admin/_admin/users/$userId': typeof AdminAdminUsersUserIdRoute
   '/admin/_admin/audit-logs/': typeof AdminAdminAuditLogsIndexRoute
   '/admin/_admin/bookings/': typeof AdminAdminBookingsIndexRoute
+  '/admin/_admin/content/': typeof AdminAdminContentIndexRoute
   '/admin/_admin/documents/': typeof AdminAdminDocumentsIndexRoute
   '/admin/_admin/listings/': typeof AdminAdminListingsIndexRoute
+  '/admin/_admin/promotions/': typeof AdminAdminPromotionsIndexRoute
+  '/admin/_admin/reports/': typeof AdminAdminReportsIndexRoute
   '/admin/_admin/sellers/': typeof AdminAdminSellersIndexRoute
   '/admin/_admin/transactions/': typeof AdminAdminTransactionsIndexRoute
   '/admin/_admin/users/': typeof AdminAdminUsersIndexRoute
@@ -233,17 +279,22 @@ export interface FileRouteTypes {
     | '/search'
     | '/verify-email'
     | '/admin'
+    | '/listing/$listingId'
     | '/seller/onboarding'
     | '/seller/register'
     | '/seller/verification-status'
     | '/admin/dashboard'
+    | '/seller/$sellerId/profile'
     | '/admin/sellers/$sellerId'
     | '/admin/sellers/verification-queue'
     | '/admin/users/$userId'
     | '/admin/audit-logs/'
     | '/admin/bookings/'
+    | '/admin/content/'
     | '/admin/documents/'
     | '/admin/listings/'
+    | '/admin/promotions/'
+    | '/admin/reports/'
     | '/admin/sellers/'
     | '/admin/transactions/'
     | '/admin/users/'
@@ -257,17 +308,22 @@ export interface FileRouteTypes {
     | '/search'
     | '/verify-email'
     | '/admin'
+    | '/listing/$listingId'
     | '/seller/onboarding'
     | '/seller/register'
     | '/seller/verification-status'
     | '/admin/dashboard'
+    | '/seller/$sellerId/profile'
     | '/admin/sellers/$sellerId'
     | '/admin/sellers/verification-queue'
     | '/admin/users/$userId'
     | '/admin/audit-logs'
     | '/admin/bookings'
+    | '/admin/content'
     | '/admin/documents'
     | '/admin/listings'
+    | '/admin/promotions'
+    | '/admin/reports'
     | '/admin/sellers'
     | '/admin/transactions'
     | '/admin/users'
@@ -281,17 +337,22 @@ export interface FileRouteTypes {
     | '/search'
     | '/verify-email'
     | '/admin/_admin'
+    | '/listing/$listingId'
     | '/seller/onboarding'
     | '/seller/register'
     | '/seller/verification-status'
     | '/admin/_admin/dashboard'
+    | '/seller/$sellerId/profile'
     | '/admin/_admin/sellers/$sellerId'
     | '/admin/_admin/sellers/verification-queue'
     | '/admin/_admin/users/$userId'
     | '/admin/_admin/audit-logs/'
     | '/admin/_admin/bookings/'
+    | '/admin/_admin/content/'
     | '/admin/_admin/documents/'
     | '/admin/_admin/listings/'
+    | '/admin/_admin/promotions/'
+    | '/admin/_admin/reports/'
     | '/admin/_admin/sellers/'
     | '/admin/_admin/transactions/'
     | '/admin/_admin/users/'
@@ -306,9 +367,11 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   AdminAdminRoute: typeof AdminAdminRouteWithChildren
+  ListingListingIdRoute: typeof ListingListingIdRoute
   SellerOnboardingRoute: typeof SellerOnboardingRoute
   SellerRegisterRoute: typeof SellerRegisterRoute
   SellerVerificationStatusRoute: typeof SellerVerificationStatusRoute
+  SellerSellerIdProfileRoute: typeof SellerSellerIdProfileRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -383,11 +446,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellerOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/listing/$listingId': {
+      id: '/listing/$listingId'
+      path: '/listing/$listingId'
+      fullPath: '/listing/$listingId'
+      preLoaderRoute: typeof ListingListingIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/_admin': {
       id: '/admin/_admin'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/$sellerId/profile': {
+      id: '/seller/$sellerId/profile'
+      path: '/seller/$sellerId/profile'
+      fullPath: '/seller/$sellerId/profile'
+      preLoaderRoute: typeof SellerSellerIdProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/_admin/dashboard': {
@@ -418,6 +495,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminSellersIndexRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/admin/_admin/reports/': {
+      id: '/admin/_admin/reports/'
+      path: '/reports'
+      fullPath: '/admin/reports/'
+      preLoaderRoute: typeof AdminAdminReportsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/promotions/': {
+      id: '/admin/_admin/promotions/'
+      path: '/promotions'
+      fullPath: '/admin/promotions/'
+      preLoaderRoute: typeof AdminAdminPromotionsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/admin/_admin/listings/': {
       id: '/admin/_admin/listings/'
       path: '/listings'
@@ -430,6 +521,13 @@ declare module '@tanstack/react-router' {
       path: '/documents'
       fullPath: '/admin/documents/'
       preLoaderRoute: typeof AdminAdminDocumentsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/content/': {
+      id: '/admin/_admin/content/'
+      path: '/content'
+      fullPath: '/admin/content/'
+      preLoaderRoute: typeof AdminAdminContentIndexRouteImport
       parentRoute: typeof AdminAdminRoute
     }
     '/admin/_admin/bookings/': {
@@ -477,8 +575,11 @@ interface AdminAdminRouteChildren {
   AdminAdminUsersUserIdRoute: typeof AdminAdminUsersUserIdRoute
   AdminAdminAuditLogsIndexRoute: typeof AdminAdminAuditLogsIndexRoute
   AdminAdminBookingsIndexRoute: typeof AdminAdminBookingsIndexRoute
+  AdminAdminContentIndexRoute: typeof AdminAdminContentIndexRoute
   AdminAdminDocumentsIndexRoute: typeof AdminAdminDocumentsIndexRoute
   AdminAdminListingsIndexRoute: typeof AdminAdminListingsIndexRoute
+  AdminAdminPromotionsIndexRoute: typeof AdminAdminPromotionsIndexRoute
+  AdminAdminReportsIndexRoute: typeof AdminAdminReportsIndexRoute
   AdminAdminSellersIndexRoute: typeof AdminAdminSellersIndexRoute
   AdminAdminTransactionsIndexRoute: typeof AdminAdminTransactionsIndexRoute
   AdminAdminUsersIndexRoute: typeof AdminAdminUsersIndexRoute
@@ -492,8 +593,11 @@ const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminUsersUserIdRoute: AdminAdminUsersUserIdRoute,
   AdminAdminAuditLogsIndexRoute: AdminAdminAuditLogsIndexRoute,
   AdminAdminBookingsIndexRoute: AdminAdminBookingsIndexRoute,
+  AdminAdminContentIndexRoute: AdminAdminContentIndexRoute,
   AdminAdminDocumentsIndexRoute: AdminAdminDocumentsIndexRoute,
   AdminAdminListingsIndexRoute: AdminAdminListingsIndexRoute,
+  AdminAdminPromotionsIndexRoute: AdminAdminPromotionsIndexRoute,
+  AdminAdminReportsIndexRoute: AdminAdminReportsIndexRoute,
   AdminAdminSellersIndexRoute: AdminAdminSellersIndexRoute,
   AdminAdminTransactionsIndexRoute: AdminAdminTransactionsIndexRoute,
   AdminAdminUsersIndexRoute: AdminAdminUsersIndexRoute,
@@ -512,9 +616,11 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   AdminAdminRoute: AdminAdminRouteWithChildren,
+  ListingListingIdRoute: ListingListingIdRoute,
   SellerOnboardingRoute: SellerOnboardingRoute,
   SellerRegisterRoute: SellerRegisterRoute,
   SellerVerificationStatusRoute: SellerVerificationStatusRoute,
+  SellerSellerIdProfileRoute: SellerSellerIdProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

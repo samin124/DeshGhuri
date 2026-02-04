@@ -47,7 +47,16 @@
       "mcp__chrome-devtools__fill",
       "mcp__chrome-devtools__click",
       "mcp__chrome-devtools__list_network_requests",
-      "mcp__chrome-devtools__get_network_request"
+      "mcp__chrome-devtools__get_network_request",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__press_key",
+      "Bash(xargs:*)",
+      "Bash(git -C /home/abdullah/Projects/DeshGhuri log --oneline -15)",
+      "Bash(supabase status:*)",
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Bash(/home/abdullah/Projects/DeshGhuri/get-supabase-keys.sh)",
+      "mcp__chrome-devtools__evaluate_script",
+      "Bash(docker exec:*)"
     ]
   }
 }

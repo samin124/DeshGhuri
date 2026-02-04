@@ -39,7 +39,7 @@ export async function requireAdmin(c: Context, next: () => Promise<void>) {
   c.set('userId', session.user.id);
   c.set('userEmail', session.user.email);
   c.set('userRoles', roles);
-  c.set('isSuper Admin', roles.includes('super_admin'));
+  c.set('isSuperAdmin', roles.includes('super_admin'));
 
   await next();
 }

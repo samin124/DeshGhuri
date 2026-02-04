@@ -58,7 +58,7 @@ export const sellerDocument = pgTable(
     fileName: text('file_name').notNull(),
     fileUrl: text('file_url').notNull(),
     fileSize: integer('file_size').notNull(),
-    cloudinaryPublicId: text('cloudinary_public_id'),
+    storageKey: text('storage_key'),
     status: text('status').notNull().default('pending'), // 'pending' | 'approved' | 'rejected'
     rejectionReason: text('rejection_reason'),
     uploadedAt: timestamp('uploaded_at').defaultNow().notNull(),
