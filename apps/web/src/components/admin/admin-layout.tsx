@@ -14,6 +14,9 @@ import {
   Package,
   Calendar,
   CreditCard,
+  Percent,
+  Layout,
+  BarChart3,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -77,6 +80,21 @@ const navigation = [
     name: 'Transactions',
     href: '/admin/transactions',
     icon: CreditCard,
+  },
+  {
+    name: 'Promotions',
+    href: '/admin/promotions',
+    icon: Percent,
+  },
+  {
+    name: 'Content',
+    href: '/admin/content',
+    icon: Layout,
+  },
+  {
+    name: 'Reports',
+    href: '/admin/reports',
+    icon: BarChart3,
   },
   {
     name: 'Audit Logs',

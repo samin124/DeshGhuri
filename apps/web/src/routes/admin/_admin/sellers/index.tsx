@@ -4,6 +4,7 @@ import { Eye, FileCheck, AlertCircle } from 'lucide-react';
 import { DataTable, type Column } from '@/components/admin/data-table';
 import { useSellers } from '@/hooks/use-admin-queries';
 import { Button } from '@/components/ui/button';
+import { VerifiedBadge } from '@/components/seller/verified-badge';
 
 export const Route = createFileRoute('/admin/_admin/sellers/')({
   component: RouteComponent,
@@ -89,7 +90,14 @@ function RouteComponent() {
     {
       id: 'businessName',
       header: 'Business Name',
-      accessor: (seller) => seller.businessName,
+      accessor: (seller) => (
+        <div className="flex items-center gap-2">
+          <span>{seller.businessName}</span>
+          {seller.verificationStatus === 'approved' && (
+            <VerifiedBadge size="sm" showText={false} />
+          )}
+        </div>
+      ),
       sortable: true,
     },
     {

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { db, seller as sellerTable, sellerDocument, eq, and } from '@DeshGhuri/db';
-import { uploadFile, deleteFile, isCloudinaryConfigured } from '../lib/cloudinary';
+import { uploadFile, deleteFile, isStorageConfigured } from '../lib/storage';
 
 const app = new Hono();
 
@@ -14,11 +14,11 @@ app.post('/documents/upload', async (c) => {
   try {
     console.log('📤 Upload request received');
 
-    // Check if Cloudinary is configured
-    if (!isCloudinaryConfigured) {
-      console.log('❌ Cloudinary not configured');
+    // Check if Supabase Storage is configured
+    if (!isStorageConfigured) {
+      console.log('❌ Supabase Storage not configured');
       return c.json({
-        error: 'File upload service not configured. Please contact administrator to configure Cloudinary.'
+        error: 'File upload service not configured. Please contact administrator to configure Supabase Storage.'
       }, 503);
     }
 
@@ -88,26 +88,24 @@ app.post('/documents/upload', async (c) => {
     if (existingDocument) {
       console.log('📄 Existing document found, updating:', existingDocument.id);
 
-      // Delete old file from Cloudinary
-      if (existingDocument.cloudinaryPublicId) {
+      // Delete old file from Supabase Storage
+      if (existingDocument.storageKey) {
         try {
-          // Determine resource type from file name
-          const resourceType = existingDocument.fileName.toLowerCase().endsWith('.pdf') ? 'raw' : 'image';
-          await deleteFile(existingDocument.cloudinaryPublicId, resourceType);
-          console.log('🗑️ Old file deleted from Cloudinary');
+          await deleteFile(existingDocument.storageKey);
+          console.log('🗑️ Old file deleted from Supabase Storage');
         } catch (error) {
           console.error('Failed to delete old file:', error);
         }
       }
 
       // Upload new file
-      console.log('☁️ Uploading new file to Cloudinary...');
+      console.log('☁️ Uploading new file to Supabase Storage...');
       uploadResult = await uploadFile(arrayBuffer, {
         folder: 'seller-documents',
         documentType,
         sellerId,
       });
-      console.log('✅ Cloudinary upload successful:', uploadResult.url);
+      console.log('✅ Supabase Storage upload successful:', uploadResult.url);
 
       // Update existing document record
       documentId = existingDocument.id;
@@ -117,7 +115,7 @@ app.post('/documents/upload', async (c) => {
           fileName: file.name,
           fileUrl: uploadResult.url,
           fileSize: file.size,
-          cloudinaryPublicId: uploadResult.publicId,
+          storageKey: uploadResult.storageKey,
           status: 'pending',
           rejectionReason: null,
           uploadedAt: new Date(),
@@ -128,13 +126,13 @@ app.post('/documents/upload', async (c) => {
       console.log('📄 No existing document, creating new one');
 
       // Upload new file
-      console.log('☁️ Uploading to Cloudinary...');
+      console.log('☁️ Uploading to Supabase Storage...');
       uploadResult = await uploadFile(arrayBuffer, {
         folder: 'seller-documents',
         documentType,
         sellerId,
       });
-      console.log('✅ Cloudinary upload successful:', uploadResult.url);
+      console.log('✅ Supabase Storage upload successful:', uploadResult.url);
 
       // Save new document record
       documentId = generateId('doc');
@@ -145,7 +143,7 @@ app.post('/documents/upload', async (c) => {
         fileName: file.name,
         fileUrl: uploadResult.url,
         fileSize: file.size,
-        cloudinaryPublicId: uploadResult.publicId,
+        storageKey: uploadResult.storageKey,
         status: 'pending',
       });
       console.log('✅ Database save successful');
@@ -187,12 +185,10 @@ app.patch('/documents/:documentId', async (c) => {
       return c.json({ error: 'Document not found' }, 404);
     }
 
-    // Delete old file from Cloudinary
-    if (existingDoc.cloudinaryPublicId) {
+    // Delete old file from Supabase Storage
+    if (existingDoc.storageKey) {
       try {
-        // Determine resource type from file name
-        const resourceType = existingDoc.fileName.toLowerCase().endsWith('.pdf') ? 'raw' : 'image';
-        await deleteFile(existingDoc.cloudinaryPublicId, resourceType);
+        await deleteFile(existingDoc.storageKey);
       } catch (error) {
         console.error('Failed to delete old file:', error);
       }
@@ -213,7 +209,7 @@ app.patch('/documents/:documentId', async (c) => {
         fileName: file.name,
         fileUrl: uploadResult.url,
         fileSize: file.size,
-        cloudinaryPublicId: uploadResult.publicId,
+        storageKey: uploadResult.storageKey,
         status: 'pending',
         rejectionReason: null,
         uploadedAt: new Date(),

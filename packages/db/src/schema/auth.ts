@@ -79,7 +79,8 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
-  roles: many(userRole),
+  roles: many(userRole, { relationName: 'userRoles' }),
+  createdRoles: many(userRole, { relationName: 'roleCreator' }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -117,9 +118,11 @@ export const userRoleRelations = relations(userRole, ({ one }) => ({
   user: one(user, {
     fields: [userRole.userId],
     references: [user.id],
+    relationName: 'userRoles',
   }),
   creator: one(user, {
     fields: [userRole.createdBy],
     references: [user.id],
+    relationName: 'roleCreator',
   }),
 }));

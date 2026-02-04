@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { DocumentReviewPanel } from '@/components/admin/document-review-panel';
+import { VerifiedBadge } from '@/components/seller/verified-badge';
 
 export const Route = createFileRoute('/admin/_admin/sellers/$sellerId')({
   component: RouteComponent,
@@ -107,7 +108,10 @@ function RouteComponent() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">{seller.businessName}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold">{seller.businessName}</h1>
+              {seller.verificationStatus === 'approved' && <VerifiedBadge size="md" />}
+            </div>
             <p className="text-gray-600 dark:text-gray-400">
               {getCategoryLabel(seller.category)} • Applied{' '}
               {new Date(seller.createdAt).toLocaleDateString()}

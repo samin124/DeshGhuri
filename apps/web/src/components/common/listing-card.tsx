@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CountdownTimer } from "./countdown-timer";
 import { PriceDisplay } from "./price-display";
 import { RatingStars } from "./rating-stars";
+import { VerifiedBadge } from "@/components/seller/verified-badge";
 
 interface ListingCardProps {
   listing: Listing;
@@ -65,6 +66,17 @@ export function ListingCard({
               <MapPin className="h-4 w-4" />
               <span>{listing.location}</span>
             </div>
+
+            {listing.seller && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  by {listing.seller.name}
+                </span>
+                {listing.seller.isVerified && (
+                  <VerifiedBadge size="sm" showText={false} />
+                )}
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="text-xs">

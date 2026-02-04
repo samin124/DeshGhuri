@@ -21,10 +21,10 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
 
-    // Cloudinary configuration (optional - required for file uploads)
-    CLOUDINARY_CLOUD_NAME: z.string().optional(),
-    CLOUDINARY_API_KEY: z.string().optional(),
-    CLOUDINARY_API_SECRET: z.string().optional(),
+    // Supabase Storage (S3-compatible)
+    SUPABASE_PROJECT_REF: z.string().min(1),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+    SUPABASE_STORAGE_BUCKET: z.string().default('seller-documents'),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

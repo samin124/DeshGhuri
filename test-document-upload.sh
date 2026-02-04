@@ -17,10 +17,15 @@ fi
 echo "✅ Server is running"
 echo ""
 
-# Check Cloudinary configuration
-echo "📋 Checking Cloudinary Configuration..."
-CLOUDINARY_RESPONSE=$(curl -s http://localhost:3000/api/seller/test-cloudinary)
-echo "Response: $CLOUDINARY_RESPONSE"
+# Check Supabase Storage configuration
+echo "📋 Checking Supabase Storage..."
+STORAGE_RESPONSE=$(curl -s http://127.0.0.1:54321/storage/v1/bucket/seller-documents 2>&1)
+if echo "$STORAGE_RESPONSE" | grep -q "seller-documents\|Unauthorized"; then
+  echo "✅ Supabase Storage is running"
+else
+  echo "❌ Supabase Storage may not be configured properly"
+  echo "Response: $STORAGE_RESPONSE"
+fi
 echo ""
 
 # Instructions for manual testing
@@ -44,7 +49,7 @@ echo "5. After uploading, verify in database:"
 echo ""
 echo "   Run this SQL query to check your documents:"
 echo "   --------------------------------------------"
-echo "   SELECT id, seller_id, document_type, file_name, status, uploaded_at"
+echo "   SELECT id, seller_id, document_type, file_name, storage_key, status, uploaded_at"
 echo "   FROM seller_document"
 echo "   WHERE seller_id = 'YOUR_SELLER_ID';"
 echo ""
@@ -52,9 +57,10 @@ echo "   Expected: You should see separate records for each document type"
 echo "   ✅ PASS: 3-4 separate document records"
 echo "   ❌ FAIL: Only 1 document record (bug still present)"
 echo ""
-echo "6. Verify in Cloudinary:"
-echo "   - Go to https://cloudinary.com/console"
-echo "   - Check Media Library > seller-documents/{sellerId}"
+echo "6. Verify in Supabase Storage:"
+echo "   - Go to http://127.0.0.1:54323 (Supabase Studio)"
+echo "   - Navigate to Storage > seller-documents bucket"
+echo "   - Check folder {sellerId}/ for uploaded files"
 echo "   - Verify all uploaded files are present"
 echo ""
 echo "7. Check Verification Status Page:"
@@ -101,6 +107,7 @@ if command -v psql &> /dev/null; then
         id,
         document_type,
         file_name,
+        storage_key,
         status,
         uploaded_at
       FROM seller_document
