@@ -1,4 +1,5 @@
 import { useForm } from '@tanstack/react-form';
+import { useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -58,6 +59,13 @@ export function OnboardingStep1({ data, onUpdate }: OnboardingStep1Props) {
       });
     },
   });
+
+  // Ensure the default category is propagated to parent on mount
+  useEffect(() => {
+    if (!data.category) {
+      onUpdate({ category: 'agency' as SellerCategory });
+    }
+  }, []);
 
   return (
     <div className="space-y-6">

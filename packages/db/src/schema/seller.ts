@@ -14,9 +14,8 @@ export const seller = pgTable(
   'seller',
   {
     id: text('id').primaryKey(),
-    userId: text('user_id')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }), // Made optional for independent seller auth
+    email: text('email').notNull().unique(), // Primary identifier for seller auth
     businessName: text('business_name').notNull(),
     category: text('category').notNull(), // 'agency' | 'hotel' | 'tour-operator'
     registrationNumber: text('registration_number').notNull(),
@@ -43,6 +42,7 @@ export const seller = pgTable(
   },
   (table) => [
     index('seller_userId_idx').on(table.userId),
+    index('seller_email_idx').on(table.email),
     index('seller_verificationStatus_idx').on(table.verificationStatus),
   ]
 );
@@ -94,6 +94,29 @@ export const sellerBankAccount = pgTable(
   (table) => [index('sellerBankAccount_sellerId_idx').on(table.sellerId)]
 );
 
+export const sellerPaymentMethod = pgTable(
+  'seller_payment_method',
+  {
+    id: text('id').primaryKey(),
+    sellerId: text('seller_id')
+      .notNull()
+      .references(() => seller.id, { onDelete: 'cascade' }),
+    paymentType: text('payment_type').notNull(), // 'bkash' | 'nagad'
+    accountNumber: text('account_number').notNull(),
+    accountName: text('account_name').notNull(),
+    verified: boolean('verified').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index('sellerPaymentMethod_sellerId_idx').on(table.sellerId),
+    index('sellerPaymentMethod_paymentType_idx').on(table.paymentType),
+  ]
+);
+
 export const verificationTimeline = pgTable(
   'verification_timeline',
   {
@@ -120,7 +143,9 @@ export const sellerRelations = relations(seller, ({ one, many }) => ({
   }),
   documents: many(sellerDocument),
   bankAccount: one(sellerBankAccount),
+  paymentMethods: many(sellerPaymentMethod),
   timeline: many(verificationTimeline),
+  // Marketplace relations (will be defined in marketplace.ts to avoid circular deps)
 }));
 
 export const sellerDocumentRelations = relations(sellerDocument, ({ one }) => ({
@@ -137,6 +162,13 @@ export const sellerDocumentRelations = relations(sellerDocument, ({ one }) => ({
 export const sellerBankAccountRelations = relations(sellerBankAccount, ({ one }) => ({
   seller: one(seller, {
     fields: [sellerBankAccount.sellerId],
+    references: [seller.id],
+  }),
+}));
+
+export const sellerPaymentMethodRelations = relations(sellerPaymentMethod, ({ one }) => ({
+  seller: one(seller, {
+    fields: [sellerPaymentMethod.sellerId],
     references: [seller.id],
   }),
 }));

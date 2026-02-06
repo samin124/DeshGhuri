@@ -81,13 +81,13 @@ export default function Footer() {
             <h3 className="mb-4 text-lg font-semibold">For Sellers</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/seller/register" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link to="/seller" className="text-muted-foreground transition-colors hover:text-primary">
                   Become a Seller
                 </Link>
               </li>
               <li>
-                <Link to="/seller/login" className="text-muted-foreground transition-colors hover:text-primary">
-                  Seller Login
+                <Link to="/seller/signin" className="text-muted-foreground transition-colors hover:text-primary">
+                  Seller Sign In
                 </Link>
               </li>
               <li>

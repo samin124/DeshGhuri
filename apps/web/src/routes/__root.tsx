@@ -1,4 +1,4 @@
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { HeadContent, Outlet, Scripts, createRootRouteWithContext, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -7,8 +7,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+import { DashboardFooter } from "@/components/layout/dashboard-footer";
 import { initMocks } from "@/mocks";
 import appCss from "../index.css?url";
+import { SellerSessionProvider } from "@/contexts/seller-session-context";
 
 export interface RouterAppContext {}
 
@@ -56,6 +58,22 @@ function RootDocument() {
     initMocks();
   }, []);
 
+  // Get current pathname to conditionally render navbar/footer
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+
+  // Detect different page types
+  const isAdminLoginPage = currentPath === '/admin' || currentPath === '/admin/' || currentPath === '/admin/reset-password';
+  const isSellerAuthPage = currentPath === '/seller/signin' || currentPath === '/seller/signup' || currentPath === '/seller/register';
+  const isAdminDashboard = currentPath.startsWith('/admin/') && currentPath !== '/admin' && currentPath !== '/admin/';
+  const isSellerDashboard = currentPath.startsWith('/seller/dashboard');
+
+  // Dashboard pages have their own layouts (navbar + footer managed internally)
+  const isDashboardPage = isAdminDashboard || isSellerDashboard;
+
+  // Show public navbar/footer only on public pages (not auth pages, not dashboards)
+  const showNavAndFooter = !isAdminLoginPage && !isSellerAuthPage && !isDashboardPage;
+
   return (
     <html lang="en">
       <head>
@@ -64,13 +82,15 @@ function RootDocument() {
       <body>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
-            <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
-              <Navbar />
-              <Outlet />
-              <Footer />
-            </div>
-            <Toaster richColors />
-            <TanStackRouterDevtools position="bottom-left" />
+            <SellerSessionProvider>
+              <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
+                {showNavAndFooter && <Navbar />}
+                <Outlet />
+                {showNavAndFooter && <Footer />}
+              </div>
+              <Toaster richColors />
+              <TanStackRouterDevtools position="bottom-left" />
+            </SellerSessionProvider>
           </ThemeProvider>
         </QueryClientProvider>
         <Scripts />

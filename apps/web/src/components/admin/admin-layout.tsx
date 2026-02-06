@@ -6,7 +6,6 @@ import {
   Store,
   FileText,
   ClipboardList,
-  Settings,
   Menu,
   X,
   ChevronDown,
@@ -26,11 +25,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { DashboardFooter } from '@/components/layout/dashboard-footer';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { authClient } from '@/lib/auth-client';
+import { RoleSwitcher } from '@/components/layout/role-switcher';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -113,7 +115,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const currentPath = matches[matches.length - 1]?.pathname || '';
 
   // Get user from route context
-  const session = matches.find((m) => m.context?.session)?.context?.session;
+  const routeContext = matches.find((m) => m.context && 'session' in m.context)?.context as { session?: { user?: { id: string; name: string; email: string } } } | undefined;
+  const session = routeContext?.session;
   const user = session?.user;
 
   const toggleExpanded = (name: string) => {
@@ -124,7 +127,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleSignOut = async () => {
     await authClient.signOut();
-    router.navigate({ to: '/login' });
+    router.navigate({ to: '/admin' });
   };
 
   const getUserInitials = (name?: string) => {
@@ -254,31 +257,25 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {/* User section */}
           <div className="p-4">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>{getUserInitials(user?.name)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="truncate text-sm font-medium">{user?.name}</p>
-                    <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                      {user?.email}
-                    </p>
-                  </div>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
+              <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>{getUserInitials(user?.name)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 overflow-hidden">
+                  <p className="truncate text-sm font-medium">{user?.name}</p>
+                  <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                    {user?.email}
+                  </p>
+                </div>
+                <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/dashboard">View Public Site</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/admin/settings">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
+                  <Link to="/">View Public Site</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
@@ -308,12 +305,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <Badge variant="outline" className="hidden md:flex">
               Admin Panel
             </Badge>
+            <RoleSwitcher />
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 lg:p-6">
-          <div className="mx-auto max-w-7xl">{children}</div>
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+          <div className="p-4 lg:p-6">
+            <div className="mx-auto max-w-7xl">{children}</div>
+          </div>
+          <DashboardFooter />
         </main>
       </div>
     </div>

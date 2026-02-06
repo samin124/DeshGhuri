@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
+import { getPostLoginRedirect, getReturnUrlFromSearch } from "@/lib/auth/redirect-after-login";
 
 import Loader from "./loader";
 import { Button } from "./ui/button";
@@ -28,11 +29,19 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
           password: value.password,
         },
         {
-          onSuccess: () => {
-            navigate({
-              to: "/",
+          onSuccess: async () => {
+            // Get return URL from query params (if user was redirected to login)
+            const returnUrl = getReturnUrlFromSearch(window.location.search);
+
+            // Determine redirect destination based on user roles
+            const redirectTo = await getPostLoginRedirect({
+              preferredDestination: returnUrl,
             });
+
             toast.success("Sign in successful");
+
+            // Navigate to role-appropriate destination
+            navigate({ to: redirectTo });
           },
           onError: (error) => {
             // Check if email is not verified
@@ -177,9 +186,13 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
         variant="outline"
         className="w-full"
         onClick={async () => {
+          // Preserve return URL in OAuth callback
+          const returnUrl = getReturnUrlFromSearch(window.location.search);
+          const callbackPath = returnUrl ? `/login?return=${encodeURIComponent(returnUrl)}` : '/login';
+
           await authClient.signIn.social({
             provider: "google",
-            callbackURL: window.location.origin,
+            callbackURL: window.location.origin + callbackPath,
           });
         }}
       >

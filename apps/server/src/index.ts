@@ -16,6 +16,10 @@ import adminAuditLogs from "./routes/admin/audit-logs";
 import adminListings from "./routes/admin/listings";
 import adminBookings from "./routes/admin/bookings";
 import adminTransactions from "./routes/admin/transactions";
+import adminVerify from "./routes/admin/verify";
+import authRoles from "./routes/auth/roles";
+import sellerDashboard from "./routes/seller/dashboard";
+import sellerAuth from "./routes/seller/auth";
 
 const app = new Hono();
 const port = 3000;
@@ -32,7 +36,14 @@ app.use(
   }),
 );
 
+// Mount auth helper routes (must be BEFORE Better Auth wildcard handler)
+app.route("/api/auth/roles", authRoles);
+
+// Better Auth handler (catches all other /api/auth/* routes)
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
+
+// Mount seller authentication routes (independent from user auth)
+app.route("/api/seller/auth", sellerAuth);
 
 // Mount OpenAPI documented routes (JSON endpoints with full documentation)
 // Includes: POST /register, GET /by-user/:userId, POST /onboarding/complete,
@@ -42,6 +53,12 @@ app.route("/", openAPIRoutes);
 // Mount file upload routes (FormData endpoints - not in OpenAPI spec)
 // Includes: POST /documents/upload, PATCH /documents/:documentId
 app.route("/api/seller", sellerUploadRoutes);
+
+// Mount seller dashboard routes (protected with seller authentication)
+app.route("/api/seller/dashboard", sellerDashboard);
+
+// Mount admin verification route (must be BEFORE requireAdmin middleware)
+app.route("/api/admin/verify", adminVerify);
 
 // Protect all admin routes with authentication middleware
 app.use("/api/admin/*", requireAdmin);

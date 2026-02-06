@@ -1,4 +1,4 @@
-import { Heart, Menu, Search, ShoppingCart, X } from "lucide-react";
+import { Heart, Menu, Search, ShoppingCart, X, Store, LayoutDashboard, LogOut } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -13,6 +13,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
+import { useSellerSession } from "@/contexts/seller-session-context";
+import { RoleSwitcher } from "@/components/layout/role-switcher";
+
+function SellerMenu() {
+  const { seller, logout } = useSellerSession();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await logout();
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  if (!seller) return null;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-3 h-9 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+        <Store className="h-4 w-4" />
+        <span className="hidden md:inline">{seller.businessName}</span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            <div className="flex flex-col">
+              <span className="font-medium">{seller.businessName}</span>
+              <span className="text-xs text-muted-foreground">{seller.email}</span>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/seller/dashboard" className="cursor-pointer">
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            Dashboard
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="cursor-pointer text-destructive focus:text-destructive"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          {isLoggingOut ? 'Logging out...' : 'Logout'}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -20,6 +84,9 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("All Cities");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+
+  // Get seller session (will be null if not logged in as seller)
+  const { seller } = useSellerSession();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,23 +168,30 @@ export default function Navbar() {
               </Button>
             </div>
 
-            {/* Become a Seller Link - Desktop */}
+            {/* Seller Menu or Become a Seller Link - Desktop */}
             <div className="hidden lg:block">
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/seller/register">Become a Seller</Link>
-              </Button>
+              {seller ? (
+                <SellerMenu />
+              ) : (
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/seller">Become a Seller</Link>
+                </Button>
+              )}
             </div>
 
             {/* Theme Toggle */}
             <ThemeToggle />
 
+            {/* Role Switcher - Only shows for multi-role users */}
+            <RoleSwitcher />
+
             {/* Wishlist */}
             <Button variant="ghost" size="icon" className="relative">
-              <Heart className="h-5 w-5" />
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-white">
-                0
-              </span>
-            </Button>
+                  <Heart className="h-5 w-5" />
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-white">
+                    0
+                  </span>
+                </Button>
 
             {/* Cart */}
             <Button variant="ghost" size="icon" className="relative">
@@ -164,39 +238,48 @@ export default function Navbar() {
         {mobileMenuOpen && (
           <div className="border-t bg-background p-4 lg:hidden">
             <div className="flex flex-col gap-4">
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All Cities">All Cities</SelectItem>
-                  {CITIES.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Customer-only features - Hidden for sellers */}
+              {!seller && (
+                <>
+                  <Select value={selectedCity} onValueChange={setSelectedCity}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All Cities">All Cities</SelectItem>
+                      {CITIES.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/categories">Categories</Link>
-              </Button>
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link to="/categories">Categories</Link>
+                  </Button>
 
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/deals">Deals</Link>
-              </Button>
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link to="/deals">Deals</Link>
+                  </Button>
 
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/group-bookings">Group Booking</Link>
-              </Button>
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link to="/group-bookings">Group Booking</Link>
+                  </Button>
 
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/help">Help</Link>
-              </Button>
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link to="/help">Help</Link>
+                  </Button>
+                </>
+              )}
 
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/seller/register">Become a Seller</Link>
-              </Button>
+              {seller ? (
+                <SellerMenu />
+              ) : (
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link to="/seller">Become a Seller</Link>
+                </Button>
+              )}
 
               <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
                 <SelectTrigger>

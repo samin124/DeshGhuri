@@ -1,4 +1,4 @@
-import { db, userRole } from "@DeshGhuri/db";
+import { db, userRole, seller, eq } from "@DeshGhuri/db";
 import * as schema from "@DeshGhuri/db/schema/auth";
 import { env } from "@DeshGhuri/env/server";
 import { betterAuth } from "better-auth";
@@ -23,7 +23,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false, // Disabled for now due to email verification issues
-    async onSignUp({ user }) {
+    async onSignUp({ user }: { user: any }) {
       // Assign default 'customer' role to new users
       try {
         await db.insert(userRole).values({
