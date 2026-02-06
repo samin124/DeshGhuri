@@ -84,8 +84,8 @@ DeshGhuri/
 
 ### Prerequisites
 - Node.js 18+ or Bun 1.0+
-- PostgreSQL 14+
-- Supabase account (for storage)
+- Docker Desktop (for local Supabase)
+- Supabase CLI (install via npm)
 - Resend account (for email)
 
 ### Installation
@@ -117,7 +117,8 @@ The application will be available at:
 ## Documentation
 
 - **[CLAUDE.md](./CLAUDE.md)** - Project context and conventions for AI assistance
-- **[docs/SETUP.md](./docs/SETUP.md)** - Detailed setup instructions
+- **[docs/SETUP.md](./docs/SETUP.md)** - Complete setup instructions
+- **[docs/LOCAL_SUPABASE_SETUP.md](./docs/LOCAL_SUPABASE_SETUP.md)** - Local Supabase with S3 storage setup
 - **[docs/prd.md](./docs/prd.md)** - Product requirements document
 - **[docs/SELLER_DASHBOARD_QUICKSTART.md](./docs/SELLER_DASHBOARD_QUICKSTART.md)** - Seller dashboard guide
 - **[docs/BECOME_SELLER_IMPLEMENTATION.md](./docs/BECOME_SELLER_IMPLEMENTATION.md)** - Seller onboarding flow

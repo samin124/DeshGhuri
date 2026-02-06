@@ -156,26 +156,55 @@ bun -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ### 5. Database Migrations
 
-Run database migrations to create all required tables:
+**IMPORTANT**: This step creates all database tables. Your friend MUST run this!
 
 ```bash
-# Generate migration files (if schema changed)
-bun run db:generate
-
-# Run migrations
+# Run migrations to create all tables
 bun run db:migrate
 ```
 
-This will create tables for:
-- Users and authentication
-- Sellers and business profiles
-- Listings and categories
-- Bookings and orders
-- Reviews and ratings
-- Transactions and payouts
-- Admin audit logs
+This will automatically create all tables:
+- ✅ Users and authentication (user, session, account, verification)
+- ✅ Sellers and business profiles (seller, seller_document)
+- ✅ Listings and categories (listing, category)
+- ✅ Bookings and orders (booking, booking_guest)
+- ✅ Reviews and ratings (review)
+- ✅ Transactions and payouts (escrow_transaction, payout, proof_of_completion)
+- ✅ Analytics (listing_analytics, seller_analytics)
+- ✅ Admin audit logs (user_role)
 
-### 6. Seed Initial Data (Optional)
+**Verify tables were created:**
+```bash
+# Open Drizzle Studio to view tables
+bun run db:studio
+# Opens at http://localhost:4983
+```
+
+**Note**: If you change the schema later, run:
+```bash
+bun run db:generate  # Generate new migration file
+bun run db:migrate   # Apply the migration
+```
+
+### 6. Supabase Local Storage Setup
+
+**IMPORTANT**: Your friend MUST start Supabase locally and create buckets!
+
+We use **Supabase Local Development** (runs on Docker) - no cloud account needed!
+
+**Quick Setup:**
+1. Install Docker Desktop and start it
+2. Install Supabase CLI: `npm install -g supabase`
+3. Start Supabase: `supabase start` (from project root)
+4. Create 3 storage buckets via Studio (http://127.0.0.1:54323):
+   - `seller-documents` (private)
+   - `listings` (public)
+   - `avatars` (public)
+5. Copy credentials from terminal to `apps/server/.env`
+
+**Detailed Instructions**: See [docs/LOCAL_SUPABASE_SETUP.md](./LOCAL_SUPABASE_SETUP.md) for complete guide.
+
+### 7. Seed Initial Data (Optional)
 
 Create an admin user manually in the database:
 
@@ -194,7 +223,7 @@ INSERT INTO "role" ("userId", role, "createdAt")
 VALUES ('admin-user-id', 'admin', NOW());
 ```
 
-### 7. Start Development Servers
+### 8. Start Development Servers
 
 Start both frontend and backend:
 
@@ -212,7 +241,7 @@ bun run dev:server
 bun run dev:web
 ```
 
-### 8. Verify Installation
+### 9. Verify Installation
 
 Check that everything is running:
 
