@@ -48,6 +48,23 @@ function RouteComponent() {
       setIsLoading(true);
 
       try {
+        // Check if email is already in use
+        const checkResponse = await fetch('http://localhost:3000/api/auth/check-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: value.email }),
+        });
+
+        const checkData = await checkResponse.json();
+
+        if (!checkData.available) {
+          toast.error(checkData.message || 'This email is already registered. Each email can only be used for one account type. Please sign in or use a different email.');
+          setIsLoading(false);
+          return;
+        }
+
         // Store credentials temporarily for onboarding
         sessionStorage.setItem('seller_signup_email', value.email);
         sessionStorage.setItem('seller_signup_password', value.password);
@@ -202,7 +219,7 @@ function RouteComponent() {
               {/* Sign In Link */}
               <div className="text-center text-sm">
                 <span className="text-muted-foreground">Already have a seller account? </span>
-                <Link to="/seller/signin" className="text-primary hover:underline font-medium">
+                <Link to="/login" className="text-primary hover:underline font-medium">
                   Sign in here
                 </Link>
               </div>

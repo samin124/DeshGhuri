@@ -23,7 +23,6 @@ import {
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { useSellerSession } from "@/contexts/seller-session-context";
-import { RoleSwitcher } from "@/components/layout/role-switcher";
 
 function SellerMenu() {
   const { seller, logout } = useSellerSession();
@@ -173,17 +172,18 @@ export default function Navbar() {
               {seller ? (
                 <SellerMenu />
               ) : (
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/seller">Become a Seller</Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate({ to: "/login", search: { tab: "seller" } })}
+                >
+                  Become a Seller
                 </Button>
               )}
             </div>
 
             {/* Theme Toggle */}
             <ThemeToggle />
-
-            {/* Role Switcher - Only shows for multi-role users */}
-            <RoleSwitcher />
 
             {/* Wishlist */}
             <Button variant="ghost" size="icon" className="relative">
@@ -276,8 +276,12 @@ export default function Navbar() {
               {seller ? (
                 <SellerMenu />
               ) : (
-                <Button variant="outline" className="w-full justify-start" asChild>
-                  <Link to="/seller">Become a Seller</Link>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => navigate({ to: "/login", search: { tab: "seller" } })}
+                >
+                  Become a Seller
                 </Button>
               )}
 

@@ -86,7 +86,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/seller/signin" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link to="/login" className="text-muted-foreground transition-colors hover:text-primary">
                   Seller Sign In
                 </Link>
               </li>

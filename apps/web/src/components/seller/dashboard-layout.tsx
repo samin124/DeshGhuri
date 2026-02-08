@@ -20,7 +20,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { RoleSwitcher } from '@/components/layout/role-switcher';
 import { DashboardFooter } from '@/components/layout/dashboard-footer';
 import { Badge } from '@/components/ui/badge';
 import { useSellerSession } from '@/contexts/seller-session-context';
@@ -190,7 +189,6 @@ export function DashboardLayout() {
             <Badge variant="outline" className="hidden md:flex">
               Seller Dashboard
             </Badge>
-            <RoleSwitcher />
           </div>
           <Button
             variant="outline"
@@ -210,8 +208,7 @@ export function DashboardLayout() {
               DeshGhuri
             </Link>
             <div className="flex items-center gap-2">
-              <RoleSwitcher />
-              <Button
+                <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setSidebarOpen(true)}

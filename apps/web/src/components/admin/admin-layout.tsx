@@ -32,7 +32,6 @@ import { DashboardFooter } from '@/components/layout/dashboard-footer';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { authClient } from '@/lib/auth-client';
-import { RoleSwitcher } from '@/components/layout/role-switcher';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -305,7 +304,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <Badge variant="outline" className="hidden md:flex">
               Admin Panel
             </Badge>
-            <RoleSwitcher />
           </div>
         </header>
 

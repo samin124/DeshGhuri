@@ -8,8 +8,12 @@ import { Separator } from '@/components/ui/separator';
 import { VerifiedBadge } from '@/components/seller/verified-badge';
 import { RatingStars } from '@/components/common/rating-stars';
 import { ListingCard } from '@/components/common/listing-card';
+import { requireCustomerAccess } from '@/lib/auth/role-guard';
 
 export const Route = createFileRoute('/seller/$sellerId/profile')({
+  beforeLoad: async ({ location }) => {
+    await requireCustomerAccess(location.pathname);
+  },
   component: RouteComponent,
 });
 

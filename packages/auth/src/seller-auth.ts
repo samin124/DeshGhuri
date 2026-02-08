@@ -57,6 +57,12 @@ export interface SellerSigninData {
  * Seller signup - creates both user account and seller profile
  */
 export async function sellerSignup(data: SellerSignupData) {
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(data.email)) {
+    throw new Error('Please enter a valid email address');
+  }
+
   // Validate at least one payment method
   if (!data.paymentMethods || data.paymentMethods.length === 0) {
     throw new Error('At least one payment method (Bkash or Nagad) is required');
@@ -68,7 +74,7 @@ export async function sellerSignup(data: SellerSignupData) {
   });
 
   if (existingSeller) {
-    throw new Error('A seller account with this email already exists');
+    throw new Error('This email is already registered as a seller. Please sign in instead.');
   }
 
   // Check if user with this email exists
@@ -77,7 +83,7 @@ export async function sellerSignup(data: SellerSignupData) {
   });
 
   if (existingUser) {
-    throw new Error('An account with this email already exists');
+    throw new Error('This email is already registered. Please sign in or use a different email.');
   }
 
   // Hash password

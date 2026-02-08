@@ -38,7 +38,24 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
               preferredDestination: returnUrl,
             });
 
-            toast.success("Sign in successful");
+            // Get user roles to show appropriate success message
+            try {
+              const response = await fetch('http://localhost:3000/api/auth/roles', {
+                credentials: 'include',
+              });
+              const data = await response.json();
+              const primaryRole = data.primaryRole;
+
+              if (primaryRole === 'admin' || primaryRole === 'super_admin') {
+                toast.success("Welcome back, Admin! Redirecting to admin dashboard...");
+              } else if (primaryRole === 'seller') {
+                toast.success("Welcome back! Redirecting to your seller dashboard...");
+              } else {
+                toast.success("Sign in successful");
+              }
+            } catch (error) {
+              toast.success("Sign in successful");
+            }
 
             // Navigate to role-appropriate destination
             navigate({ to: redirectTo });
@@ -68,8 +85,10 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
                   },
                 },
               });
+            } else if (error.error.message?.toLowerCase().includes("credential")) {
+              toast.error("Invalid email or password. Please check your credentials and try again.");
             } else {
-              toast.error(error.error.message || error.error.statusText);
+              toast.error(error.error.message || error.error.statusText || "Failed to sign in. Please try again.");
             }
           },
         },
@@ -88,9 +107,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
   }
 
   return (
-    <div className="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">Welcome Back</h1>
-
+    <div className="mx-auto w-full max-w-md">
       <form
         onSubmit={(e) => {
           e.preventDefault();

@@ -20,7 +20,6 @@ import { Route as SellerIndexRouteImport } from './routes/seller/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SellerVerificationStatusRouteImport } from './routes/seller/verification-status'
 import { Route as SellerSignupRouteImport } from './routes/seller/signup'
-import { Route as SellerSigninRouteImport } from './routes/seller/signin'
 import { Route as SellerRegisterRouteImport } from './routes/seller/register'
 import { Route as SellerOnboardingNewRouteImport } from './routes/seller/onboarding-new'
 import { Route as SellerOnboardingRouteImport } from './routes/seller/onboarding'
@@ -109,11 +108,6 @@ const SellerVerificationStatusRoute =
 const SellerSignupRoute = SellerSignupRouteImport.update({
   id: '/seller/signup',
   path: '/seller/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SellerSigninRoute = SellerSigninRouteImport.update({
-  id: '/seller/signin',
-  path: '/seller/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellerRegisterRoute = SellerRegisterRouteImport.update({
@@ -305,7 +299,6 @@ export interface FileRoutesByFullPath {
   '/seller/onboarding': typeof SellerOnboardingRoute
   '/seller/onboarding-new': typeof SellerOnboardingNewRoute
   '/seller/register': typeof SellerRegisterRoute
-  '/seller/signin': typeof SellerSigninRoute
   '/seller/signup': typeof SellerSignupRoute
   '/seller/verification-status': typeof SellerVerificationStatusRoute
   '/admin/': typeof AdminIndexRoute
@@ -351,7 +344,6 @@ export interface FileRoutesByTo {
   '/seller/onboarding': typeof SellerOnboardingRoute
   '/seller/onboarding-new': typeof SellerOnboardingNewRoute
   '/seller/register': typeof SellerRegisterRoute
-  '/seller/signin': typeof SellerSigninRoute
   '/seller/signup': typeof SellerSignupRoute
   '/seller/verification-status': typeof SellerVerificationStatusRoute
   '/seller': typeof SellerIndexRoute
@@ -398,7 +390,6 @@ export interface FileRoutesById {
   '/seller/onboarding': typeof SellerOnboardingRoute
   '/seller/onboarding-new': typeof SellerOnboardingNewRoute
   '/seller/register': typeof SellerRegisterRoute
-  '/seller/signin': typeof SellerSigninRoute
   '/seller/signup': typeof SellerSignupRoute
   '/seller/verification-status': typeof SellerVerificationStatusRoute
   '/admin/': typeof AdminIndexRoute
@@ -447,7 +438,6 @@ export interface FileRouteTypes {
     | '/seller/onboarding'
     | '/seller/onboarding-new'
     | '/seller/register'
-    | '/seller/signin'
     | '/seller/signup'
     | '/seller/verification-status'
     | '/admin/'
@@ -493,7 +483,6 @@ export interface FileRouteTypes {
     | '/seller/onboarding'
     | '/seller/onboarding-new'
     | '/seller/register'
-    | '/seller/signin'
     | '/seller/signup'
     | '/seller/verification-status'
     | '/seller'
@@ -539,7 +528,6 @@ export interface FileRouteTypes {
     | '/seller/onboarding'
     | '/seller/onboarding-new'
     | '/seller/register'
-    | '/seller/signin'
     | '/seller/signup'
     | '/seller/verification-status'
     | '/admin/'
@@ -587,7 +575,6 @@ export interface RootRouteChildren {
   SellerOnboardingRoute: typeof SellerOnboardingRoute
   SellerOnboardingNewRoute: typeof SellerOnboardingNewRoute
   SellerRegisterRoute: typeof SellerRegisterRoute
-  SellerSigninRoute: typeof SellerSigninRoute
   SellerSignupRoute: typeof SellerSignupRoute
   SellerVerificationStatusRoute: typeof SellerVerificationStatusRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -672,13 +659,6 @@ declare module '@tanstack/react-router' {
       path: '/seller/signup'
       fullPath: '/seller/signup'
       preLoaderRoute: typeof SellerSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/seller/signin': {
-      id: '/seller/signin'
-      path: '/seller/signin'
-      fullPath: '/seller/signin'
-      preLoaderRoute: typeof SellerSigninRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seller/register': {
@@ -1001,7 +981,6 @@ const rootRouteChildren: RootRouteChildren = {
   SellerOnboardingRoute: SellerOnboardingRoute,
   SellerOnboardingNewRoute: SellerOnboardingNewRoute,
   SellerRegisterRoute: SellerRegisterRoute,
-  SellerSigninRoute: SellerSigninRoute,
   SellerSignupRoute: SellerSignupRoute,
   SellerVerificationStatusRoute: SellerVerificationStatusRoute,
   AdminIndexRoute: AdminIndexRoute,

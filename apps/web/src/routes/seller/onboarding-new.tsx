@@ -187,10 +187,10 @@ function RouteComponent() {
       sessionStorage.removeItem('seller_signup_password');
       sessionStorage.removeItem('seller_signup_category');
 
-      toast.success('Seller account created successfully! Please verify your email.');
+      toast.success('Seller account created successfully! Please verify your email and sign in.');
 
-      // Redirect to verification status
-      navigate({ to: '/seller/signin', search: { email } });
+      // Redirect to login
+      navigate({ to: '/login' });
     } catch (error) {
       console.error('Submit error:', error);
       toast.error('Failed to submit application. Please try again.');

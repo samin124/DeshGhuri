@@ -18,8 +18,11 @@ import adminBookings from "./routes/admin/bookings";
 import adminTransactions from "./routes/admin/transactions";
 import adminVerify from "./routes/admin/verify";
 import authRoles from "./routes/auth/roles";
+import authCheckEmail from "./routes/auth/check-email";
 import sellerDashboard from "./routes/seller/dashboard";
 import sellerAuth from "./routes/seller/auth";
+import sellerListings from "./routes/seller/listings";
+import customerBookings from "./routes/customer/bookings";
 
 const app = new Hono();
 const port = 3000;
@@ -29,7 +32,7 @@ app.use("*", secureHeaders());
 app.use(
   "/*",
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: ["http://localhost:3001", "http://127.0.0.1:3001", env.CORS_ORIGIN],
     allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -38,6 +41,7 @@ app.use(
 
 // Mount auth helper routes (must be BEFORE Better Auth wildcard handler)
 app.route("/api/auth/roles", authRoles);
+app.route("/api/auth/check-email", authCheckEmail);
 
 // Better Auth handler (catches all other /api/auth/* routes)
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
@@ -56,6 +60,12 @@ app.route("/api/seller", sellerUploadRoutes);
 
 // Mount seller dashboard routes (protected with seller authentication)
 app.route("/api/seller/dashboard", sellerDashboard);
+
+// Mount seller listings routes (protected with seller authentication)
+app.route("/api/seller/listings", sellerListings);
+
+// Mount customer booking routes (protected - customers only)
+app.route("/api/bookings", customerBookings);
 
 // Mount admin verification route (must be BEFORE requireAdmin middleware)
 app.route("/api/admin/verify", adminVerify);

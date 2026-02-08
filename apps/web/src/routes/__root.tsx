@@ -64,7 +64,7 @@ function RootDocument() {
 
   // Detect different page types
   const isAdminLoginPage = currentPath === '/admin' || currentPath === '/admin/' || currentPath === '/admin/reset-password';
-  const isSellerAuthPage = currentPath === '/seller/signin' || currentPath === '/seller/signup' || currentPath === '/seller/register';
+  const isSellerAuthPage = currentPath === '/seller/signup' || currentPath === '/seller/register';
   const isAdminDashboard = currentPath.startsWith('/admin/') && currentPath !== '/admin' && currentPath !== '/admin/';
   const isSellerDashboard = currentPath.startsWith('/seller/dashboard');
 

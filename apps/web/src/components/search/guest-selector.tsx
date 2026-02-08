@@ -77,14 +77,11 @@ export function GuestSelector({
     <div className={cn("", className)}>
       <label className="text-sm font-medium mb-1 block">Guests & Rooms</label>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-start text-left font-normal"
-          >
-            <Users className="mr-2 h-4 w-4" />
-            <span className="flex-1">{displayText()}</span>
-          </Button>
+        <PopoverTrigger
+          className="flex h-10 w-full items-center justify-start rounded-md border border-input bg-background px-3 py-2 text-sm font-normal ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <Users className="mr-2 h-4 w-4" />
+          <span className="flex-1 text-left">{displayText()}</span>
         </PopoverTrigger>
         <PopoverContent className="w-80" align="start">
           <div className="space-y-4">

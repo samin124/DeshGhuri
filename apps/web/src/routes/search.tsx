@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo, useCallback } from "react";
+import { requireCustomerAccess } from "@/lib/auth/role-guard";
 import { Map, Grid3x3, SlidersHorizontal, Bookmark } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,9 @@ type SearchParams = {
 };
 
 export const Route = createFileRoute("/search")({
+  beforeLoad: async ({ location }) => {
+    await requireCustomerAccess(location.pathname);
+  },
   component: SearchComponent,
   validateSearch: (search: Record<string, unknown>): SearchParams => {
     return {

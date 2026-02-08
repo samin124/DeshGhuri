@@ -101,8 +101,8 @@ function BecomeASellerLanding() {
               </li>
             </ul>
             <Button className="w-full" size="lg" variant="outline" asChild>
-              <Link to="/seller/signin">
-                Sign In to Seller Account
+              <Link to="/login">
+                Sign In
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

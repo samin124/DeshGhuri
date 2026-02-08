@@ -1,42 +1,37 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { DashboardLayout } from '@/components/seller/dashboard-layout';
-import { getUser } from '@/functions/get-user';
+import { requireSellerAccess } from '@/lib/auth/role-guard';
+
+const API_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 
 export const Route = createFileRoute('/seller/dashboard')({
-  beforeLoad: async () => {
-    const session = await getUser();
+  beforeLoad: async ({ location }) => {
+    // Check authentication and seller role
+    await requireSellerAccess(location.pathname);
 
-    // Check if user is logged in
-    if (!session) {
+    // Get seller information
+    try {
+      const sellerResponse = await fetch(`${API_URL}/api/seller/auth/me`, {
+        credentials: 'include',
+      });
+
+      if (!sellerResponse.ok) {
+        throw redirect({ to: '/login', search: { return: location.pathname } });
+      }
+
+      const { data } = await sellerResponse.json();
+
+      // Return seller session data
+      return { seller: data };
+    } catch (error) {
+      // Error or unauthorized, redirect to login
       throw redirect({
-        to: '/seller/signin',
+        to: '/login',
         search: {
-          return: '/seller/dashboard',
+          return: location.pathname,
         },
       });
     }
-
-    // Check if user has seller role
-    // For now, we'll fetch roles from the API
-    const response = await fetch('http://localhost:3000/api/auth/roles', {
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw redirect({ to: '/seller/signin' });
-    }
-
-    const { roles } = await response.json();
-
-    // If user doesn't have seller role, redirect to home with error
-    if (!roles || !roles.includes('seller')) {
-      throw redirect({
-        to: '/',
-        // You could add a toast/error message here via search params
-      });
-    }
-
-    return { session };
   },
   component: DashboardLayout,
 });

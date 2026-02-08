@@ -8,8 +8,12 @@ import { RatingStars } from '@/components/common/rating-stars';
 import { PriceDisplay } from '@/components/common/price-display';
 import { VerifiedBadge } from '@/components/seller/verified-badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { requireCustomerAccess } from '@/lib/auth/role-guard';
 
 export const Route = createFileRoute('/listing/$listingId')({
+  beforeLoad: async ({ location }) => {
+    await requireCustomerAccess(location.pathname);
+  },
   component: RouteComponent,
 });
 

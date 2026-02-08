@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
+import { requireCustomerAccess } from "@/lib/auth/role-guard";
 
 // Eager load above-fold components for better LCP
 import HeroSection from "@/components/homepage/hero-section";
@@ -22,6 +23,9 @@ const FAQSection = lazy(() => import("@/components/homepage/faq-section"));
 const NewsletterCTA = lazy(() => import("@/components/homepage/newsletter-cta"));
 
 export const Route = createFileRoute("/")({
+  beforeLoad: async ({ location }) => {
+    await requireCustomerAccess(location.pathname);
+  },
   component: HomeComponent,
   head: () => ({
     meta: [

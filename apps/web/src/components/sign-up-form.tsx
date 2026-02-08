@@ -23,6 +23,27 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
       name: "",
     },
     onSubmit: async ({ value }) => {
+      // Check if email is already in use
+      try {
+        const checkResponse = await fetch('http://localhost:3000/api/auth/check-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: value.email }),
+        });
+
+        const checkData = await checkResponse.json();
+
+        if (!checkData.available) {
+          toast.error(checkData.message || "This email is already registered. Please sign in instead.");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking email availability:", error);
+        // Continue with signup if check fails (graceful degradation)
+      }
+
       const { data, error } = await authClient.signUp.email({
         email: value.email,
         password: value.password,
@@ -30,7 +51,14 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
       });
 
       if (error) {
-        toast.error(error.message || "Failed to create account");
+        // Improved error messages
+        if (error.message?.toLowerCase().includes("exist")) {
+          toast.error("This email is already registered. Please sign in instead.");
+        } else if (error.message?.toLowerCase().includes("password")) {
+          toast.error("Password must be at least 8 characters with uppercase, lowercase, number, and special character.");
+        } else {
+          toast.error(error.message || "Failed to create account. Please try again.");
+        }
         return;
       }
 
@@ -42,11 +70,11 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
 
       if (emailResult.error) {
         console.error("Failed to send verification email:", emailResult.error);
-        toast.warning("Account created, but verification email failed to send. Please try logging in.", {
+        toast.warning("Account created, but verification email failed to send. Please contact support.", {
           duration: 6000,
         });
       } else {
-        toast.success("Account created! Please check your email to verify your account.", {
+        toast.success("Account created! Please check your email to verify your account before signing in.", {
           duration: 5000,
         });
       }
@@ -75,9 +103,7 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
   }
 
   return (
-    <div className="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">Create Account</h1>
-
+    <div className="mx-auto w-full max-w-md">
       <form
         onSubmit={(e) => {
           e.preventDefault();
