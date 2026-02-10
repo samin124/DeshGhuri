@@ -1,5 +1,4 @@
 import { redirect } from "@tanstack/react-router";
-import { authClient } from "@/lib/auth-client";
 
 const API_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:3000";
 
@@ -37,18 +36,16 @@ export async function getUserRoles(): Promise<UserRoles | null> {
  * Allows unauthenticated users and customers
  */
 export async function requireCustomerAccess(currentPath: string) {
-  const session = await authClient.getSession();
-
-  // Unauthenticated users can access customer pages
-  if (!session?.data) {
+  // Skip during SSR - redirects will happen on client side if needed
+  if (typeof window === 'undefined') {
     return;
   }
 
-  // Get user roles
+  // Get user roles via API
   const userRoles = await getUserRoles();
 
   if (!userRoles) {
-    // If we can't verify roles, allow access (fail open for public pages)
+    // Unauthenticated users can access customer pages
     return;
   }
 
@@ -72,20 +69,52 @@ export async function requireCustomerAccess(currentPath: string) {
 /**
  * Guards seller-only routes
  * Requires authentication and seller role
+ * Checks both Better Auth session and seller-specific session
  */
 export async function requireSellerAccess(currentPath: string) {
-  const session = await authClient.getSession();
+  // Skip during SSR - auth will be checked on client side
+  if (typeof window === 'undefined') {
+    return {
+      roles: [],
+      primaryRole: null,
+      userId: '',
+      userEmail: ''
+    };
+  }
 
-  if (!session?.data) {
+  // First check seller-specific session via API (this includes cookies automatically)
+  try {
+    const sellerResponse = await fetch(`${API_URL}/api/seller/auth/me`, {
+      credentials: 'include',
+    });
+
+    if (sellerResponse.ok) {
+      const { data } = await sellerResponse.json();
+      // Seller session exists, allow access
+      return {
+        roles: ['seller'],
+        primaryRole: 'seller',
+        userId: data.userId,
+        userEmail: data.email
+      };
+    }
+  } catch (error) {
+    console.error('Seller session check error:', error);
+  }
+
+  // Fallback: Check if user has seller role via roles API
+  const userRoles = await getUserRoles();
+
+  if (!userRoles) {
+    // No session at all
     throw redirect({
       to: "/login",
       search: { return: currentPath },
     });
   }
 
-  const userRoles = await getUserRoles();
-
-  if (!userRoles || !userRoles.roles.includes("seller")) {
+  if (!userRoles.roles.includes("seller")) {
+    // User is logged in but not a seller
     throw redirect({ to: "/" });
   }
 
@@ -97,21 +126,32 @@ export async function requireSellerAccess(currentPath: string) {
  * Requires authentication and admin role
  */
 export async function requireAdminAccess(currentPath: string) {
-  const session = await authClient.getSession();
+  // Skip during SSR - auth will be checked on client side
+  if (typeof window === 'undefined') {
+    return {
+      roles: [],
+      primaryRole: null,
+      userId: '',
+      userEmail: ''
+    };
+  }
 
-  if (!session?.data) {
+  // Check user roles via API (includes cookies automatically)
+  const userRoles = await getUserRoles();
+
+  if (!userRoles) {
+    // No session at all
     throw redirect({
-      to: "/admin",
+      to: "/login",
       search: { return: currentPath },
     });
   }
 
-  const userRoles = await getUserRoles();
-
   if (
-    !userRoles ||
-    (!userRoles.roles.includes("admin") && !userRoles.roles.includes("super_admin"))
+    !userRoles.roles.includes("admin") &&
+    !userRoles.roles.includes("super_admin")
   ) {
+    // User is logged in but not an admin
     throw redirect({ to: "/" });
   }
 

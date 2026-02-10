@@ -103,11 +103,17 @@ export const auth = betterAuth({
       }
     : {}),
 
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days (in seconds)
+    updateAge: 60 * 60 * 24, // Update session every 24 hours
+  },
+
   advanced: {
     defaultCookieAttributes: {
       sameSite: "lax",
       secure: env.NODE_ENV === "production",
       httpOnly: true,
+      maxAge: 60 * 60 * 24 * 7, // 7 days (in seconds)
     },
   },
 

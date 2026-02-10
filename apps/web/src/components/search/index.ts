@@ -4,3 +4,4 @@ export { GuestSelector } from "./guest-selector";
 export { CategorySelect } from "./category-select";
 export { PriceRangeSlider } from "./price-range-slider";
 export { AmenitiesFilter, AMENITIES } from "./amenities-filter";
+export { default as SearchAutocomplete } from "./search-autocomplete";

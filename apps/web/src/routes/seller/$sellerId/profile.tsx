@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
 import { MapPin, Phone, Mail, Star, Award } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { VerifiedBadge } from '@/components/seller/verified-badge';
 import { RatingStars } from '@/components/common/rating-stars';
 import { ListingCard } from '@/components/common/listing-card';
+import { ListingDetailSheet } from '@/components/common/listing-detail-sheet';
 import { requireCustomerAccess } from '@/lib/auth/role-guard';
 
 export const Route = createFileRoute('/seller/$sellerId/profile')({
@@ -19,6 +21,13 @@ export const Route = createFileRoute('/seller/$sellerId/profile')({
 
 function RouteComponent() {
   const { sellerId } = Route.useParams();
+  const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const handleListingClick = (listingId: string) => {
+    setSelectedListingId(listingId);
+    setSheetOpen(true);
+  };
 
   // Mock data - replace with actual API call
   const seller = {
@@ -215,7 +224,11 @@ function RouteComponent() {
           {seller.listings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {seller.listings.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
+                <ListingCard
+                  key={listing.id}
+                  listing={listing}
+                  onClick={handleListingClick}
+                />
               ))}
             </div>
           ) : (
@@ -224,6 +237,13 @@ function RouteComponent() {
             </Card>
           )}
         </div>
+
+        {/* Listing Detail Sheet */}
+        <ListingDetailSheet
+          listingId={selectedListingId}
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+        />
       </div>
     </div>
   );

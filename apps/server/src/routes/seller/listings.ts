@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { db } from "@packages/db";
-import { listing } from "@packages/db/src/schema/marketplace";
+import { db, listing } from "@DeshGhuri/db";
 import { eq, and, desc } from "drizzle-orm";
 import { requireSeller } from "@/middleware/seller-auth";
 import { nanoid } from "nanoid";
@@ -14,13 +13,24 @@ app.use("*", requireSeller);
 /**
  * GET /api/seller/listings
  * Get all listings for the authenticated seller
+ * Query params:
+ * - status: Filter by listing status (draft, pending-review, active, paused, rejected)
  */
 app.get("/", async (c) => {
   const sellerId = c.get("sellerId") as string;
+  const statusFilter = c.req.query("status");
 
   try {
+    // Build WHERE conditions
+    const conditions = [eq(listing.sellerId, sellerId)];
+
+    // Add status filter if provided
+    if (statusFilter) {
+      conditions.push(eq(listing.status, statusFilter));
+    }
+
     const listings = await db.query.listing.findMany({
-      where: eq(listing.sellerId, sellerId),
+      where: and(...conditions),
       orderBy: [desc(listing.createdAt)],
     });
 
@@ -123,17 +133,25 @@ app.post("/", async (c) => {
         maxGuests: body.maxGuests,
         images: body.images || [],
         amenities: body.amenities || [],
+        inclusions: body.inclusions || [],
+        exclusions: body.exclusions || [],
+        houseRules: body.houseRules || "",
+        checkInTime: body.checkInTime || null,
+        checkOutTime: body.checkOutTime || null,
         cancellationPolicy: body.cancellationPolicy || "flexible",
-        instantBooking: body.instantBooking || false,
-        groupDiscountEnabled: body.groupDiscountEnabled || false,
-        groupDiscountTiers: body.groupDiscountTiers || [],
-        averageRating: 0,
-        totalReviews: 0,
-        totalBookings: 0,
-        isActive: body.isActive !== undefined ? body.isActive : true,
+        groupEligible: body.groupEligible || false,
+        groupPricingTiers: body.groupPricingTiers || [],
+        status: body.status || "draft", // Allow setting status (draft or pending-review)
+        rejectionReason: null,
+        viewCount: 0,
+        bookingCount: 0,
+        rating: null,
+        reviewCount: 0,
         isFeatured: false, // Only admins can set featured
+        isTrending: false, // System-managed
         createdAt: new Date(),
         updatedAt: new Date(),
+        publishedAt: null, // Set when status becomes active
       })
       .returning();
 
@@ -182,9 +200,12 @@ app.patch("/:listingId", async (c) => {
     delete body.id;
     delete body.sellerId; // Prevent seller ID tampering
     delete body.isFeatured; // Only admins can set featured
-    delete body.averageRating; // System-calculated
-    delete body.totalReviews; // System-calculated
-    delete body.totalBookings; // System-calculated
+    delete body.isTrending; // System-managed
+    delete body.rating; // System-calculated
+    delete body.reviewCount; // System-calculated
+    delete body.viewCount; // System-calculated
+    delete body.bookingCount; // System-calculated
+    delete body.publishedAt; // System-managed
     delete body.createdAt; // Immutable
 
     // Update slug if title is changed

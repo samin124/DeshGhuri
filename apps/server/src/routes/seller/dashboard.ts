@@ -215,6 +215,7 @@ app.get('/bookings', async (c) => {
   try {
     // Get query parameters
     const status = c.req.query('status');
+    const approvalStatus = c.req.query('approvalStatus');
     const startDate = c.req.query('startDate');
     const endDate = c.req.query('endDate');
     const page = Number(c.req.query('page')) || 1;
@@ -223,11 +224,25 @@ app.get('/bookings', async (c) => {
     const sortOrder = c.req.query('sortOrder') || 'desc';
     const offset = (page - 1) * limit;
 
+    console.log('🔍 Seller Dashboard Bookings Request:', {
+      sellerId,
+      status,
+      approvalStatus,
+      startDate,
+      endDate,
+      page,
+      limit
+    });
+
     // Build where conditions
     const conditions = [eq(booking.sellerId, sellerId)];
 
     if (status) {
       conditions.push(eq(booking.status, status as any));
+    }
+
+    if (approvalStatus) {
+      conditions.push(eq(booking.approvalStatus, approvalStatus as any));
     }
 
     if (startDate) {
@@ -274,6 +289,16 @@ app.get('/bookings', async (c) => {
         : desc(booking[sortBy as keyof typeof booking]),
     });
 
+    console.log('✅ Found bookings:', bookings.length);
+    console.log('📦 Bookings data:', bookings.slice(0, 3).map(b => ({
+      id: b.id,
+      listingId: b.listingId,
+      sellerId: b.sellerId,
+      approvalStatus: b.approvalStatus,
+      status: b.status,
+      customerId: b.customerId
+    })));
+
     return c.json({
       bookings,
       total,
@@ -282,7 +307,7 @@ app.get('/bookings', async (c) => {
       totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
-    console.error('Error fetching bookings:', error);
+    console.error('❌ Error fetching bookings:', error);
     return c.json({ error: 'Failed to fetch bookings' }, 500);
   }
 });

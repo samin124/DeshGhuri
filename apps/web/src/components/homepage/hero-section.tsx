@@ -32,14 +32,14 @@ export default function HeroSection() {
   }, [emblaApi]);
 
   return (
-    <section className="relative overflow-hidden bg-muted/30 ">
+    <section className="relative overflow-hidden bg-muted/30">
       {/* Container to match other sections */}
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4">
         {/* Desktop: 2-column layout (70-30), Tablet: 65-35, Mobile: stacked */}
-        <div className="flex flex-col lg:grid lg:grid-cols-[70%_30%] md:grid-cols-[65%_35%] h-[600px] md:h-[500px] lg:h-[600px]">
+        <div className="flex flex-col lg:grid lg:grid-cols-[70%_30%] md:grid-cols-[65%_35%] h-[600px] md:h-[500px] lg:h-[600px] py-4">
 
           {/* Left Column: Carousel with Text Overlays */}
-          <div className="relative h-[400px] md:h-full overflow-hidden rounded-t-lg md:rounded-l-lg md:rounded-tr-none">
+          <div className="relative h-[400px] md:h-full overflow-hidden rounded-t-lg lg:rounded-l-lg lg:rounded-tr-none">
             {/* Carousel */}
             <div ref={emblaRef} className="h-full">
               <div className="flex h-full">
@@ -99,7 +99,7 @@ export default function HeroSection() {
           </div>
 
           {/* Right Column: Search Form */}
-          <div className="flex items-center justify-center p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center p-2 md:p-4 lg:p-6">
             <SearchForm variant="hero" className="w-full max-w-md" />
           </div>
         </div>

@@ -22,7 +22,9 @@ import authCheckEmail from "./routes/auth/check-email";
 import sellerDashboard from "./routes/seller/dashboard";
 import sellerAuth from "./routes/seller/auth";
 import sellerListings from "./routes/seller/listings";
+import sellerBookings from "./routes/seller/bookings";
 import customerBookings from "./routes/customer/bookings";
+import publicListings from "./routes/listings";
 
 const app = new Hono();
 const port = 3000;
@@ -64,8 +66,14 @@ app.route("/api/seller/dashboard", sellerDashboard);
 // Mount seller listings routes (protected with seller authentication)
 app.route("/api/seller/listings", sellerListings);
 
+// Mount seller bookings routes (protected with seller authentication)
+app.route("/api/seller/bookings", sellerBookings);
+
 // Mount customer booking routes (protected - customers only)
 app.route("/api/bookings", customerBookings);
+
+// Mount public listing routes (browse, search, view listings)
+app.route("/api/listings", publicListings);
 
 // Mount admin verification route (must be BEFORE requireAdmin middleware)
 app.route("/api/admin/verify", adminVerify);

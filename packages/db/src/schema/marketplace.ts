@@ -14,6 +14,46 @@ import { seller } from './seller';
 import { user } from './auth';
 
 // ============================================================================
+// CONSTANTS & ENUMS
+// ============================================================================
+
+export const LISTING_CATEGORIES = {
+  HOTEL: 'hotel',
+  TOUR_PACKAGE: 'tour-package',
+  EXPERIENCE: 'experience',
+  TRANSPORT: 'transport',
+} as const;
+
+export type ListingCategory = typeof LISTING_CATEGORIES[keyof typeof LISTING_CATEGORIES];
+
+export const LISTING_STATUSES = {
+  DRAFT: 'draft',
+  PENDING_REVIEW: 'pending-review',
+  ACTIVE: 'active',
+  PAUSED: 'paused',
+  REJECTED: 'rejected',
+} as const;
+
+export type ListingStatus = typeof LISTING_STATUSES[keyof typeof LISTING_STATUSES];
+
+export const CANCELLATION_POLICIES = {
+  FLEXIBLE: 'flexible',
+  MODERATE: 'moderate',
+  STRICT: 'strict',
+  NON_REFUNDABLE: 'non-refundable',
+} as const;
+
+export type CancellationPolicy = typeof CANCELLATION_POLICIES[keyof typeof CANCELLATION_POLICIES];
+
+export const PRICE_UNITS = {
+  PER_PERSON: 'per-person',
+  PER_NIGHT: 'per-night',
+  PER_BOOKING: 'per-booking',
+} as const;
+
+export type PriceUnit = typeof PRICE_UNITS[keyof typeof PRICE_UNITS];
+
+// ============================================================================
 // LISTINGS
 // ============================================================================
 
@@ -86,6 +126,21 @@ export const listing = pgTable(
     rating: decimal('rating', { precision: 3, scale: 2 }),
     reviewCount: integer('review_count').default(0).notNull(),
 
+    // Featured & Trending (admin/system managed)
+    isFeatured: boolean('is_featured').default(false).notNull(),
+    isTrending: boolean('is_trending').default(false).notNull(),
+
+    // Promotions (seller/admin managed)
+    isFlashDeal: boolean('is_flash_deal').default(false).notNull(),
+    flashDealEndsAt: timestamp('flash_deal_ends_at'),
+    discountPercent: integer('discount_percent'),
+    discountedPrice: decimal('discounted_price', { precision: 10, scale: 2 }),
+    promoCode: text('promo_code'),
+    promoCodeDiscount: integer('promo_code_discount'),
+    promoCodeMaxUses: integer('promo_code_max_uses'),
+    promoCodeUsedCount: integer('promo_code_used_count').default(0),
+    promoCodeExpiresAt: timestamp('promo_code_expires_at'),
+
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
@@ -152,7 +207,23 @@ export const booking = pgTable(
     paymentStatus: text('payment_status').notNull().default('pending'), // 'pending' | 'completed' | 'failed' | 'refunded'
     paymentMethod: text('payment_method'), // 'bkash' | 'nagad' | 'card' | 'bank-transfer'
     transactionId: text('transaction_id'),
+    paymentDetails: json('payment_details').$type<{
+      accountNumber?: string;
+      accountHolderName?: string;
+      transactionDate?: string;
+      notes?: string;
+    }>(),
     paidAt: timestamp('paid_at'),
+
+    // Promo Code
+    promoCode: text('promo_code'),
+    promoCodeDiscount: decimal('promo_code_discount', { precision: 10, scale: 2 }),
+
+    // Seller Approval (for manual payment methods)
+    approvalStatus: text('approval_status').default('pending'), // 'pending' | 'approved' | 'rejected'
+    approvedAt: timestamp('approved_at'),
+    approvedBy: text('approved_by'),
+    rejectionReason: text('rejection_reason'),
 
     // Status
     status: text('status').notNull().default('draft'), // 'draft' | 'hold' | 'confirmed' | 'completed' | 'cancelled' | 'expired' | 'disputed' | 'refunded'

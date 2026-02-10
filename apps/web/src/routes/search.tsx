@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { requireCustomerAccess } from "@/lib/auth/role-guard";
 import { Map, Grid3x3, SlidersHorizontal, Bookmark } from "lucide-react";
 
@@ -11,7 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ListingCard } from "@/components/common/listing-card";
+import { ListingDetailSheet } from "@/components/common/listing-detail-sheet";
 import {
   DateRangePicker,
   GuestSelector,
@@ -19,13 +21,7 @@ import {
   PriceRangeSlider,
   AmenitiesFilter,
 } from "@/components/search";
-import {
-  mockTrendingListings,
-  mockFlashDeals,
-  mockSeasonalPackages,
-  mockSpecialOffers
-} from "@/lib/mock-data";
-import type { Listing } from "@/types/listing";
+import { useListings } from "@/lib/api/listings";
 
 // Define search params type
 type SearchParams = {
@@ -38,6 +34,7 @@ type SearchParams = {
   rating?: string;
   groupEligible?: string;
   verifiedOnly?: string;
+  flashDeals?: string;
   sort?: string;
   // New parameters
   checkIn?: string;
@@ -64,6 +61,7 @@ export const Route = createFileRoute("/search")({
       rating: search.rating as string,
       groupEligible: search.groupEligible as string,
       verifiedOnly: search.verifiedOnly as string,
+      flashDeals: search.flashDeals as string,
       sort: (search.sort as string) || "relevance",
       // New parameters
       checkIn: search.checkIn as string,
@@ -82,14 +80,34 @@ function SearchComponent() {
 
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-  // Combine all listings for search
-  const allListings: Listing[] = [
-    ...mockTrendingListings,
-    ...mockFlashDeals,
-    ...mockSeasonalPackages,
-    ...mockSpecialOffers,
-  ];
+  const handleListingClick = (listingId: string) => {
+    setSelectedListingId(listingId);
+    setSheetOpen(true);
+  };
+
+  // Fetch listings from API with current search params
+  const { data, isLoading, error } = useListings({
+    page: 1, // TODO: Add pagination support
+    limit: 20,
+    category: search.category && search.category !== "all" ? search.category : undefined,
+    location: search.location,
+    minPrice: search.minPrice ? Number(search.minPrice) : undefined,
+    maxPrice: search.maxPrice ? Number(search.maxPrice) : undefined,
+    rating: search.rating ? Number(search.rating) : undefined,
+    groupEligible: search.groupEligible === "true" ? true : undefined,
+    verifiedOnly: search.verifiedOnly === "true" ? true : undefined,
+    flashDeals: search.flashDeals === "true" ? true : undefined,
+    sort: search.sort === "price-low" ? "price-asc" :
+          search.sort === "price-high" ? "price-desc" :
+          search.sort === "rating" ? "rating" :
+          search.sort === "popularity" ? "popular" :
+          search.sort === "newest" ? "newest" : undefined,
+  });
+
+  const filteredListings = data?.data || [];
 
   // Update search params
   const updateSearch = useCallback((updates: Partial<SearchParams>) => {
@@ -153,143 +171,27 @@ function SearchComponent() {
     }
   }, [search]);
 
-  // Filter and sort listings based on search params
-  const filteredListings = useMemo(() => {
-    let results = [...allListings];
-
-    // Calculate dynamic price based on guest count (per person pricing)
-    const totalGuests = Number(search.adults || 2) + Number(search.children || 0);
-
-    // Update prices based on guest count for applicable listings
-    results = results.map((listing) => ({
-      ...listing,
-      // For hotels/resorts, multiply by rooms; for tours/experiences, multiply by guests
-      price: listing.category.toLowerCase().includes('hotel') || listing.category.toLowerCase().includes('resort')
-        ? listing.price * Number(search.rooms || 1)
-        : listing.price * totalGuests,
-    }));
-
-    // Filter by location
-    if (search.location) {
-      results = results.filter((listing) =>
-        listing.location.toLowerCase().includes(search.location!.toLowerCase())
-      );
-    }
-
-    // Filter by category
-    if (search.category && search.category !== "all") {
-      results = results.filter((listing) =>
-        listing.category.toLowerCase() === search.category!.toLowerCase()
-      );
-    }
-
-    // Filter by price range (now using updated prices)
-    if (search.minPrice) {
-      results = results.filter((listing) => listing.price >= Number(search.minPrice));
-    }
-    if (search.maxPrice) {
-      results = results.filter((listing) => listing.price <= Number(search.maxPrice));
-    }
-
-    // Filter by rating
-    if (search.rating) {
-      results = results.filter((listing) => listing.rating >= Number(search.rating));
-    }
-
-    // Filter group eligible
-    if (search.groupEligible === "true") {
-      results = results.filter((listing) => listing.category === "Tour");
-    }
-
-    // Filter verified sellers only
-    if (search.verifiedOnly === "true") {
-      results = results.filter((listing) => listing.seller?.isVerified !== false);
-    }
-
-    // NEW: Filter by date range (basic availability check for MVP)
-    if (search.checkIn && search.checkOut) {
-      // For MVP: Show only available inventory
-      // In production, this would check against listing.availability array
-      // Currently, we're showing all listings as available after validation
-      const checkInDate = new Date(search.checkIn);
-      const checkOutDate = new Date(search.checkOut);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      // Only show listings if dates are valid (check-in >= today and check-out > check-in)
-      if (checkInDate < today || checkOutDate <= checkInDate) {
-        // Invalid dates, return empty results
-        return [];
-      }
-      // All listings are assumed available for valid future dates (MVP)
-    }
-
-    // NEW: Filter by guest capacity
-    if (search.adults || search.children) {
-      const totalGuests = Number(search.adults || 0) + Number(search.children || 0);
-      results = results.filter((listing) => {
-        // TODO: Add maxGuests field to Listing type
-        // For MVP, assume all listings can accommodate up to 20 guests
-        const maxGuests = 20;
-        return totalGuests <= maxGuests;
-      });
-    }
-
-    // NEW: Filter by amenities
-    if (search.amenities) {
-      const requiredAmenities = search.amenities.split(",");
-      results = results.filter((listing) => {
-        // Check if listing.features includes required amenities
-        // Using case-insensitive partial matching for flexibility
-        return requiredAmenities.every((amenity) =>
-          listing.features?.some((feature) =>
-            feature.toLowerCase().includes(amenity.toLowerCase())
-          )
-        );
-      });
-    }
-
-    // Sort results
-    switch (search.sort) {
-      case "price-low":
-        results.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high":
-        results.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        results.sort((a, b) => b.rating - a.rating);
-        break;
-      case "popularity":
-        results.sort((a, b) => b.reviewCount - a.reviewCount);
-        break;
-      case "newest":
-        // Mock: already in order
-        break;
-      default:
-        // Relevance - keep original order
-        break;
-    }
-
-    return results;
-  }, [search, allListings]);
-
-  // Calculate category counts for all listings
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    allListings.forEach((listing) => {
-      const category = listing.category.toLowerCase();
-      counts[category] = (counts[category] || 0) + 1;
-    });
-    return counts;
-  }, [allListings]);
+  // Get available filters from API response
+  const availableFilters = data?.filters?.availableFilters;
+  const categoryCounts = availableFilters?.categories?.reduce(
+    (acc, cat) => ({ ...acc, [cat.value]: cat.count }),
+    {} as Record<string, number>
+  ) || {};
 
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Search Summary */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">
-          {search.location ? `Searching in ${search.location}` : "Search Results"}
+          {search.flashDeals === "true" ? (
+            <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              ⚡ Flash Deals{search.location && ` in ${search.location}`}
+            </span>
+          ) : search.location ? (
+            `Searching in ${search.location}`
+          ) : (
+            "Search Results"
+          )}
         </h1>
         <div className="space-y-1">
           <p className="text-muted-foreground">
@@ -323,6 +225,16 @@ function SearchComponent() {
           </Button>
 
           {/* Quick filters */}
+          <Button
+            variant={search.flashDeals === "true" ? "default" : "outline"}
+            size="sm"
+            onClick={() => updateSearch({ flashDeals: search.flashDeals === "true" ? undefined : "true" })}
+            className={search.flashDeals === "true" ? "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" : ""}
+          >
+            {search.flashDeals === "true" && "⚡ "}
+            Flash Deals
+          </Button>
+
           <Button
             variant={search.verifiedOnly === "true" ? "default" : "outline"}
             size="sm"
@@ -496,14 +408,41 @@ function SearchComponent() {
         </div>
       )}
 
-      {/* Results */}
-      {viewMode === "grid" ? (
+      {/* Loading State */}
+      {isLoading && (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredListings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-80 rounded-lg" />
           ))}
         </div>
-      ) : (
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-8 text-center">
+          <h3 className="mb-2 text-lg font-semibold text-destructive">
+            Failed to load listings
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Please try again later or adjust your search criteria.
+          </p>
+        </div>
+      )}
+
+      {/* Results */}
+      {!isLoading && !error && viewMode === "grid" && (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredListings.map((listing) => (
+            <ListingCard
+              key={listing.id}
+              listing={listing}
+              onClick={handleListingClick}
+            />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && !error && viewMode === "map" && (
         <div className="rounded-lg border bg-muted/30 p-8 text-center">
           <Map className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
           <h3 className="mb-2 text-lg font-semibold">Map View</h3>
@@ -512,7 +451,11 @@ function SearchComponent() {
           </p>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredListings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                onClick={handleListingClick}
+              />
             ))}
           </div>
         </div>
@@ -531,12 +474,25 @@ function SearchComponent() {
         </div>
       )}
 
-      {/* Pagination would go here */}
-      {filteredListings.length > 0 && (
-        <div className="mt-8 text-center text-sm text-muted-foreground">
-          Showing {filteredListings.length} results
+      {/* Pagination */}
+      {!isLoading && data?.pagination && (
+        <div className="mt-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Showing {filteredListings.length} of {data.pagination.total} results
+            {data.pagination.totalPages > 1 && (
+              <span> • Page {data.pagination.page} of {data.pagination.totalPages}</span>
+            )}
+          </p>
+          {/* TODO: Add pagination controls when backend supports it */}
         </div>
       )}
+
+      {/* Listing Detail Sheet */}
+      <ListingDetailSheet
+        listingId={selectedListingId}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
     </div>
   );
 }

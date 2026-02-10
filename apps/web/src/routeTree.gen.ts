@@ -25,6 +25,7 @@ import { Route as SellerOnboardingNewRouteImport } from './routes/seller/onboard
 import { Route as SellerOnboardingRouteImport } from './routes/seller/onboarding'
 import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
 import { Route as ListingListingIdRouteImport } from './routes/listing/$listingId'
+import { Route as CustomerBookingsRouteImport } from './routes/customer/bookings'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin/reset-password'
 import { Route as AdminAdminRouteImport } from './routes/admin/_admin'
 import { Route as SellerDashboardIndexRouteImport } from './routes/seller/dashboard/index'
@@ -32,14 +33,14 @@ import { Route as SellerDashboardSettingsRouteImport } from './routes/seller/das
 import { Route as SellerDashboardReviewsRouteImport } from './routes/seller/dashboard/reviews'
 import { Route as SellerDashboardProofCenterRouteImport } from './routes/seller/dashboard/proof-center'
 import { Route as SellerDashboardPayoutsRouteImport } from './routes/seller/dashboard/payouts'
-import { Route as SellerDashboardListingsRouteImport } from './routes/seller/dashboard/listings'
 import { Route as SellerDashboardInboxRouteImport } from './routes/seller/dashboard/inbox'
 import { Route as SellerDashboardEarningsRouteImport } from './routes/seller/dashboard/earnings'
 import { Route as SellerDashboardCalendarRouteImport } from './routes/seller/dashboard/calendar'
-import { Route as SellerDashboardBookingsRouteImport } from './routes/seller/dashboard/bookings'
 import { Route as SellerDashboardAnalyticsRouteImport } from './routes/seller/dashboard/analytics'
 import { Route as SellerSellerIdProfileRouteImport } from './routes/seller/$sellerId/profile'
 import { Route as AdminAdminDashboardRouteImport } from './routes/admin/_admin/dashboard'
+import { Route as SellerDashboardListingsIndexRouteImport } from './routes/seller/dashboard/listings/index'
+import { Route as SellerDashboardBookingsIndexRouteImport } from './routes/seller/dashboard/bookings/index'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/admin/_admin/users/index'
 import { Route as AdminAdminTransactionsIndexRouteImport } from './routes/admin/_admin/transactions/index'
 import { Route as AdminAdminSellersIndexRouteImport } from './routes/admin/_admin/sellers/index'
@@ -50,9 +51,11 @@ import { Route as AdminAdminDocumentsIndexRouteImport } from './routes/admin/_ad
 import { Route as AdminAdminContentIndexRouteImport } from './routes/admin/_admin/content/index'
 import { Route as AdminAdminBookingsIndexRouteImport } from './routes/admin/_admin/bookings/index'
 import { Route as AdminAdminAuditLogsIndexRouteImport } from './routes/admin/_admin/audit-logs/index'
+import { Route as SellerDashboardListingsNewRouteImport } from './routes/seller/dashboard/listings/new'
 import { Route as AdminAdminUsersUserIdRouteImport } from './routes/admin/_admin/users/$userId'
 import { Route as AdminAdminSellersVerificationQueueRouteImport } from './routes/admin/_admin/sellers/verification-queue'
 import { Route as AdminAdminSellersSellerIdRouteImport } from './routes/admin/_admin/sellers/$sellerId'
+import { Route as SellerDashboardListingsListingIdEditRouteImport } from './routes/seller/dashboard/listings/$listingId/edit'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -135,6 +138,11 @@ const ListingListingIdRoute = ListingListingIdRouteImport.update({
   path: '/listing/$listingId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomerBookingsRoute = CustomerBookingsRouteImport.update({
+  id: '/customer/bookings',
+  path: '/customer/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
   id: '/admin/reset-password',
   path: '/admin/reset-password',
@@ -171,11 +179,6 @@ const SellerDashboardPayoutsRoute = SellerDashboardPayoutsRouteImport.update({
   path: '/payouts',
   getParentRoute: () => SellerDashboardRoute,
 } as any)
-const SellerDashboardListingsRoute = SellerDashboardListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => SellerDashboardRoute,
-} as any)
 const SellerDashboardInboxRoute = SellerDashboardInboxRouteImport.update({
   id: '/inbox',
   path: '/inbox',
@@ -189,11 +192,6 @@ const SellerDashboardEarningsRoute = SellerDashboardEarningsRouteImport.update({
 const SellerDashboardCalendarRoute = SellerDashboardCalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
-  getParentRoute: () => SellerDashboardRoute,
-} as any)
-const SellerDashboardBookingsRoute = SellerDashboardBookingsRouteImport.update({
-  id: '/bookings',
-  path: '/bookings',
   getParentRoute: () => SellerDashboardRoute,
 } as any)
 const SellerDashboardAnalyticsRoute =
@@ -212,6 +210,18 @@ const AdminAdminDashboardRoute = AdminAdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const SellerDashboardListingsIndexRoute =
+  SellerDashboardListingsIndexRouteImport.update({
+    id: '/listings/',
+    path: '/listings/',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
+const SellerDashboardBookingsIndexRoute =
+  SellerDashboardBookingsIndexRouteImport.update({
+    id: '/bookings/',
+    path: '/bookings/',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
 const AdminAdminUsersIndexRoute = AdminAdminUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -266,6 +276,12 @@ const AdminAdminAuditLogsIndexRoute =
     path: '/audit-logs/',
     getParentRoute: () => AdminAdminRoute,
   } as any)
+const SellerDashboardListingsNewRoute =
+  SellerDashboardListingsNewRouteImport.update({
+    id: '/listings/new',
+    path: '/listings/new',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
 const AdminAdminUsersUserIdRoute = AdminAdminUsersUserIdRouteImport.update({
   id: '/users/$userId',
   path: '/users/$userId',
@@ -283,6 +299,12 @@ const AdminAdminSellersSellerIdRoute =
     path: '/sellers/$sellerId',
     getParentRoute: () => AdminAdminRoute,
   } as any)
+const SellerDashboardListingsListingIdEditRoute =
+  SellerDashboardListingsListingIdEditRouteImport.update({
+    id: '/listings/$listingId/edit',
+    path: '/listings/$listingId/edit',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -294,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof VerifyEmailRoute
   '/admin': typeof AdminAdminRouteWithChildren
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/customer/bookings': typeof CustomerBookingsRoute
   '/listing/$listingId': typeof ListingListingIdRoute
   '/seller/dashboard': typeof SellerDashboardRouteWithChildren
   '/seller/onboarding': typeof SellerOnboardingRoute
@@ -306,11 +329,9 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof AdminAdminDashboardRoute
   '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
   '/seller/dashboard/analytics': typeof SellerDashboardAnalyticsRoute
-  '/seller/dashboard/bookings': typeof SellerDashboardBookingsRoute
   '/seller/dashboard/calendar': typeof SellerDashboardCalendarRoute
   '/seller/dashboard/earnings': typeof SellerDashboardEarningsRoute
   '/seller/dashboard/inbox': typeof SellerDashboardInboxRoute
-  '/seller/dashboard/listings': typeof SellerDashboardListingsRoute
   '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
   '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
   '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
@@ -319,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/seller/dashboard/listings/new': typeof SellerDashboardListingsNewRoute
   '/admin/audit-logs/': typeof AdminAdminAuditLogsIndexRoute
   '/admin/bookings/': typeof AdminAdminBookingsIndexRoute
   '/admin/content/': typeof AdminAdminContentIndexRoute
@@ -329,6 +351,9 @@ export interface FileRoutesByFullPath {
   '/admin/sellers/': typeof AdminAdminSellersIndexRoute
   '/admin/transactions/': typeof AdminAdminTransactionsIndexRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
+  '/seller/dashboard/bookings/': typeof SellerDashboardBookingsIndexRoute
+  '/seller/dashboard/listings/': typeof SellerDashboardListingsIndexRoute
+  '/seller/dashboard/listings/$listingId/edit': typeof SellerDashboardListingsListingIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -340,6 +365,7 @@ export interface FileRoutesByTo {
   '/verify-email': typeof VerifyEmailRoute
   '/admin': typeof AdminIndexRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/customer/bookings': typeof CustomerBookingsRoute
   '/listing/$listingId': typeof ListingListingIdRoute
   '/seller/onboarding': typeof SellerOnboardingRoute
   '/seller/onboarding-new': typeof SellerOnboardingNewRoute
@@ -350,11 +376,9 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AdminAdminDashboardRoute
   '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
   '/seller/dashboard/analytics': typeof SellerDashboardAnalyticsRoute
-  '/seller/dashboard/bookings': typeof SellerDashboardBookingsRoute
   '/seller/dashboard/calendar': typeof SellerDashboardCalendarRoute
   '/seller/dashboard/earnings': typeof SellerDashboardEarningsRoute
   '/seller/dashboard/inbox': typeof SellerDashboardInboxRoute
-  '/seller/dashboard/listings': typeof SellerDashboardListingsRoute
   '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
   '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
   '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
@@ -363,6 +387,7 @@ export interface FileRoutesByTo {
   '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/seller/dashboard/listings/new': typeof SellerDashboardListingsNewRoute
   '/admin/audit-logs': typeof AdminAdminAuditLogsIndexRoute
   '/admin/bookings': typeof AdminAdminBookingsIndexRoute
   '/admin/content': typeof AdminAdminContentIndexRoute
@@ -373,6 +398,9 @@ export interface FileRoutesByTo {
   '/admin/sellers': typeof AdminAdminSellersIndexRoute
   '/admin/transactions': typeof AdminAdminTransactionsIndexRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
+  '/seller/dashboard/bookings': typeof SellerDashboardBookingsIndexRoute
+  '/seller/dashboard/listings': typeof SellerDashboardListingsIndexRoute
+  '/seller/dashboard/listings/$listingId/edit': typeof SellerDashboardListingsListingIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -385,6 +413,7 @@ export interface FileRoutesById {
   '/verify-email': typeof VerifyEmailRoute
   '/admin/_admin': typeof AdminAdminRouteWithChildren
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/customer/bookings': typeof CustomerBookingsRoute
   '/listing/$listingId': typeof ListingListingIdRoute
   '/seller/dashboard': typeof SellerDashboardRouteWithChildren
   '/seller/onboarding': typeof SellerOnboardingRoute
@@ -397,11 +426,9 @@ export interface FileRoutesById {
   '/admin/_admin/dashboard': typeof AdminAdminDashboardRoute
   '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
   '/seller/dashboard/analytics': typeof SellerDashboardAnalyticsRoute
-  '/seller/dashboard/bookings': typeof SellerDashboardBookingsRoute
   '/seller/dashboard/calendar': typeof SellerDashboardCalendarRoute
   '/seller/dashboard/earnings': typeof SellerDashboardEarningsRoute
   '/seller/dashboard/inbox': typeof SellerDashboardInboxRoute
-  '/seller/dashboard/listings': typeof SellerDashboardListingsRoute
   '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
   '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
   '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
@@ -410,6 +437,7 @@ export interface FileRoutesById {
   '/admin/_admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/_admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
   '/admin/_admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/seller/dashboard/listings/new': typeof SellerDashboardListingsNewRoute
   '/admin/_admin/audit-logs/': typeof AdminAdminAuditLogsIndexRoute
   '/admin/_admin/bookings/': typeof AdminAdminBookingsIndexRoute
   '/admin/_admin/content/': typeof AdminAdminContentIndexRoute
@@ -420,6 +448,9 @@ export interface FileRoutesById {
   '/admin/_admin/sellers/': typeof AdminAdminSellersIndexRoute
   '/admin/_admin/transactions/': typeof AdminAdminTransactionsIndexRoute
   '/admin/_admin/users/': typeof AdminAdminUsersIndexRoute
+  '/seller/dashboard/bookings/': typeof SellerDashboardBookingsIndexRoute
+  '/seller/dashboard/listings/': typeof SellerDashboardListingsIndexRoute
+  '/seller/dashboard/listings/$listingId/edit': typeof SellerDashboardListingsListingIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -433,6 +464,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/admin'
     | '/admin/reset-password'
+    | '/customer/bookings'
     | '/listing/$listingId'
     | '/seller/dashboard'
     | '/seller/onboarding'
@@ -445,11 +477,9 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/seller/$sellerId/profile'
     | '/seller/dashboard/analytics'
-    | '/seller/dashboard/bookings'
     | '/seller/dashboard/calendar'
     | '/seller/dashboard/earnings'
     | '/seller/dashboard/inbox'
-    | '/seller/dashboard/listings'
     | '/seller/dashboard/payouts'
     | '/seller/dashboard/proof-center'
     | '/seller/dashboard/reviews'
@@ -458,6 +488,7 @@ export interface FileRouteTypes {
     | '/admin/sellers/$sellerId'
     | '/admin/sellers/verification-queue'
     | '/admin/users/$userId'
+    | '/seller/dashboard/listings/new'
     | '/admin/audit-logs/'
     | '/admin/bookings/'
     | '/admin/content/'
@@ -468,6 +499,9 @@ export interface FileRouteTypes {
     | '/admin/sellers/'
     | '/admin/transactions/'
     | '/admin/users/'
+    | '/seller/dashboard/bookings/'
+    | '/seller/dashboard/listings/'
+    | '/seller/dashboard/listings/$listingId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -479,6 +513,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/admin'
     | '/admin/reset-password'
+    | '/customer/bookings'
     | '/listing/$listingId'
     | '/seller/onboarding'
     | '/seller/onboarding-new'
@@ -489,11 +524,9 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/seller/$sellerId/profile'
     | '/seller/dashboard/analytics'
-    | '/seller/dashboard/bookings'
     | '/seller/dashboard/calendar'
     | '/seller/dashboard/earnings'
     | '/seller/dashboard/inbox'
-    | '/seller/dashboard/listings'
     | '/seller/dashboard/payouts'
     | '/seller/dashboard/proof-center'
     | '/seller/dashboard/reviews'
@@ -502,6 +535,7 @@ export interface FileRouteTypes {
     | '/admin/sellers/$sellerId'
     | '/admin/sellers/verification-queue'
     | '/admin/users/$userId'
+    | '/seller/dashboard/listings/new'
     | '/admin/audit-logs'
     | '/admin/bookings'
     | '/admin/content'
@@ -512,6 +546,9 @@ export interface FileRouteTypes {
     | '/admin/sellers'
     | '/admin/transactions'
     | '/admin/users'
+    | '/seller/dashboard/bookings'
+    | '/seller/dashboard/listings'
+    | '/seller/dashboard/listings/$listingId/edit'
   id:
     | '__root__'
     | '/'
@@ -523,6 +560,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/admin/_admin'
     | '/admin/reset-password'
+    | '/customer/bookings'
     | '/listing/$listingId'
     | '/seller/dashboard'
     | '/seller/onboarding'
@@ -535,11 +573,9 @@ export interface FileRouteTypes {
     | '/admin/_admin/dashboard'
     | '/seller/$sellerId/profile'
     | '/seller/dashboard/analytics'
-    | '/seller/dashboard/bookings'
     | '/seller/dashboard/calendar'
     | '/seller/dashboard/earnings'
     | '/seller/dashboard/inbox'
-    | '/seller/dashboard/listings'
     | '/seller/dashboard/payouts'
     | '/seller/dashboard/proof-center'
     | '/seller/dashboard/reviews'
@@ -548,6 +584,7 @@ export interface FileRouteTypes {
     | '/admin/_admin/sellers/$sellerId'
     | '/admin/_admin/sellers/verification-queue'
     | '/admin/_admin/users/$userId'
+    | '/seller/dashboard/listings/new'
     | '/admin/_admin/audit-logs/'
     | '/admin/_admin/bookings/'
     | '/admin/_admin/content/'
@@ -558,6 +595,9 @@ export interface FileRouteTypes {
     | '/admin/_admin/sellers/'
     | '/admin/_admin/transactions/'
     | '/admin/_admin/users/'
+    | '/seller/dashboard/bookings/'
+    | '/seller/dashboard/listings/'
+    | '/seller/dashboard/listings/$listingId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -570,6 +610,7 @@ export interface RootRouteChildren {
   VerifyEmailRoute: typeof VerifyEmailRoute
   AdminAdminRoute: typeof AdminAdminRouteWithChildren
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  CustomerBookingsRoute: typeof CustomerBookingsRoute
   ListingListingIdRoute: typeof ListingListingIdRoute
   SellerDashboardRoute: typeof SellerDashboardRouteWithChildren
   SellerOnboardingRoute: typeof SellerOnboardingRoute
@@ -696,6 +737,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingListingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer/bookings': {
+      id: '/customer/bookings'
+      path: '/customer/bookings'
+      fullPath: '/customer/bookings'
+      preLoaderRoute: typeof CustomerBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/reset-password': {
       id: '/admin/reset-password'
       path: '/admin/reset-password'
@@ -745,13 +793,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellerDashboardPayoutsRouteImport
       parentRoute: typeof SellerDashboardRoute
     }
-    '/seller/dashboard/listings': {
-      id: '/seller/dashboard/listings'
-      path: '/listings'
-      fullPath: '/seller/dashboard/listings'
-      preLoaderRoute: typeof SellerDashboardListingsRouteImport
-      parentRoute: typeof SellerDashboardRoute
-    }
     '/seller/dashboard/inbox': {
       id: '/seller/dashboard/inbox'
       path: '/inbox'
@@ -771,13 +812,6 @@ declare module '@tanstack/react-router' {
       path: '/calendar'
       fullPath: '/seller/dashboard/calendar'
       preLoaderRoute: typeof SellerDashboardCalendarRouteImport
-      parentRoute: typeof SellerDashboardRoute
-    }
-    '/seller/dashboard/bookings': {
-      id: '/seller/dashboard/bookings'
-      path: '/bookings'
-      fullPath: '/seller/dashboard/bookings'
-      preLoaderRoute: typeof SellerDashboardBookingsRouteImport
       parentRoute: typeof SellerDashboardRoute
     }
     '/seller/dashboard/analytics': {
@@ -800,6 +834,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminAdminDashboardRouteImport
       parentRoute: typeof AdminAdminRoute
+    }
+    '/seller/dashboard/listings/': {
+      id: '/seller/dashboard/listings/'
+      path: '/listings'
+      fullPath: '/seller/dashboard/listings/'
+      preLoaderRoute: typeof SellerDashboardListingsIndexRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/bookings/': {
+      id: '/seller/dashboard/bookings/'
+      path: '/bookings'
+      fullPath: '/seller/dashboard/bookings/'
+      preLoaderRoute: typeof SellerDashboardBookingsIndexRouteImport
+      parentRoute: typeof SellerDashboardRoute
     }
     '/admin/_admin/users/': {
       id: '/admin/_admin/users/'
@@ -871,6 +919,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminAuditLogsIndexRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/seller/dashboard/listings/new': {
+      id: '/seller/dashboard/listings/new'
+      path: '/listings/new'
+      fullPath: '/seller/dashboard/listings/new'
+      preLoaderRoute: typeof SellerDashboardListingsNewRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
     '/admin/_admin/users/$userId': {
       id: '/admin/_admin/users/$userId'
       path: '/users/$userId'
@@ -891,6 +946,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/sellers/$sellerId'
       preLoaderRoute: typeof AdminAdminSellersSellerIdRouteImport
       parentRoute: typeof AdminAdminRoute
+    }
+    '/seller/dashboard/listings/$listingId/edit': {
+      id: '/seller/dashboard/listings/$listingId/edit'
+      path: '/listings/$listingId/edit'
+      fullPath: '/seller/dashboard/listings/$listingId/edit'
+      preLoaderRoute: typeof SellerDashboardListingsListingIdEditRouteImport
+      parentRoute: typeof SellerDashboardRoute
     }
   }
 }
@@ -936,30 +998,35 @@ const AdminAdminRouteWithChildren = AdminAdminRoute._addFileChildren(
 
 interface SellerDashboardRouteChildren {
   SellerDashboardAnalyticsRoute: typeof SellerDashboardAnalyticsRoute
-  SellerDashboardBookingsRoute: typeof SellerDashboardBookingsRoute
   SellerDashboardCalendarRoute: typeof SellerDashboardCalendarRoute
   SellerDashboardEarningsRoute: typeof SellerDashboardEarningsRoute
   SellerDashboardInboxRoute: typeof SellerDashboardInboxRoute
-  SellerDashboardListingsRoute: typeof SellerDashboardListingsRoute
   SellerDashboardPayoutsRoute: typeof SellerDashboardPayoutsRoute
   SellerDashboardProofCenterRoute: typeof SellerDashboardProofCenterRoute
   SellerDashboardReviewsRoute: typeof SellerDashboardReviewsRoute
   SellerDashboardSettingsRoute: typeof SellerDashboardSettingsRoute
   SellerDashboardIndexRoute: typeof SellerDashboardIndexRoute
+  SellerDashboardListingsNewRoute: typeof SellerDashboardListingsNewRoute
+  SellerDashboardBookingsIndexRoute: typeof SellerDashboardBookingsIndexRoute
+  SellerDashboardListingsIndexRoute: typeof SellerDashboardListingsIndexRoute
+  SellerDashboardListingsListingIdEditRoute: typeof SellerDashboardListingsListingIdEditRoute
 }
 
 const SellerDashboardRouteChildren: SellerDashboardRouteChildren = {
   SellerDashboardAnalyticsRoute: SellerDashboardAnalyticsRoute,
-  SellerDashboardBookingsRoute: SellerDashboardBookingsRoute,
   SellerDashboardCalendarRoute: SellerDashboardCalendarRoute,
   SellerDashboardEarningsRoute: SellerDashboardEarningsRoute,
   SellerDashboardInboxRoute: SellerDashboardInboxRoute,
-  SellerDashboardListingsRoute: SellerDashboardListingsRoute,
   SellerDashboardPayoutsRoute: SellerDashboardPayoutsRoute,
   SellerDashboardProofCenterRoute: SellerDashboardProofCenterRoute,
   SellerDashboardReviewsRoute: SellerDashboardReviewsRoute,
   SellerDashboardSettingsRoute: SellerDashboardSettingsRoute,
   SellerDashboardIndexRoute: SellerDashboardIndexRoute,
+  SellerDashboardListingsNewRoute: SellerDashboardListingsNewRoute,
+  SellerDashboardBookingsIndexRoute: SellerDashboardBookingsIndexRoute,
+  SellerDashboardListingsIndexRoute: SellerDashboardListingsIndexRoute,
+  SellerDashboardListingsListingIdEditRoute:
+    SellerDashboardListingsListingIdEditRoute,
 }
 
 const SellerDashboardRouteWithChildren = SellerDashboardRoute._addFileChildren(
@@ -976,6 +1043,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyEmailRoute: VerifyEmailRoute,
   AdminAdminRoute: AdminAdminRouteWithChildren,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
+  CustomerBookingsRoute: CustomerBookingsRoute,
   ListingListingIdRoute: ListingListingIdRoute,
   SellerDashboardRoute: SellerDashboardRouteWithChildren,
   SellerOnboardingRoute: SellerOnboardingRoute,

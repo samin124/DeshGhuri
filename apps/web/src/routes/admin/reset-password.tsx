@@ -45,7 +45,7 @@ function AdminResetPasswordPage() {
         toast.success('Password reset successfully! Redirecting to login...');
 
         setTimeout(() => {
-          navigate({ to: '/admin' });
+          navigate({ to: '/login' });
         }, 2000);
       } catch (error) {
         toast.error('Failed to reset password. The link may have expired.');
@@ -175,7 +175,7 @@ function AdminResetPasswordPage() {
         {/* Footer */}
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate({ to: '/admin' })}
+            onClick={() => navigate({ to: '/login' })}
             className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
           >
             ← Back to Admin Login

@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { requireCustomerAccess } from "@/lib/auth/role-guard";
 
 // Eager load above-fold components for better LCP
 import HeroSection from "@/components/homepage/hero-section";
 import FlashDeals from "@/components/homepage/flash-deals";
 import SpecialOffers from "@/components/homepage/special-offers";
+import { ListingDetailSheet } from "@/components/common/listing-detail-sheet";
 
 // Lazy load below-fold components for better performance
 const TrendingListings = lazy(() => import("@/components/homepage/trending-listings"));
@@ -14,11 +15,8 @@ const FeaturedDestinations = lazy(() => import("@/components/homepage/featured-d
 const PopularServices = lazy(() => import("@/components/homepage/popular-services"));
 const GroupsForming = lazy(() => import("@/components/homepage/groups-forming"));
 const SeasonalPackages = lazy(() => import("@/components/homepage/seasonal-packages"));
-const HowItWorks = lazy(() => import("@/components/homepage/how-it-works"));
 const TestimonialsSection = lazy(() => import("@/components/homepage/testimonials"));
 const BlogPreview = lazy(() => import("@/components/homepage/blog-preview"));
-const PartnersSection = lazy(() => import("@/components/homepage/partners-section"));
-const StatsSection = lazy(() => import("@/components/homepage/stats-section"));
 const FAQSection = lazy(() => import("@/components/homepage/faq-section"));
 const NewsletterCTA = lazy(() => import("@/components/homepage/newsletter-cta"));
 
@@ -60,16 +58,24 @@ const SectionSkeleton = () => (
 );
 
 function HomeComponent() {
+  const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const handleListingClick = (listingId: string) => {
+    setSelectedListingId(listingId);
+    setSheetOpen(true);
+  };
+
   return (
     <main className="min-h-screen">
       {/* Above fold - eager load for better LCP */}
       <HeroSection />
-      <FlashDeals />
-      <SpecialOffers />
+      <FlashDeals onListingClick={handleListingClick} />
+      <SpecialOffers onListingClick={handleListingClick} />
 
       {/* Below fold - lazy load with Suspense boundaries */}
       <Suspense fallback={<SectionSkeleton />}>
-        <TrendingListings />
+        <TrendingListings onListingClick={handleListingClick} />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
@@ -81,19 +87,15 @@ function HomeComponent() {
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <PopularServices />
+        <PopularServices onListingClick={handleListingClick} />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <GroupsForming />
+        <GroupsForming onListingClick={handleListingClick} />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <SeasonalPackages />
-      </Suspense>
-
-      <Suspense fallback={<SectionSkeleton />}>
-        <HowItWorks />
+        <SeasonalPackages onListingClick={handleListingClick} />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
@@ -105,18 +107,17 @@ function HomeComponent() {
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <PartnersSection />
-      </Suspense>
-
-      <Suspense fallback={<SectionSkeleton />}>
-        <StatsSection />
-      </Suspense>
-
-      <Suspense fallback={<SectionSkeleton />}>
         <FAQSection />
       </Suspense>
 
       <NewsletterCTA />
+
+      {/* Listing Detail Sheet */}
+      <ListingDetailSheet
+        listingId={selectedListingId}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
     </main>
   );
 }

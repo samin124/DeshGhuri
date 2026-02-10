@@ -110,7 +110,9 @@
       "Bash(cmd.exe /c \"E:\\\\Learn-Typescript\\\\DeshGhuri\\\\scripts\\\\fresh-start.bat\")",
       "Bash(cmd.exe /c \"cd /d E:\\\\Learn-Typescript\\\\DeshGhuri && scripts\\\\kill-ports.bat\")",
       "Bash(cmd.exe /c \"E:\\\\Learn-Typescript\\\\DeshGhuri\\\\scripts\\\\diagnose-ports.bat\")",
-      "Bash(if not exist docs mkdir docs)"
+      "Bash(if not exist docs mkdir docs)",
+      "mcp__chrome-devtools__handle_dialog",
+      "Bash(cmd.exe //c taskkill //F //PID 26824)"
     ]
   }
 }

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { getCurrentSeller, logoutSeller } from '@/lib/api/seller-dashboard';
+import { authClient } from '@/lib/auth-client';
 
 interface SellerSession {
   sellerId: string;
@@ -50,7 +51,12 @@ export function SellerSessionProvider({ children }: { children: React.ReactNode 
 
   const logout = useCallback(async () => {
     try {
+      // Clear seller-specific session
       await logoutSeller();
+
+      // Clear Better Auth session (main authentication)
+      await authClient.signOut();
+
       setSeller(null);
       navigate({ to: '/' });
     } catch (err) {

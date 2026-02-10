@@ -6,7 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { mockGroupBookings } from "@/lib/mock-data";
 
-export default function GroupsForming() {
+interface GroupsFormingProps {
+  onListingClick?: (listingId: string) => void;
+}
+
+export default function GroupsForming({ onListingClick }: GroupsFormingProps) {
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">

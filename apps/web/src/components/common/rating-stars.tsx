@@ -1,7 +1,7 @@
 import { Star, StarHalf } from "lucide-react";
 
 interface RatingStarsProps {
-  rating: number;
+  rating?: number;
   maxRating?: number;
   size?: "sm" | "md" | "lg";
   showNumber?: boolean;
@@ -23,8 +23,9 @@ export function RatingStars({
 
   const renderStars = () => {
     const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
+    const actualRating = rating || 0;
+    const fullStars = Math.floor(actualRating);
+    const hasHalfStar = actualRating % 1 >= 0.5;
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(
@@ -60,7 +61,7 @@ export function RatingStars({
   return (
     <div className="flex items-center gap-1">
       {renderStars()}
-      {showNumber && (
+      {showNumber && rating !== undefined && (
         <span className="ml-1 text-sm font-medium text-muted-foreground">
           {rating.toFixed(1)}
         </span>

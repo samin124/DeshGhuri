@@ -126,7 +126,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleSignOut = async () => {
     await authClient.signOut();
-    router.navigate({ to: '/admin' });
+    router.navigate({ to: '/login' });
   };
 
   const getUserInitials = (name?: string) => {

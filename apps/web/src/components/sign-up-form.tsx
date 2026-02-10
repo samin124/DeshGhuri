@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
+import { getPostLoginRedirect, getReturnUrlFromSearch } from "@/lib/auth/redirect-after-login";
 
 import Loader from "./loader";
 import { Button } from "./ui/button";
@@ -11,9 +12,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) {
-  const navigate = useNavigate({
-    from: "/",
-  });
+  const navigate = useNavigate();
   const { isPending } = authClient.useSession();
 
   const form = useForm({
@@ -62,26 +61,21 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
         return;
       }
 
-      // Manually trigger verification email after successful signup
-      const emailResult = await authClient.sendVerificationEmail({
-        email: value.email,
-        callbackURL: `${window.location.origin}/login`,
+      // Sign-up successful! Better Auth automatically creates a session
+      // Get return URL from query params (if user was redirected to login)
+      const returnUrl = getReturnUrlFromSearch(window.location.search);
+
+      // Determine redirect destination based on user roles (default: customer = homepage)
+      const redirectTo = await getPostLoginRedirect({
+        preferredDestination: returnUrl,
       });
 
-      if (emailResult.error) {
-        console.error("Failed to send verification email:", emailResult.error);
-        toast.warning("Account created, but verification email failed to send. Please contact support.", {
-          duration: 6000,
-        });
-      } else {
-        toast.success("Account created! Please check your email to verify your account before signing in.", {
-          duration: 5000,
-        });
-      }
-
-      navigate({
-        to: "/login",
+      // Show success message and redirect to appropriate page
+      toast.success("Welcome to DeshGhuri! Your account has been created successfully.", {
+        duration: 3000,
       });
+
+      navigate({ to: redirectTo });
     },
     validators: {
       onSubmit: z.object({
