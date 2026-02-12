@@ -9,13 +9,77 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SellerIndexRouteImport } from './routes/seller/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as SellerVerificationStatusRouteImport } from './routes/seller/verification-status'
+import { Route as SellerSignupRouteImport } from './routes/seller/signup'
+import { Route as SellerRegisterRouteImport } from './routes/seller/register'
+import { Route as SellerOnboardingNewRouteImport } from './routes/seller/onboarding-new'
+import { Route as SellerOnboardingRouteImport } from './routes/seller/onboarding'
+import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
+import { Route as ListingListingIdRouteImport } from './routes/listing/$listingId'
+import { Route as CustomerBookingsRouteImport } from './routes/customer/bookings'
+import { Route as AdminResetPasswordRouteImport } from './routes/admin/reset-password'
+import { Route as AdminAdminRouteImport } from './routes/admin/_admin'
+import { Route as SellerDashboardIndexRouteImport } from './routes/seller/dashboard/index'
+import { Route as SellerDashboardSettingsRouteImport } from './routes/seller/dashboard/settings'
+import { Route as SellerDashboardReviewsRouteImport } from './routes/seller/dashboard/reviews'
+import { Route as SellerDashboardProofCenterRouteImport } from './routes/seller/dashboard/proof-center'
+import { Route as SellerDashboardPayoutsRouteImport } from './routes/seller/dashboard/payouts'
+import { Route as SellerDashboardInboxRouteImport } from './routes/seller/dashboard/inbox'
+import { Route as SellerDashboardEarningsRouteImport } from './routes/seller/dashboard/earnings'
+import { Route as SellerDashboardCalendarRouteImport } from './routes/seller/dashboard/calendar'
+import { Route as SellerDashboardAnalyticsRouteImport } from './routes/seller/dashboard/analytics'
+import { Route as SellerSellerIdProfileRouteImport } from './routes/seller/$sellerId/profile'
+import { Route as AdminAdminDashboardRouteImport } from './routes/admin/_admin/dashboard'
+import { Route as SellerDashboardListingsIndexRouteImport } from './routes/seller/dashboard/listings/index'
+import { Route as SellerDashboardBookingsIndexRouteImport } from './routes/seller/dashboard/bookings/index'
+import { Route as AdminAdminUsersIndexRouteImport } from './routes/admin/_admin/users/index'
+import { Route as AdminAdminTransactionsIndexRouteImport } from './routes/admin/_admin/transactions/index'
+import { Route as AdminAdminSellersIndexRouteImport } from './routes/admin/_admin/sellers/index'
+import { Route as AdminAdminReportsIndexRouteImport } from './routes/admin/_admin/reports/index'
+import { Route as AdminAdminPromotionsIndexRouteImport } from './routes/admin/_admin/promotions/index'
+import { Route as AdminAdminListingsIndexRouteImport } from './routes/admin/_admin/listings/index'
+import { Route as AdminAdminDocumentsIndexRouteImport } from './routes/admin/_admin/documents/index'
+import { Route as AdminAdminContentIndexRouteImport } from './routes/admin/_admin/content/index'
+import { Route as AdminAdminBookingsIndexRouteImport } from './routes/admin/_admin/bookings/index'
+import { Route as AdminAdminAuditLogsIndexRouteImport } from './routes/admin/_admin/audit-logs/index'
+import { Route as SellerDashboardListingsNewRouteImport } from './routes/seller/dashboard/listings/new'
+import { Route as AdminAdminUsersUserIdRouteImport } from './routes/admin/_admin/users/$userId'
+import { Route as AdminAdminSellersVerificationQueueRouteImport } from './routes/admin/_admin/sellers/verification-queue'
+import { Route as AdminAdminSellersSellerIdRouteImport } from './routes/admin/_admin/sellers/$sellerId'
+import { Route as SellerDashboardListingsListingIdEditRouteImport } from './routes/seller/dashboard/listings/$listingId/edit'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -28,44 +92,572 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellerIndexRoute = SellerIndexRouteImport.update({
+  id: '/seller/',
+  path: '/seller/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerVerificationStatusRoute =
+  SellerVerificationStatusRouteImport.update({
+    id: '/seller/verification-status',
+    path: '/seller/verification-status',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SellerSignupRoute = SellerSignupRouteImport.update({
+  id: '/seller/signup',
+  path: '/seller/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerRegisterRoute = SellerRegisterRouteImport.update({
+  id: '/seller/register',
+  path: '/seller/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerOnboardingNewRoute = SellerOnboardingNewRouteImport.update({
+  id: '/seller/onboarding-new',
+  path: '/seller/onboarding-new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerOnboardingRoute = SellerOnboardingRouteImport.update({
+  id: '/seller/onboarding',
+  path: '/seller/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerDashboardRoute = SellerDashboardRouteImport.update({
+  id: '/seller/dashboard',
+  path: '/seller/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingListingIdRoute = ListingListingIdRouteImport.update({
+  id: '/listing/$listingId',
+  path: '/listing/$listingId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerBookingsRoute = CustomerBookingsRouteImport.update({
+  id: '/customer/bookings',
+  path: '/customer/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
+  id: '/admin/reset-password',
+  path: '/admin/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAdminRoute = AdminAdminRouteImport.update({
+  id: '/admin/_admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerDashboardIndexRoute = SellerDashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardSettingsRoute = SellerDashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardReviewsRoute = SellerDashboardReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardProofCenterRoute =
+  SellerDashboardProofCenterRouteImport.update({
+    id: '/proof-center',
+    path: '/proof-center',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
+const SellerDashboardPayoutsRoute = SellerDashboardPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardInboxRoute = SellerDashboardInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardEarningsRoute = SellerDashboardEarningsRouteImport.update({
+  id: '/earnings',
+  path: '/earnings',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardCalendarRoute = SellerDashboardCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardAnalyticsRoute =
+  SellerDashboardAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
+const SellerSellerIdProfileRoute = SellerSellerIdProfileRouteImport.update({
+  id: '/seller/$sellerId/profile',
+  path: '/seller/$sellerId/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAdminDashboardRoute = AdminAdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const SellerDashboardListingsIndexRoute =
+  SellerDashboardListingsIndexRouteImport.update({
+    id: '/listings/',
+    path: '/listings/',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
+const SellerDashboardBookingsIndexRoute =
+  SellerDashboardBookingsIndexRouteImport.update({
+    id: '/bookings/',
+    path: '/bookings/',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
+const AdminAdminUsersIndexRoute = AdminAdminUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminTransactionsIndexRoute =
+  AdminAdminTransactionsIndexRouteImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => AdminAdminRoute,
+  } as any)
+const AdminAdminSellersIndexRoute = AdminAdminSellersIndexRouteImport.update({
+  id: '/sellers/',
+  path: '/sellers/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminReportsIndexRoute = AdminAdminReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminPromotionsIndexRoute =
+  AdminAdminPromotionsIndexRouteImport.update({
+    id: '/promotions/',
+    path: '/promotions/',
+    getParentRoute: () => AdminAdminRoute,
+  } as any)
+const AdminAdminListingsIndexRoute = AdminAdminListingsIndexRouteImport.update({
+  id: '/listings/',
+  path: '/listings/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminDocumentsIndexRoute =
+  AdminAdminDocumentsIndexRouteImport.update({
+    id: '/documents/',
+    path: '/documents/',
+    getParentRoute: () => AdminAdminRoute,
+  } as any)
+const AdminAdminContentIndexRoute = AdminAdminContentIndexRouteImport.update({
+  id: '/content/',
+  path: '/content/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminBookingsIndexRoute = AdminAdminBookingsIndexRouteImport.update({
+  id: '/bookings/',
+  path: '/bookings/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminAuditLogsIndexRoute =
+  AdminAdminAuditLogsIndexRouteImport.update({
+    id: '/audit-logs/',
+    path: '/audit-logs/',
+    getParentRoute: () => AdminAdminRoute,
+  } as any)
+const SellerDashboardListingsNewRoute =
+  SellerDashboardListingsNewRouteImport.update({
+    id: '/listings/new',
+    path: '/listings/new',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
+const AdminAdminUsersUserIdRoute = AdminAdminUsersUserIdRouteImport.update({
+  id: '/users/$userId',
+  path: '/users/$userId',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminSellersVerificationQueueRoute =
+  AdminAdminSellersVerificationQueueRouteImport.update({
+    id: '/sellers/verification-queue',
+    path: '/sellers/verification-queue',
+    getParentRoute: () => AdminAdminRoute,
+  } as any)
+const AdminAdminSellersSellerIdRoute =
+  AdminAdminSellersSellerIdRouteImport.update({
+    id: '/sellers/$sellerId',
+    path: '/sellers/$sellerId',
+    getParentRoute: () => AdminAdminRoute,
+  } as any)
+const SellerDashboardListingsListingIdEditRoute =
+  SellerDashboardListingsListingIdEditRouteImport.update({
+    id: '/listings/$listingId/edit',
+    path: '/listings/$listingId/edit',
+    getParentRoute: () => SellerDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/admin': typeof AdminAdminRouteWithChildren
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/customer/bookings': typeof CustomerBookingsRoute
+  '/listing/$listingId': typeof ListingListingIdRoute
+  '/seller/dashboard': typeof SellerDashboardRouteWithChildren
+  '/seller/onboarding': typeof SellerOnboardingRoute
+  '/seller/onboarding-new': typeof SellerOnboardingNewRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/seller/signup': typeof SellerSignupRoute
+  '/seller/verification-status': typeof SellerVerificationStatusRoute
+  '/admin/': typeof AdminIndexRoute
+  '/seller/': typeof SellerIndexRoute
+  '/admin/dashboard': typeof AdminAdminDashboardRoute
+  '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
+  '/seller/dashboard/analytics': typeof SellerDashboardAnalyticsRoute
+  '/seller/dashboard/calendar': typeof SellerDashboardCalendarRoute
+  '/seller/dashboard/earnings': typeof SellerDashboardEarningsRoute
+  '/seller/dashboard/inbox': typeof SellerDashboardInboxRoute
+  '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
+  '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
+  '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
+  '/seller/dashboard/settings': typeof SellerDashboardSettingsRoute
+  '/seller/dashboard/': typeof SellerDashboardIndexRoute
+  '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
+  '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
+  '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/seller/dashboard/listings/new': typeof SellerDashboardListingsNewRoute
+  '/admin/audit-logs/': typeof AdminAdminAuditLogsIndexRoute
+  '/admin/bookings/': typeof AdminAdminBookingsIndexRoute
+  '/admin/content/': typeof AdminAdminContentIndexRoute
+  '/admin/documents/': typeof AdminAdminDocumentsIndexRoute
+  '/admin/listings/': typeof AdminAdminListingsIndexRoute
+  '/admin/promotions/': typeof AdminAdminPromotionsIndexRoute
+  '/admin/reports/': typeof AdminAdminReportsIndexRoute
+  '/admin/sellers/': typeof AdminAdminSellersIndexRoute
+  '/admin/transactions/': typeof AdminAdminTransactionsIndexRoute
+  '/admin/users/': typeof AdminAdminUsersIndexRoute
+  '/seller/dashboard/bookings/': typeof SellerDashboardBookingsIndexRoute
+  '/seller/dashboard/listings/': typeof SellerDashboardListingsIndexRoute
+  '/seller/dashboard/listings/$listingId/edit': typeof SellerDashboardListingsListingIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/customer/bookings': typeof CustomerBookingsRoute
+  '/listing/$listingId': typeof ListingListingIdRoute
+  '/seller/onboarding': typeof SellerOnboardingRoute
+  '/seller/onboarding-new': typeof SellerOnboardingNewRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/seller/signup': typeof SellerSignupRoute
+  '/seller/verification-status': typeof SellerVerificationStatusRoute
+  '/seller': typeof SellerIndexRoute
+  '/admin/dashboard': typeof AdminAdminDashboardRoute
+  '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
+  '/seller/dashboard/analytics': typeof SellerDashboardAnalyticsRoute
+  '/seller/dashboard/calendar': typeof SellerDashboardCalendarRoute
+  '/seller/dashboard/earnings': typeof SellerDashboardEarningsRoute
+  '/seller/dashboard/inbox': typeof SellerDashboardInboxRoute
+  '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
+  '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
+  '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
+  '/seller/dashboard/settings': typeof SellerDashboardSettingsRoute
+  '/seller/dashboard': typeof SellerDashboardIndexRoute
+  '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
+  '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
+  '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/seller/dashboard/listings/new': typeof SellerDashboardListingsNewRoute
+  '/admin/audit-logs': typeof AdminAdminAuditLogsIndexRoute
+  '/admin/bookings': typeof AdminAdminBookingsIndexRoute
+  '/admin/content': typeof AdminAdminContentIndexRoute
+  '/admin/documents': typeof AdminAdminDocumentsIndexRoute
+  '/admin/listings': typeof AdminAdminListingsIndexRoute
+  '/admin/promotions': typeof AdminAdminPromotionsIndexRoute
+  '/admin/reports': typeof AdminAdminReportsIndexRoute
+  '/admin/sellers': typeof AdminAdminSellersIndexRoute
+  '/admin/transactions': typeof AdminAdminTransactionsIndexRoute
+  '/admin/users': typeof AdminAdminUsersIndexRoute
+  '/seller/dashboard/bookings': typeof SellerDashboardBookingsIndexRoute
+  '/seller/dashboard/listings': typeof SellerDashboardListingsIndexRoute
+  '/seller/dashboard/listings/$listingId/edit': typeof SellerDashboardListingsListingIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/admin/_admin': typeof AdminAdminRouteWithChildren
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/customer/bookings': typeof CustomerBookingsRoute
+  '/listing/$listingId': typeof ListingListingIdRoute
+  '/seller/dashboard': typeof SellerDashboardRouteWithChildren
+  '/seller/onboarding': typeof SellerOnboardingRoute
+  '/seller/onboarding-new': typeof SellerOnboardingNewRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/seller/signup': typeof SellerSignupRoute
+  '/seller/verification-status': typeof SellerVerificationStatusRoute
+  '/admin/': typeof AdminIndexRoute
+  '/seller/': typeof SellerIndexRoute
+  '/admin/_admin/dashboard': typeof AdminAdminDashboardRoute
+  '/seller/$sellerId/profile': typeof SellerSellerIdProfileRoute
+  '/seller/dashboard/analytics': typeof SellerDashboardAnalyticsRoute
+  '/seller/dashboard/calendar': typeof SellerDashboardCalendarRoute
+  '/seller/dashboard/earnings': typeof SellerDashboardEarningsRoute
+  '/seller/dashboard/inbox': typeof SellerDashboardInboxRoute
+  '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
+  '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
+  '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
+  '/seller/dashboard/settings': typeof SellerDashboardSettingsRoute
+  '/seller/dashboard/': typeof SellerDashboardIndexRoute
+  '/admin/_admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
+  '/admin/_admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
+  '/admin/_admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/seller/dashboard/listings/new': typeof SellerDashboardListingsNewRoute
+  '/admin/_admin/audit-logs/': typeof AdminAdminAuditLogsIndexRoute
+  '/admin/_admin/bookings/': typeof AdminAdminBookingsIndexRoute
+  '/admin/_admin/content/': typeof AdminAdminContentIndexRoute
+  '/admin/_admin/documents/': typeof AdminAdminDocumentsIndexRoute
+  '/admin/_admin/listings/': typeof AdminAdminListingsIndexRoute
+  '/admin/_admin/promotions/': typeof AdminAdminPromotionsIndexRoute
+  '/admin/_admin/reports/': typeof AdminAdminReportsIndexRoute
+  '/admin/_admin/sellers/': typeof AdminAdminSellersIndexRoute
+  '/admin/_admin/transactions/': typeof AdminAdminTransactionsIndexRoute
+  '/admin/_admin/users/': typeof AdminAdminUsersIndexRoute
+  '/seller/dashboard/bookings/': typeof SellerDashboardBookingsIndexRoute
+  '/seller/dashboard/listings/': typeof SellerDashboardListingsIndexRoute
+  '/seller/dashboard/listings/$listingId/edit': typeof SellerDashboardListingsListingIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/search'
+    | '/verify-email'
+    | '/admin'
+    | '/admin/reset-password'
+    | '/customer/bookings'
+    | '/listing/$listingId'
+    | '/seller/dashboard'
+    | '/seller/onboarding'
+    | '/seller/onboarding-new'
+    | '/seller/register'
+    | '/seller/signup'
+    | '/seller/verification-status'
+    | '/admin/'
+    | '/seller/'
+    | '/admin/dashboard'
+    | '/seller/$sellerId/profile'
+    | '/seller/dashboard/analytics'
+    | '/seller/dashboard/calendar'
+    | '/seller/dashboard/earnings'
+    | '/seller/dashboard/inbox'
+    | '/seller/dashboard/payouts'
+    | '/seller/dashboard/proof-center'
+    | '/seller/dashboard/reviews'
+    | '/seller/dashboard/settings'
+    | '/seller/dashboard/'
+    | '/admin/sellers/$sellerId'
+    | '/admin/sellers/verification-queue'
+    | '/admin/users/$userId'
+    | '/seller/dashboard/listings/new'
+    | '/admin/audit-logs/'
+    | '/admin/bookings/'
+    | '/admin/content/'
+    | '/admin/documents/'
+    | '/admin/listings/'
+    | '/admin/promotions/'
+    | '/admin/reports/'
+    | '/admin/sellers/'
+    | '/admin/transactions/'
+    | '/admin/users/'
+    | '/seller/dashboard/bookings/'
+    | '/seller/dashboard/listings/'
+    | '/seller/dashboard/listings/$listingId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login'
-  id: '__root__' | '/' | '/dashboard' | '/login'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/search'
+    | '/verify-email'
+    | '/admin'
+    | '/admin/reset-password'
+    | '/customer/bookings'
+    | '/listing/$listingId'
+    | '/seller/onboarding'
+    | '/seller/onboarding-new'
+    | '/seller/register'
+    | '/seller/signup'
+    | '/seller/verification-status'
+    | '/seller'
+    | '/admin/dashboard'
+    | '/seller/$sellerId/profile'
+    | '/seller/dashboard/analytics'
+    | '/seller/dashboard/calendar'
+    | '/seller/dashboard/earnings'
+    | '/seller/dashboard/inbox'
+    | '/seller/dashboard/payouts'
+    | '/seller/dashboard/proof-center'
+    | '/seller/dashboard/reviews'
+    | '/seller/dashboard/settings'
+    | '/seller/dashboard'
+    | '/admin/sellers/$sellerId'
+    | '/admin/sellers/verification-queue'
+    | '/admin/users/$userId'
+    | '/seller/dashboard/listings/new'
+    | '/admin/audit-logs'
+    | '/admin/bookings'
+    | '/admin/content'
+    | '/admin/documents'
+    | '/admin/listings'
+    | '/admin/promotions'
+    | '/admin/reports'
+    | '/admin/sellers'
+    | '/admin/transactions'
+    | '/admin/users'
+    | '/seller/dashboard/bookings'
+    | '/seller/dashboard/listings'
+    | '/seller/dashboard/listings/$listingId/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/search'
+    | '/verify-email'
+    | '/admin/_admin'
+    | '/admin/reset-password'
+    | '/customer/bookings'
+    | '/listing/$listingId'
+    | '/seller/dashboard'
+    | '/seller/onboarding'
+    | '/seller/onboarding-new'
+    | '/seller/register'
+    | '/seller/signup'
+    | '/seller/verification-status'
+    | '/admin/'
+    | '/seller/'
+    | '/admin/_admin/dashboard'
+    | '/seller/$sellerId/profile'
+    | '/seller/dashboard/analytics'
+    | '/seller/dashboard/calendar'
+    | '/seller/dashboard/earnings'
+    | '/seller/dashboard/inbox'
+    | '/seller/dashboard/payouts'
+    | '/seller/dashboard/proof-center'
+    | '/seller/dashboard/reviews'
+    | '/seller/dashboard/settings'
+    | '/seller/dashboard/'
+    | '/admin/_admin/sellers/$sellerId'
+    | '/admin/_admin/sellers/verification-queue'
+    | '/admin/_admin/users/$userId'
+    | '/seller/dashboard/listings/new'
+    | '/admin/_admin/audit-logs/'
+    | '/admin/_admin/bookings/'
+    | '/admin/_admin/content/'
+    | '/admin/_admin/documents/'
+    | '/admin/_admin/listings/'
+    | '/admin/_admin/promotions/'
+    | '/admin/_admin/reports/'
+    | '/admin/_admin/sellers/'
+    | '/admin/_admin/transactions/'
+    | '/admin/_admin/users/'
+    | '/seller/dashboard/bookings/'
+    | '/seller/dashboard/listings/'
+    | '/seller/dashboard/listings/$listingId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SearchRoute: typeof SearchRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
+  AdminAdminRoute: typeof AdminAdminRouteWithChildren
+  AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  CustomerBookingsRoute: typeof CustomerBookingsRoute
+  ListingListingIdRoute: typeof ListingListingIdRoute
+  SellerDashboardRoute: typeof SellerDashboardRouteWithChildren
+  SellerOnboardingRoute: typeof SellerOnboardingRoute
+  SellerOnboardingNewRoute: typeof SellerOnboardingNewRoute
+  SellerRegisterRoute: typeof SellerRegisterRoute
+  SellerSignupRoute: typeof SellerSignupRoute
+  SellerVerificationStatusRoute: typeof SellerVerificationStatusRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  SellerIndexRoute: typeof SellerIndexRoute
+  SellerSellerIdProfileRoute: typeof SellerSellerIdProfileRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -82,13 +674,386 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seller/': {
+      id: '/seller/'
+      path: '/seller'
+      fullPath: '/seller/'
+      preLoaderRoute: typeof SellerIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/verification-status': {
+      id: '/seller/verification-status'
+      path: '/seller/verification-status'
+      fullPath: '/seller/verification-status'
+      preLoaderRoute: typeof SellerVerificationStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/signup': {
+      id: '/seller/signup'
+      path: '/seller/signup'
+      fullPath: '/seller/signup'
+      preLoaderRoute: typeof SellerSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/register': {
+      id: '/seller/register'
+      path: '/seller/register'
+      fullPath: '/seller/register'
+      preLoaderRoute: typeof SellerRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/onboarding-new': {
+      id: '/seller/onboarding-new'
+      path: '/seller/onboarding-new'
+      fullPath: '/seller/onboarding-new'
+      preLoaderRoute: typeof SellerOnboardingNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/onboarding': {
+      id: '/seller/onboarding'
+      path: '/seller/onboarding'
+      fullPath: '/seller/onboarding'
+      preLoaderRoute: typeof SellerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/dashboard': {
+      id: '/seller/dashboard'
+      path: '/seller/dashboard'
+      fullPath: '/seller/dashboard'
+      preLoaderRoute: typeof SellerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listing/$listingId': {
+      id: '/listing/$listingId'
+      path: '/listing/$listingId'
+      fullPath: '/listing/$listingId'
+      preLoaderRoute: typeof ListingListingIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer/bookings': {
+      id: '/customer/bookings'
+      path: '/customer/bookings'
+      fullPath: '/customer/bookings'
+      preLoaderRoute: typeof CustomerBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reset-password': {
+      id: '/admin/reset-password'
+      path: '/admin/reset-password'
+      fullPath: '/admin/reset-password'
+      preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/_admin': {
+      id: '/admin/_admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/dashboard/': {
+      id: '/seller/dashboard/'
+      path: '/'
+      fullPath: '/seller/dashboard/'
+      preLoaderRoute: typeof SellerDashboardIndexRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/settings': {
+      id: '/seller/dashboard/settings'
+      path: '/settings'
+      fullPath: '/seller/dashboard/settings'
+      preLoaderRoute: typeof SellerDashboardSettingsRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/reviews': {
+      id: '/seller/dashboard/reviews'
+      path: '/reviews'
+      fullPath: '/seller/dashboard/reviews'
+      preLoaderRoute: typeof SellerDashboardReviewsRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/proof-center': {
+      id: '/seller/dashboard/proof-center'
+      path: '/proof-center'
+      fullPath: '/seller/dashboard/proof-center'
+      preLoaderRoute: typeof SellerDashboardProofCenterRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/payouts': {
+      id: '/seller/dashboard/payouts'
+      path: '/payouts'
+      fullPath: '/seller/dashboard/payouts'
+      preLoaderRoute: typeof SellerDashboardPayoutsRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/inbox': {
+      id: '/seller/dashboard/inbox'
+      path: '/inbox'
+      fullPath: '/seller/dashboard/inbox'
+      preLoaderRoute: typeof SellerDashboardInboxRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/earnings': {
+      id: '/seller/dashboard/earnings'
+      path: '/earnings'
+      fullPath: '/seller/dashboard/earnings'
+      preLoaderRoute: typeof SellerDashboardEarningsRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/calendar': {
+      id: '/seller/dashboard/calendar'
+      path: '/calendar'
+      fullPath: '/seller/dashboard/calendar'
+      preLoaderRoute: typeof SellerDashboardCalendarRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/analytics': {
+      id: '/seller/dashboard/analytics'
+      path: '/analytics'
+      fullPath: '/seller/dashboard/analytics'
+      preLoaderRoute: typeof SellerDashboardAnalyticsRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/$sellerId/profile': {
+      id: '/seller/$sellerId/profile'
+      path: '/seller/$sellerId/profile'
+      fullPath: '/seller/$sellerId/profile'
+      preLoaderRoute: typeof SellerSellerIdProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/_admin/dashboard': {
+      id: '/admin/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminAdminDashboardRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/seller/dashboard/listings/': {
+      id: '/seller/dashboard/listings/'
+      path: '/listings'
+      fullPath: '/seller/dashboard/listings/'
+      preLoaderRoute: typeof SellerDashboardListingsIndexRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/bookings/': {
+      id: '/seller/dashboard/bookings/'
+      path: '/bookings'
+      fullPath: '/seller/dashboard/bookings/'
+      preLoaderRoute: typeof SellerDashboardBookingsIndexRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/admin/_admin/users/': {
+      id: '/admin/_admin/users/'
+      path: '/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminAdminUsersIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/transactions/': {
+      id: '/admin/_admin/transactions/'
+      path: '/transactions'
+      fullPath: '/admin/transactions/'
+      preLoaderRoute: typeof AdminAdminTransactionsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/sellers/': {
+      id: '/admin/_admin/sellers/'
+      path: '/sellers'
+      fullPath: '/admin/sellers/'
+      preLoaderRoute: typeof AdminAdminSellersIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/reports/': {
+      id: '/admin/_admin/reports/'
+      path: '/reports'
+      fullPath: '/admin/reports/'
+      preLoaderRoute: typeof AdminAdminReportsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/promotions/': {
+      id: '/admin/_admin/promotions/'
+      path: '/promotions'
+      fullPath: '/admin/promotions/'
+      preLoaderRoute: typeof AdminAdminPromotionsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/listings/': {
+      id: '/admin/_admin/listings/'
+      path: '/listings'
+      fullPath: '/admin/listings/'
+      preLoaderRoute: typeof AdminAdminListingsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/documents/': {
+      id: '/admin/_admin/documents/'
+      path: '/documents'
+      fullPath: '/admin/documents/'
+      preLoaderRoute: typeof AdminAdminDocumentsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/content/': {
+      id: '/admin/_admin/content/'
+      path: '/content'
+      fullPath: '/admin/content/'
+      preLoaderRoute: typeof AdminAdminContentIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/bookings/': {
+      id: '/admin/_admin/bookings/'
+      path: '/bookings'
+      fullPath: '/admin/bookings/'
+      preLoaderRoute: typeof AdminAdminBookingsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/audit-logs/': {
+      id: '/admin/_admin/audit-logs/'
+      path: '/audit-logs'
+      fullPath: '/admin/audit-logs/'
+      preLoaderRoute: typeof AdminAdminAuditLogsIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/seller/dashboard/listings/new': {
+      id: '/seller/dashboard/listings/new'
+      path: '/listings/new'
+      fullPath: '/seller/dashboard/listings/new'
+      preLoaderRoute: typeof SellerDashboardListingsNewRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/admin/_admin/users/$userId': {
+      id: '/admin/_admin/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AdminAdminUsersUserIdRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/sellers/verification-queue': {
+      id: '/admin/_admin/sellers/verification-queue'
+      path: '/sellers/verification-queue'
+      fullPath: '/admin/sellers/verification-queue'
+      preLoaderRoute: typeof AdminAdminSellersVerificationQueueRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/admin/_admin/sellers/$sellerId': {
+      id: '/admin/_admin/sellers/$sellerId'
+      path: '/sellers/$sellerId'
+      fullPath: '/admin/sellers/$sellerId'
+      preLoaderRoute: typeof AdminAdminSellersSellerIdRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/seller/dashboard/listings/$listingId/edit': {
+      id: '/seller/dashboard/listings/$listingId/edit'
+      path: '/listings/$listingId/edit'
+      fullPath: '/seller/dashboard/listings/$listingId/edit'
+      preLoaderRoute: typeof SellerDashboardListingsListingIdEditRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
   }
 }
+
+interface AdminAdminRouteChildren {
+  AdminAdminDashboardRoute: typeof AdminAdminDashboardRoute
+  AdminAdminSellersSellerIdRoute: typeof AdminAdminSellersSellerIdRoute
+  AdminAdminSellersVerificationQueueRoute: typeof AdminAdminSellersVerificationQueueRoute
+  AdminAdminUsersUserIdRoute: typeof AdminAdminUsersUserIdRoute
+  AdminAdminAuditLogsIndexRoute: typeof AdminAdminAuditLogsIndexRoute
+  AdminAdminBookingsIndexRoute: typeof AdminAdminBookingsIndexRoute
+  AdminAdminContentIndexRoute: typeof AdminAdminContentIndexRoute
+  AdminAdminDocumentsIndexRoute: typeof AdminAdminDocumentsIndexRoute
+  AdminAdminListingsIndexRoute: typeof AdminAdminListingsIndexRoute
+  AdminAdminPromotionsIndexRoute: typeof AdminAdminPromotionsIndexRoute
+  AdminAdminReportsIndexRoute: typeof AdminAdminReportsIndexRoute
+  AdminAdminSellersIndexRoute: typeof AdminAdminSellersIndexRoute
+  AdminAdminTransactionsIndexRoute: typeof AdminAdminTransactionsIndexRoute
+  AdminAdminUsersIndexRoute: typeof AdminAdminUsersIndexRoute
+}
+
+const AdminAdminRouteChildren: AdminAdminRouteChildren = {
+  AdminAdminDashboardRoute: AdminAdminDashboardRoute,
+  AdminAdminSellersSellerIdRoute: AdminAdminSellersSellerIdRoute,
+  AdminAdminSellersVerificationQueueRoute:
+    AdminAdminSellersVerificationQueueRoute,
+  AdminAdminUsersUserIdRoute: AdminAdminUsersUserIdRoute,
+  AdminAdminAuditLogsIndexRoute: AdminAdminAuditLogsIndexRoute,
+  AdminAdminBookingsIndexRoute: AdminAdminBookingsIndexRoute,
+  AdminAdminContentIndexRoute: AdminAdminContentIndexRoute,
+  AdminAdminDocumentsIndexRoute: AdminAdminDocumentsIndexRoute,
+  AdminAdminListingsIndexRoute: AdminAdminListingsIndexRoute,
+  AdminAdminPromotionsIndexRoute: AdminAdminPromotionsIndexRoute,
+  AdminAdminReportsIndexRoute: AdminAdminReportsIndexRoute,
+  AdminAdminSellersIndexRoute: AdminAdminSellersIndexRoute,
+  AdminAdminTransactionsIndexRoute: AdminAdminTransactionsIndexRoute,
+  AdminAdminUsersIndexRoute: AdminAdminUsersIndexRoute,
+}
+
+const AdminAdminRouteWithChildren = AdminAdminRoute._addFileChildren(
+  AdminAdminRouteChildren,
+)
+
+interface SellerDashboardRouteChildren {
+  SellerDashboardAnalyticsRoute: typeof SellerDashboardAnalyticsRoute
+  SellerDashboardCalendarRoute: typeof SellerDashboardCalendarRoute
+  SellerDashboardEarningsRoute: typeof SellerDashboardEarningsRoute
+  SellerDashboardInboxRoute: typeof SellerDashboardInboxRoute
+  SellerDashboardPayoutsRoute: typeof SellerDashboardPayoutsRoute
+  SellerDashboardProofCenterRoute: typeof SellerDashboardProofCenterRoute
+  SellerDashboardReviewsRoute: typeof SellerDashboardReviewsRoute
+  SellerDashboardSettingsRoute: typeof SellerDashboardSettingsRoute
+  SellerDashboardIndexRoute: typeof SellerDashboardIndexRoute
+  SellerDashboardListingsNewRoute: typeof SellerDashboardListingsNewRoute
+  SellerDashboardBookingsIndexRoute: typeof SellerDashboardBookingsIndexRoute
+  SellerDashboardListingsIndexRoute: typeof SellerDashboardListingsIndexRoute
+  SellerDashboardListingsListingIdEditRoute: typeof SellerDashboardListingsListingIdEditRoute
+}
+
+const SellerDashboardRouteChildren: SellerDashboardRouteChildren = {
+  SellerDashboardAnalyticsRoute: SellerDashboardAnalyticsRoute,
+  SellerDashboardCalendarRoute: SellerDashboardCalendarRoute,
+  SellerDashboardEarningsRoute: SellerDashboardEarningsRoute,
+  SellerDashboardInboxRoute: SellerDashboardInboxRoute,
+  SellerDashboardPayoutsRoute: SellerDashboardPayoutsRoute,
+  SellerDashboardProofCenterRoute: SellerDashboardProofCenterRoute,
+  SellerDashboardReviewsRoute: SellerDashboardReviewsRoute,
+  SellerDashboardSettingsRoute: SellerDashboardSettingsRoute,
+  SellerDashboardIndexRoute: SellerDashboardIndexRoute,
+  SellerDashboardListingsNewRoute: SellerDashboardListingsNewRoute,
+  SellerDashboardBookingsIndexRoute: SellerDashboardBookingsIndexRoute,
+  SellerDashboardListingsIndexRoute: SellerDashboardListingsIndexRoute,
+  SellerDashboardListingsListingIdEditRoute:
+    SellerDashboardListingsListingIdEditRoute,
+}
+
+const SellerDashboardRouteWithChildren = SellerDashboardRoute._addFileChildren(
+  SellerDashboardRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SearchRoute: SearchRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
+  AdminAdminRoute: AdminAdminRouteWithChildren,
+  AdminResetPasswordRoute: AdminResetPasswordRoute,
+  CustomerBookingsRoute: CustomerBookingsRoute,
+  ListingListingIdRoute: ListingListingIdRoute,
+  SellerDashboardRoute: SellerDashboardRouteWithChildren,
+  SellerOnboardingRoute: SellerOnboardingRoute,
+  SellerOnboardingNewRoute: SellerOnboardingNewRoute,
+  SellerRegisterRoute: SellerRegisterRoute,
+  SellerSignupRoute: SellerSignupRoute,
+  SellerVerificationStatusRoute: SellerVerificationStatusRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  SellerIndexRoute: SellerIndexRoute,
+  SellerSellerIdProfileRoute: SellerSellerIdProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -13,9 +13,15 @@
     "@DeshGhuri/auth": "workspace:*",
     "@DeshGhuri/db": "workspace:*",
     "@DeshGhuri/env": "workspace:*",
+    "@hono/zod-openapi": "^1.2.0",
+    "@scalar/hono-api-reference": "^0.9.39",
+    "@supabase/storage-js": "^2.94.1",
+    "@types/pdfkit": "^0.17.4",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
     "hono": "^4.8.2",
+    "nanoid": "^5.1.6",
+    "pdfkit": "^0.17.2",
     "zod": "catalog:"
   },
   "devDependencies": {

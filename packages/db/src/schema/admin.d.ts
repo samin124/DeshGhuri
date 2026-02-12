@@ -1,0 +1,202 @@
+export declare const auditLog: import('drizzle-orm/pg-core').PgTableWithColumns<{
+  name: 'audit_log';
+  schema: undefined;
+  columns: {
+    id: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'id';
+        tableName: 'audit_log';
+        dataType: 'string';
+        columnType: 'PgText';
+        data: string;
+        driverParam: string;
+        notNull: true;
+        hasDefault: false;
+        isPrimaryKey: true;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: [string, ...string[]];
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    userId: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'user_id';
+        tableName: 'audit_log';
+        dataType: 'string';
+        columnType: 'PgText';
+        data: string;
+        driverParam: string;
+        notNull: false;
+        hasDefault: false;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: [string, ...string[]];
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    action: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'action';
+        tableName: 'audit_log';
+        dataType: 'string';
+        columnType: 'PgText';
+        data: string;
+        driverParam: string;
+        notNull: true;
+        hasDefault: false;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: [string, ...string[]];
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    entityType: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'entity_type';
+        tableName: 'audit_log';
+        dataType: 'string';
+        columnType: 'PgText';
+        data: string;
+        driverParam: string;
+        notNull: true;
+        hasDefault: false;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: [string, ...string[]];
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    entityId: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'entity_id';
+        tableName: 'audit_log';
+        dataType: 'string';
+        columnType: 'PgText';
+        data: string;
+        driverParam: string;
+        notNull: true;
+        hasDefault: false;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: [string, ...string[]];
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    oldValue: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'old_value';
+        tableName: 'audit_log';
+        dataType: 'json';
+        columnType: 'PgJson';
+        data: unknown;
+        driverParam: unknown;
+        notNull: false;
+        hasDefault: false;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: undefined;
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    newValue: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'new_value';
+        tableName: 'audit_log';
+        dataType: 'json';
+        columnType: 'PgJson';
+        data: unknown;
+        driverParam: unknown;
+        notNull: false;
+        hasDefault: false;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: undefined;
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    metadata: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'metadata';
+        tableName: 'audit_log';
+        dataType: 'json';
+        columnType: 'PgJson';
+        data: unknown;
+        driverParam: unknown;
+        notNull: false;
+        hasDefault: false;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: undefined;
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+    createdAt: import('drizzle-orm/pg-core').PgColumn<
+      {
+        name: 'created_at';
+        tableName: 'audit_log';
+        dataType: 'date';
+        columnType: 'PgTimestamp';
+        data: Date;
+        driverParam: string;
+        notNull: true;
+        hasDefault: true;
+        isPrimaryKey: false;
+        isAutoincrement: false;
+        hasRuntimeDefault: false;
+        enumValues: undefined;
+        baseColumn: never;
+        identity: undefined;
+        generated: undefined;
+      },
+      {},
+      {}
+    >;
+  };
+  dialect: 'pg';
+}>;
+export declare const auditLogRelations: import('drizzle-orm').Relations<
+  'audit_log',
+  {
+    user: import('drizzle-orm').One<'user', false>;
+  }
+>;

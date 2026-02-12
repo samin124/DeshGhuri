@@ -1,34 +1,118 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router';
+import { lazy, Suspense, useState } from 'react';
+import { requireCustomerAccess } from '@/lib/auth/role-guard';
 
-export const Route = createFileRoute("/")({
+// Eager load above-fold components for better LCP
+import HeroSection from '@/components/homepage/hero-section';
+import FlashDeals from '@/components/homepage/flash-deals';
+import SpecialOffers from '@/components/homepage/special-offers';
+import { ListingDetailSheet } from '@/components/common/listing-detail-sheet';
+
+// Lazy load below-fold components for better performance
+const TrendingListings = lazy(() => import('@/components/homepage/trending-listings'));
+const BrowseCategories = lazy(() => import('@/components/homepage/browse-categories'));
+const FeaturedDestinations = lazy(() => import('@/components/homepage/featured-destinations'));
+const PopularServices = lazy(() => import('@/components/homepage/popular-services'));
+const SeasonalPackages = lazy(() => import('@/components/homepage/seasonal-packages'));
+const TestimonialsSection = lazy(() => import('@/components/homepage/testimonials'));
+const BlogPreview = lazy(() => import('@/components/homepage/blog-preview'));
+const FAQSection = lazy(() => import('@/components/homepage/faq-section'));
+const NewsletterCTA = lazy(() => import('@/components/homepage/newsletter-cta'));
+
+export const Route = createFileRoute('/')({
+  beforeLoad: async ({ location }) => {
+    await requireCustomerAccess(location.pathname);
+  },
   component: HomeComponent,
+  head: () => ({
+    meta: [
+      {
+        title: 'DeshGhuri - Your Trusted Travel Marketplace in Bangladesh',
+      },
+      {
+        name: 'description',
+        content:
+          'Book hotels, tours, and experiences in Bangladesh with escrow protection, group discounts up to 40%, and verified sellers. Secure payment, price lock guarantee, and split payment options available.',
+      },
+      {
+        name: 'keywords',
+        content:
+          "Bangladesh travel, Cox's Bazar, Sundarbans, group booking, travel marketplace, escrow payment, verified sellers, tour packages, hotels Bangladesh",
+      },
+    ],
+  }),
 });
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
-
-function HomeComponent() {
-  return (
-    <div className="container mx-auto max-w-3xl px-4 py-2">
-      <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-      <div className="grid gap-6">
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">API Status</h2>
-        </section>
+const SectionSkeleton = () => (
+  <div className="container mx-auto py-12 px-4">
+    <div className="animate-pulse space-y-4">
+      <div className="h-8 w-64 rounded bg-muted"></div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-64 rounded bg-muted"></div>
+        ))}
       </div>
     </div>
+  </div>
+);
+
+function HomeComponent() {
+  const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const handleListingClick = (listingId: string) => {
+    setSelectedListingId(listingId);
+    setSheetOpen(true);
+  };
+
+  return (
+    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden">
+      {/* Above fold - eager load for better LCP */}
+      <HeroSection />
+      <FlashDeals onListingClick={handleListingClick} />
+      <SpecialOffers onListingClick={handleListingClick} />
+
+      {/* Below fold - lazy load with Suspense boundaries */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <TrendingListings onListingClick={handleListingClick} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <BrowseCategories />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <FeaturedDestinations />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <PopularServices onListingClick={handleListingClick} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <SeasonalPackages onListingClick={handleListingClick} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <TestimonialsSection />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <BlogPreview />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <FAQSection />
+      </Suspense>
+
+      <NewsletterCTA />
+
+      {/* Listing Detail Sheet */}
+      <ListingDetailSheet
+        listingId={selectedListingId}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
+    </main>
   );
 }

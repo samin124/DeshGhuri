@@ -1,8 +1,8 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-import { getUser } from "@/functions/get-user";
+import { getUser } from '@/functions/get-user';
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,
   beforeLoad: async () => {
     const session = await getUser();
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/dashboard")({
   loader: async ({ context }) => {
     if (!context.session) {
       throw redirect({
-        to: "/login",
+        to: '/login',
       });
     }
   },

@@ -21,11 +21,17 @@
     "better-auth": "catalog:",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "dotenv": "catalog:",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "hono": "^4.8.2",
     "lucide-react": "^0.525.0",
     "next-themes": "^0.4.6",
     "react": "19.2.3",
+    "react-day-picker": "^9.13.0",
     "react-dom": "19.2.3",
+    "recharts": "^3.7.0",
     "shadcn": "^3.6.2",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.1",
@@ -43,8 +49,14 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.0.4",
     "jsdom": "^26.0.0",
+    "msw": "^2.12.8",
     "typescript": "catalog:",
     "vite": "^7.0.2",
     "web-vitals": "^5.0.3"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
