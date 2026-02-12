@@ -32,7 +32,12 @@ async function checkListings() {
       .where(eq(listing.sellerId, sellerId))
       .limit(5);
 
-    console.log('\n📦 Listings with seller ID from auth (', sellerId, '):', listingsFromAuth.length);
+    console.log(
+      '\n📦 Listings with seller ID from auth (',
+      sellerId,
+      '):',
+      listingsFromAuth.length
+    );
     if (listingsFromAuth.length > 0) {
       listingsFromAuth.forEach((l, i) => {
         console.log(`${i + 1}. ${l.title} - Seller ID: ${l.sellerId}`);
@@ -47,7 +52,12 @@ async function checkListings() {
         .where(eq(listing.sellerId, sellerRecord[0].userId))
         .limit(5);
 
-      console.log('\n📦 Listings with seller.userId (', sellerRecord[0].userId, '):', listingsByUserId.length);
+      console.log(
+        '\n📦 Listings with seller.userId (',
+        sellerRecord[0].userId,
+        '):',
+        listingsByUserId.length
+      );
       if (listingsByUserId.length > 0) {
         listingsByUserId.forEach((l, i) => {
           console.log(`${i + 1}. ${l.title} - Seller ID: ${l.sellerId}`);

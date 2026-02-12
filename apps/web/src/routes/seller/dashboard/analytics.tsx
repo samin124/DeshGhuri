@@ -58,7 +58,10 @@ function SellerAnalytics() {
         ) : (
           <TrendingDown className="mr-1 h-4 w-4" />
         )}
-        <span>{value > 0 ? '+' : ''}{value.toFixed(1)}%</span>
+        <span>
+          {value > 0 ? '+' : ''}
+          {value.toFixed(1)}%
+        </span>
       </div>
     );
   };
@@ -82,14 +85,9 @@ function SellerAnalytics() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-          <p className="text-muted-foreground">
-            Track your performance and trends
-          </p>
+          <p className="text-muted-foreground">Track your performance and trends</p>
         </div>
-        <Select
-          value={period}
-          onValueChange={(value) => setPeriod(value as Period)}
-        >
+        <Select value={period} onValueChange={(value) => setPeriod(value as Period)}>
           <SelectTrigger className="w-32">
             <SelectValue />
           </SelectTrigger>
@@ -125,9 +123,7 @@ function SellerAnalytics() {
                 <Eye className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {data?.totalViews.toLocaleString() || 0}
-                </div>
+                <div className="text-2xl font-bold">{data?.totalViews.toLocaleString() || 0}</div>
                 {data && renderTrend(data.viewsChange)}
               </CardContent>
             </Card>
@@ -164,9 +160,7 @@ function SellerAnalytics() {
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {data?.conversionRate.toFixed(1) || 0}%
-                </div>
+                <div className="text-2xl font-bold">{data?.conversionRate.toFixed(1) || 0}%</div>
                 {data && renderTrend(data.conversionChange)}
               </CardContent>
             </Card>
@@ -274,18 +268,14 @@ function SellerAnalytics() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold">
-                      ৳{parseFloat(listing.revenue).toLocaleString()}
-                    </div>
+                    <div className="font-bold">৳{parseFloat(listing.revenue).toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">Revenue</div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-8 text-center text-muted-foreground">
-              No data available
-            </div>
+            <div className="py-8 text-center text-muted-foreground">No data available</div>
           )}
         </CardContent>
       </Card>

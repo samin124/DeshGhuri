@@ -31,8 +31,6 @@ export const Route = createFileRoute('/seller/verification-status')({
   validateSearch: searchSchema,
 });
 
-
-
 const statusConfig = {
   pending: {
     icon: Clock,
@@ -145,10 +143,10 @@ function RouteComponent() {
 
         if (result.data) {
           setSellerData(result.data.seller);
-          
+
           // Group documents by type and show only the latest one of each type
           const uniqueDocuments = result.data.documents.reduce((acc: SellerDocument[], doc) => {
-            const existingDocIndex = acc.findIndex(d => d.documentType === doc.documentType);
+            const existingDocIndex = acc.findIndex((d) => d.documentType === doc.documentType);
             if (existingDocIndex === -1) {
               acc.push(doc);
             } else {
@@ -159,10 +157,12 @@ function RouteComponent() {
             }
             return acc;
           }, []);
-          
+
           // Sort by upload date (newest first)
-          uniqueDocuments.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
-          
+          uniqueDocuments.sort(
+            (a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+          );
+
           setDocuments(uniqueDocuments);
           setTimeline(result.data.timeline);
         }
@@ -232,7 +232,12 @@ function RouteComponent() {
         <Card className="mb-6">
           <CardContent className="p-6 md:p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-              <div className={cn('w-16 h-16 rounded-full flex items-center justify-center', config.bgColor)}>
+              <div
+                className={cn(
+                  'w-16 h-16 rounded-full flex items-center justify-center',
+                  config.bgColor
+                )}
+              >
                 <StatusIcon className={cn('h-8 w-8', config.color)} />
               </div>
               <div className="flex-1">
@@ -259,11 +264,14 @@ function RouteComponent() {
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Your application was not approved. Please review document status below and resubmit the required documents.
+                    Your application was not approved. Please review document status below and
+                    resubmit the required documents.
                   </AlertDescription>
                 </Alert>
                 <Link to="/seller/onboarding">
-                  <Button variant="outline" className="w-full sm:w-auto mt-4">Resubmit Application</Button>
+                  <Button variant="outline" className="w-full sm:w-auto mt-4">
+                    Resubmit Application
+                  </Button>
                 </Link>
               </div>
             )}
@@ -273,11 +281,14 @@ function RouteComponent() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Please upload missing or rejected documents to continue with the verification process.
+                    Please upload missing or rejected documents to continue with the verification
+                    process.
                   </AlertDescription>
                 </Alert>
                 <Link to="/seller/onboarding">
-                  <Button variant="outline" className="w-full sm:w-auto mt-4">Complete Application</Button>
+                  <Button variant="outline" className="w-full sm:w-auto mt-4">
+                    Complete Application
+                  </Button>
                 </Link>
               </div>
             )}
@@ -287,11 +298,14 @@ function RouteComponent() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Please upload the missing or rejected documents to continue with the verification process.
+                    Please upload the missing or rejected documents to continue with the
+                    verification process.
                   </AlertDescription>
                 </Alert>
                 <Link to="/seller/onboarding">
-                  <Button variant="outline" className="w-full sm:w-auto mt-4">Complete Application</Button>
+                  <Button variant="outline" className="w-full sm:w-auto mt-4">
+                    Complete Application
+                  </Button>
                 </Link>
               </div>
             )}
@@ -323,12 +337,19 @@ function RouteComponent() {
                               <div className="flex items-center gap-2 mb-1">
                                 <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                                 <h4 className="font-medium truncate">
-                                  {documentTypeLabels[doc.documentType as keyof typeof documentTypeLabels]}
+                                  {
+                                    documentTypeLabels[
+                                      doc.documentType as keyof typeof documentTypeLabels
+                                    ]
+                                  }
                                 </h4>
                               </div>
-                              <p className="text-sm text-muted-foreground truncate">{doc.fileName}</p>
+                              <p className="text-sm text-muted-foreground truncate">
+                                {doc.fileName}
+                              </p>
                               <p className="text-xs text-muted-foreground">
-                                {formatFileSize(doc.fileSize)} • Uploaded {formatDate(doc.uploadedAt)}
+                                {formatFileSize(doc.fileSize)} • Uploaded{' '}
+                                {formatDate(doc.uploadedAt)}
                               </p>
                               {doc.rejectionReason && (
                                 <div className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -339,15 +360,17 @@ function RouteComponent() {
                             </div>
                             <Badge
                               variant="secondary"
-                              className={cn('flex items-center gap-1', docConfig.bgColor, docConfig.color)}
+                              className={cn(
+                                'flex items-center gap-1',
+                                docConfig.bgColor,
+                                docConfig.color
+                              )}
                             >
                               <DocIcon className="h-3 w-3" />
                               {docConfig.label}
                             </Badge>
                           </div>
-                          {index < documents.length - 1 && (
-                            <Separator className="mt-4" />
-                          )}
+                          {index < documents.length - 1 && <Separator className="mt-4" />}
                         </div>
                       );
                     })

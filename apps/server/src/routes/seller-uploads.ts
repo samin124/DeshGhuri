@@ -18,9 +18,13 @@ app.post('/upload-image', async (c) => {
     // Check if Supabase Storage is configured
     if (!isStorageConfigured) {
       console.log('❌ Supabase Storage not configured');
-      return c.json({
-        error: 'File upload service not configured. Please contact administrator to configure Supabase Storage.'
-      }, 503);
+      return c.json(
+        {
+          error:
+            'File upload service not configured. Please contact administrator to configure Supabase Storage.',
+        },
+        503
+      );
     }
 
     const formData = await c.req.formData();
@@ -48,7 +52,10 @@ app.post('/upload-image', async (c) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       console.log('❌ Invalid file type:', file.type);
-      return c.json({ error: 'Invalid file type. Only JPG, PNG, and WebP images are allowed' }, 400);
+      return c.json(
+        { error: 'Invalid file type. Only JPG, PNG, and WebP images are allowed' },
+        400
+      );
     }
 
     console.log('⏳ Converting file to ArrayBuffer...');
@@ -67,12 +74,10 @@ app.post('/upload-image', async (c) => {
 
     // Upload directly to Supabase Storage
     const BUCKET_NAME = env.SUPABASE_STORAGE_BUCKET;
-    const { data, error } = await storageClient
-      .from(BUCKET_NAME)
-      .upload(storageKey, buffer, {
-        contentType: file.type,
-        upsert: false,
-      });
+    const { error } = await storageClient.from(BUCKET_NAME).upload(storageKey, buffer, {
+      contentType: file.type,
+      upsert: false,
+    });
 
     if (error) {
       console.error('❌ Upload error:', error);
@@ -93,19 +98,25 @@ app.post('/upload-image', async (c) => {
 
     console.log('🔗 Signed URL generated');
 
-    return c.json({
-      url: signedData.signedUrl,
-      key: storageKey,
-      size: file.size,
-      type: file.type,
-    }, 200);
+    return c.json(
+      {
+        url: signedData.signedUrl,
+        key: storageKey,
+        size: file.size,
+        type: file.type,
+      },
+      200
+    );
   } catch (error) {
     console.error('Upload image error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return c.json({
-      error: 'Failed to upload image',
-      details: errorMessage
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to upload image',
+        details: errorMessage,
+      },
+      500
+    );
   }
 });
 
@@ -117,9 +128,13 @@ app.post('/documents/upload', async (c) => {
     // Check if Supabase Storage is configured
     if (!isStorageConfigured) {
       console.log('❌ Supabase Storage not configured');
-      return c.json({
-        error: 'File upload service not configured. Please contact administrator to configure Supabase Storage.'
-      }, 503);
+      return c.json(
+        {
+          error:
+            'File upload service not configured. Please contact administrator to configure Supabase Storage.',
+        },
+        503
+      );
     }
 
     const formData = await c.req.formData();
@@ -132,7 +147,7 @@ app.post('/documents/upload', async (c) => {
       fileSize: file?.size,
       fileType: file?.type,
       sellerId,
-      documentType
+      documentType,
     });
 
     if (!file || !sellerId || !documentType) {
@@ -166,10 +181,13 @@ app.post('/documents/upload', async (c) => {
 
     if (!existingSeller) {
       console.log('❌ Seller not found:', sellerId);
-      return c.json({
-        error: 'Seller not found. Please restart the onboarding process.',
-        code: 'SELLER_NOT_FOUND'
-      }, 404);
+      return c.json(
+        {
+          error: 'Seller not found. Please restart the onboarding process.',
+          code: 'SELLER_NOT_FOUND',
+        },
+        404
+      );
     }
     console.log('✅ Seller verified:', existingSeller.id);
 
@@ -183,7 +201,7 @@ app.post('/documents/upload', async (c) => {
     });
 
     let documentId: string;
-    let uploadResult: any;
+    let uploadResult: { url: string; storageKey: string };
 
     if (existingDocument) {
       console.log('📄 Existing document found, updating:', existingDocument.id);
@@ -249,19 +267,25 @@ app.post('/documents/upload', async (c) => {
       console.log('✅ Database save successful');
     }
 
-    return c.json({
-      documentId,
-      url: uploadResult.url,
-      fileName: file.name,
-      fileSize: file.size,
-    }, 201);
+    return c.json(
+      {
+        documentId,
+        url: uploadResult.url,
+        fileName: file.name,
+        fileSize: file.size,
+      },
+      201
+    );
   } catch (error) {
     console.error('Upload document error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return c.json({
-      error: 'Failed to upload document',
-      details: errorMessage
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to upload document',
+        details: errorMessage,
+      },
+      500
+    );
   }
 });
 
@@ -316,11 +340,14 @@ app.patch('/documents/:documentId', async (c) => {
       })
       .where(eq(sellerDocument.id, documentId));
 
-    return c.json({
-      documentId,
-      url: uploadResult.url,
-      status: 'pending',
-    }, 200);
+    return c.json(
+      {
+        documentId,
+        url: uploadResult.url,
+        status: 'pending',
+      },
+      200
+    );
   } catch (error) {
     console.error('Update document error:', error);
     return c.json({ error: 'Failed to update document' }, 500);

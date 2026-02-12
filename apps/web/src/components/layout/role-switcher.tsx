@@ -1,6 +1,6 @@
-import { Shield, Store, User, ChevronDown } from "lucide-react";
-import { useNavigate, useLocation } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { Shield, Store, User, ChevronDown } from 'lucide-react';
+import { useNavigate, useLocation } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,8 +9,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuGroup,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface RolesResponse {
   roles: string[];
@@ -131,9 +131,7 @@ export function RoleSwitcher() {
           <DropdownMenuLabel>
             <div className="flex flex-col">
               <span className="font-medium">Switch Context</span>
-              <span className="text-xs text-muted-foreground font-normal">
-                Choose your role
-              </span>
+              <span className="text-xs text-muted-foreground font-normal">Choose your role</span>
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
@@ -158,9 +156,7 @@ export function RoleSwitcher() {
                       <span className="ml-2 text-xs text-muted-foreground">(Current)</span>
                     )}
                   </span>
-                  <span className="text-xs text-muted-foreground">
-                    {roleOption.description}
-                  </span>
+                  <span className="text-xs text-muted-foreground">{roleOption.description}</span>
                 </div>
               </div>
             </DropdownMenuItem>

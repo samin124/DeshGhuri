@@ -6,12 +6,7 @@ import { useAuditLogs, useAuditLogStats, exportAuditLogs } from '@/hooks/use-adm
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export const Route = createFileRoute('/admin/_admin/audit-logs/')({
   component: RouteComponent,
@@ -101,11 +96,7 @@ function RouteComponent() {
     {
       id: 'action',
       header: 'Action',
-      accessor: (log) => (
-        <Badge className={getActionColor(log.action)}>
-          {log.action}
-        </Badge>
-      ),
+      accessor: (log) => <Badge className={getActionColor(log.action)}>{log.action}</Badge>,
     },
     {
       id: 'entityType',

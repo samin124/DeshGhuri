@@ -1,11 +1,6 @@
 import { BadgeCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 interface VerifiedBadgeProps {
@@ -14,11 +9,7 @@ interface VerifiedBadgeProps {
   className?: string;
 }
 
-export function VerifiedBadge({
-  size = 'md',
-  showText = true,
-  className,
-}: VerifiedBadgeProps) {
+export function VerifiedBadge({ size = 'md', showText = true, className }: VerifiedBadgeProps) {
   const sizeClasses = {
     sm: 'h-3 w-3',
     md: 'h-4 w-4',
@@ -43,9 +34,7 @@ export function VerifiedBadge({
             )}
           >
             <BadgeCheck className={cn(sizeClasses[size], 'flex-shrink-0')} />
-            {showText && (
-              <span className={textSizeClasses[size]}>Verified</span>
-            )}
+            {showText && <span className={textSizeClasses[size]}>Verified</span>}
           </Badge>
         </TooltipTrigger>
         <TooltipContent>

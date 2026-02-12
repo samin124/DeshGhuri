@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import * as schema from './schema';
 import { customAlphabet } from 'nanoid';
 

@@ -13,7 +13,7 @@ export interface FAQ {
   id: string;
   question: string;
   answer: string;
-  category: "General" | "Booking" | "Payment" | "Refunds" | "Escrow" | "Groups";
+  category: 'General' | 'Booking' | 'Payment' | 'Refunds' | 'Escrow' | 'Groups';
 }
 
 export interface Partner {

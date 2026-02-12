@@ -7,6 +7,7 @@ This document explains how the "View All Deals" button issue was fixed.
 ## Problem Reported
 
 When clicking "View All Deals" in the Flash Deals section:
+
 - ❌ Irrelevant packages (non-flash-deals) were appearing
 - ❌ Packages without flash sale badges were shown
 - ❌ No way to filter for only flash deals
@@ -18,6 +19,7 @@ When clicking "View All Deals" in the Flash Deals section:
 ### Original Implementation
 
 The "View All Deals" link was pointing to:
+
 ```typescript
 <Link to="/search" search={{ sort: 'newest' }}>
 ```
@@ -35,6 +37,7 @@ The "View All Deals" link was pointing to:
 **Added**: `flashDeals` query parameter to `/api/listings` endpoint
 
 **Code**:
+
 ```typescript
 const {
   // ... existing params
@@ -44,16 +47,12 @@ const {
 
 // ... in conditions
 if (flashDeals === 'true') {
-  conditions.push(
-    and(
-      eq(listing.isFlashDeal, true),
-      sql`${listing.flashDealEndsAt} > NOW()`
-    )!
-  );
+  conditions.push(and(eq(listing.isFlashDeal, true), sql`${listing.flashDealEndsAt} > NOW()`)!);
 }
 ```
 
 **What it does**:
+
 - Filters listings where `isFlashDeal = true`
 - Excludes expired flash deals (`flashDealEndsAt > NOW()`)
 - Returns only active flash deals
@@ -67,6 +66,7 @@ if (flashDeals === 'true') {
 **File**: `apps/web/src/routes/search.tsx`
 
 **Added**:
+
 - `flashDeals?: string` to `SearchParams` type
 - Support in route validation
 - Support in `useListings` hook call
@@ -76,7 +76,9 @@ if (flashDeals === 'true') {
 **File**: `apps/web/src/routes/search.tsx`
 
 **Added**:
+
 1. **Flash Deals Quick Filter Button**
+
 ```typescript
 <Button
   variant={search.flashDeals === "true" ? "default" : "outline"}
@@ -95,6 +97,7 @@ if (flashDeals === 'true') {
 ```
 
 2. **Special Page Title for Flash Deals**
+
 ```typescript
 {search.flashDeals === "true" ? (
   <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
@@ -108,6 +111,7 @@ if (flashDeals === 'true') {
 **File**: `apps/web/src/components/homepage/flash-deals.tsx`
 
 **Changed**:
+
 ```typescript
 // Before
 <Link to="/search" search={{ sort: 'newest' }}>
@@ -153,18 +157,23 @@ if (flashDeals === 'true') {
 ### When Flash Deals Filter is Active
 
 **Page Title**:
+
 ```
 ⚡ Flash Deals
 ```
+
 (Orange-to-red gradient text)
 
 **Filter Button**:
+
 ```
 [⚡ Flash Deals]
 ```
+
 (Orange-to-red gradient background, white text)
 
 **All Cards Show**:
+
 - Orange "FLASH SALE X% OFF" badge
 - Countdown timer
 - Discounted price
@@ -179,6 +188,7 @@ if (flashDeals === 'true') {
 **File**: `apps/server/src/scripts/test-flash-deals-filter.ts`
 
 **Results**:
+
 ```
 ✅ Filter applied successfully
    Found 3 flash deals
@@ -219,6 +229,7 @@ Test Results:
 **Returns**: Only active flash deals
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -234,7 +245,9 @@ Test Results:
       // ... other fields
     }
   ],
-  "pagination": { /* ... */ }
+  "pagination": {
+    /* ... */
+  }
 }
 ```
 
@@ -245,6 +258,7 @@ Test Results:
 ### Before Fix
 
 **User clicks "View All Deals"**:
+
 - Goes to `/search?sort=newest`
 - Shows ALL listings (49 total)
 - Mix of flash deals and regular listings
@@ -254,6 +268,7 @@ Test Results:
 ### After Fix
 
 **User clicks "View All Deals"**:
+
 - Goes to `/search?flashDeals=true&sort=newest`
 - Shows ONLY flash deals (3 total)
 - All packages have flash sale badges
@@ -265,11 +280,13 @@ Test Results:
 ## Files Modified
 
 ### Backend
+
 1. `apps/server/src/routes/listings.ts`
    - Added `flashDeals` query parameter support
    - Added filtering logic for flash deals
 
 ### Frontend
+
 2. `apps/web/src/lib/api/listings.ts`
    - Added `flashDeals` to `ListingFilters` type
 
@@ -283,6 +300,7 @@ Test Results:
    - Updated "View All Deals" link to include filter
 
 ### Testing
+
 5. `apps/server/src/scripts/test-flash-deals-filter.ts`
    - New comprehensive test script
 
@@ -295,6 +313,7 @@ Test Results:
 Flash deals filter works with all other filters:
 
 **Examples**:
+
 - Flash deals in Cox's Bazar: `?flashDeals=true&location=Cox's Bazar`
 - Flash deals (hotels only): `?flashDeals=true&category=hotel`
 - Flash deals (high rated): `?flashDeals=true&rating=4`
@@ -303,6 +322,7 @@ Flash deals filter works with all other filters:
 ### Quick Filter Button
 
 Users can toggle flash deals filter on/off:
+
 - Click button → Shows only flash deals
 - Click again → Shows all listings
 - Works with URL back/forward navigation
@@ -312,12 +332,14 @@ Users can toggle flash deals filter on/off:
 ## Performance Considerations
 
 **Query Optimization**:
+
 - Uses existing database indexes
 - No additional joins required
 - Simple boolean + timestamp check
 - Fast execution time
 
 **Caching**:
+
 - Frontend uses React Query
 - 5-minute cache for flash deals data
 - Automatic refetch on navigation
@@ -327,6 +349,7 @@ Users can toggle flash deals filter on/off:
 ## Future Enhancements
 
 Potential improvements:
+
 - [ ] Flash deals badge on category pages
 - [ ] "Flash Deals" section in navigation menu
 - [ ] Email alerts for new flash deals
@@ -340,12 +363,14 @@ Potential improvements:
 **Problem**: "View All Deals" showed irrelevant packages without badges
 
 **Solution**:
+
 - ✅ Added flash deals filter to backend
 - ✅ Added flash deals support to frontend
 - ✅ Enhanced search page UI
 - ✅ Updated link to use filter
 
 **Result**:
+
 - ✅ "View All Deals" now shows ONLY flash deals
 - ✅ All packages have proper badges
 - ✅ Clear visual indicators

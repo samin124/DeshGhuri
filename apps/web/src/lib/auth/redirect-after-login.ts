@@ -42,9 +42,7 @@ interface RedirectOptions {
  * });
  * ```
  */
-export async function getPostLoginRedirect(
-  options: RedirectOptions = {}
-): Promise<string> {
+export async function getPostLoginRedirect(options: RedirectOptions = {}): Promise<string> {
   const { preferredDestination, defaultDestination = '/' } = options;
 
   try {
@@ -56,7 +54,7 @@ export async function getPostLoginRedirect(
       return defaultDestination;
     }
 
-    const data = await response.json();
+    const _data = await response.json();
     const { roles, primaryRole } = data;
 
     // If user requested specific destination, check if they have access
@@ -74,7 +72,6 @@ export async function getPostLoginRedirect(
     const destination = getRoleDefaultDestination(primaryRole || 'customer');
     console.log('✅ Redirecting based on primary role:', primaryRole, '→', destination);
     return destination;
-
   } catch (error) {
     console.error('Error determining post-login redirect:', error);
     return defaultDestination;
@@ -110,7 +107,7 @@ function getRoleDefaultDestination(role: string): string {
 function checkRouteAccess(path: string, roles: string[]): boolean {
   // Admin routes require admin or super_admin role
   if (path.startsWith('/admin')) {
-    return roles.some(r => r === 'admin' || r === 'super_admin');
+    return roles.some((r) => r === 'admin' || r === 'super_admin');
   }
 
   // Seller routes require seller role

@@ -1,18 +1,5 @@
 import { Hono } from 'hono';
-import {
-  db,
-  auditLog,
-  user,
-  eq,
-  sql,
-  like,
-  and,
-  or,
-  desc,
-  asc,
-  gte,
-  lte,
-} from '@DeshGhuri/db';
+import { db, auditLog, user, eq, sql, like, and, desc, asc, gte, lte } from '@DeshGhuri/db';
 
 const app = new Hono();
 
@@ -78,10 +65,7 @@ app.get('/', async (c) => {
       where: whereClause,
       limit,
       offset,
-      orderBy:
-        sortOrder === 'asc'
-          ? [asc(auditLog.createdAt)]
-          : [desc(auditLog.createdAt)],
+      orderBy: sortOrder === 'asc' ? [asc(auditLog.createdAt)] : [desc(auditLog.createdAt)],
       with: {
         user: {
           columns: {
@@ -115,9 +99,7 @@ app.get('/', async (c) => {
 app.get('/stats', async (c) => {
   try {
     // Get total audit logs count
-    const totalResult = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(auditLog);
+    const totalResult = await db.select({ count: sql<number>`count(*)::int` }).from(auditLog);
     const total = totalResult[0]?.count || 0;
 
     // Get logs from last 24 hours
@@ -318,9 +300,7 @@ app.get('/export', async (c) => {
 
     const csvContent = [
       headers.join(','),
-      ...rows.map((row) =>
-        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-      ),
+      ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
     ].join('\n');
 
     // Set headers for CSV download

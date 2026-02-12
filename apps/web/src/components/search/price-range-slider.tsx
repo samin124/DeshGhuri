@@ -1,7 +1,6 @@
-import { useMemo } from "react";
-import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 interface PriceRangeSliderProps {
   min: number;
@@ -18,7 +17,7 @@ export function PriceRangeSlider({
   max = 50000,
   value,
   onChange,
-  currency = "৳",
+  currency = '৳',
   step = 500,
   className,
 }: PriceRangeSliderProps) {
@@ -46,7 +45,7 @@ export function PriceRangeSlider({
   };
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn('space-y-4', className)}>
       <div className="space-y-1">
         <label className="text-sm font-medium">Price Range</label>
         <Slider
@@ -99,10 +98,12 @@ export function PriceRangeSlider({
 
       <div className="flex justify-between text-xs text-muted-foreground">
         <span>
-          {currency}{minValue.toLocaleString()}
+          {currency}
+          {minValue.toLocaleString()}
         </span>
         <span>
-          {currency}{maxValue.toLocaleString()}
+          {currency}
+          {maxValue.toLocaleString()}
         </span>
       </div>
     </div>

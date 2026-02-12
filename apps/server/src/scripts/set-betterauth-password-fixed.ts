@@ -1,5 +1,5 @@
 import { db } from '../../../../packages/db/src/index.js';
-import { account, user } from '../../../../packages/db/src/schema/auth.js';
+import { account } from '../../../../packages/db/src/schema/auth.js';
 import { seller } from '../../../../packages/db/src/schema/seller.js';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
@@ -47,12 +47,7 @@ console.log(`Hashed password (first 50 chars): ${hashedPassword.substring(0, 50)
 const result = await db
   .update(account)
   .set({ password: hashedPassword })
-  .where(
-    and(
-      eq(account.userId, sellerRecord.userId),
-      eq(account.providerId, 'credential')
-    )
-  )
+  .where(and(eq(account.userId, sellerRecord.userId), eq(account.providerId, 'credential')))
   .returning();
 
 console.log(`Updated ${result.length} account(s)`);

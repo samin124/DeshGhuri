@@ -26,9 +26,7 @@ export function Step2Pricing() {
       minParticipants: lastTier ? lastTier.maxParticipants + 1 : 5,
       maxParticipants: lastTier ? lastTier.maxParticipants + 5 : 10,
       discountPercentage: 10,
-      pricePerPerson: formData.basePrice
-        ? parseFloat(formData.basePrice) * 0.9
-        : 0,
+      pricePerPerson: formData.basePrice ? parseFloat(formData.basePrice) * 0.9 : 0,
     };
 
     updateFormData({
@@ -120,9 +118,7 @@ export function Step2Pricing() {
                 type="number"
                 min="1"
                 value={formData.minGuests || 1}
-                onChange={(e) =>
-                  updateFormData({ minGuests: parseInt(e.target.value) || 1 })
-                }
+                onChange={(e) => updateFormData({ minGuests: parseInt(e.target.value) || 1 })}
               />
             </div>
 
@@ -136,9 +132,7 @@ export function Step2Pricing() {
                 type="number"
                 min="1"
                 value={formData.maxGuests || 10}
-                onChange={(e) =>
-                  updateFormData({ maxGuests: parseInt(e.target.value) || 10 })
-                }
+                onChange={(e) => updateFormData({ maxGuests: parseInt(e.target.value) || 10 })}
               />
             </div>
 
@@ -150,13 +144,9 @@ export function Step2Pricing() {
                 type="number"
                 min="1"
                 value={formData.capacity || 10}
-                onChange={(e) =>
-                  updateFormData({ capacity: parseInt(e.target.value) || 10 })
-                }
+                onChange={(e) => updateFormData({ capacity: parseInt(e.target.value) || 10 })}
               />
-              <p className="text-xs text-muted-foreground">
-                Max inventory available
-              </p>
+              <p className="text-xs text-muted-foreground">Max inventory available</p>
             </div>
           </div>
         </CardContent>
@@ -184,9 +174,7 @@ export function Step2Pricing() {
             <Switch
               id="groupEligible"
               checked={formData.groupEligible || false}
-              onCheckedChange={(checked) =>
-                updateFormData({ groupEligible: checked })
-              }
+              onCheckedChange={(checked) => updateFormData({ groupEligible: checked })}
             />
           </div>
 
@@ -277,16 +265,13 @@ export function Step2Pricing() {
                       <p className="text-xs text-muted-foreground">
                         Price per person with discount:
                       </p>
-                      <p className="text-lg font-bold">
-                        ৳{tier.pricePerPerson.toLocaleString()}
-                      </p>
+                      <p className="text-lg font-bold">৳{tier.pricePerPerson.toLocaleString()}</p>
                     </div>
                   </CardContent>
                 </Card>
               ))}
 
-              {(!formData.groupPricingTiers ||
-                formData.groupPricingTiers.length === 0) && (
+              {(!formData.groupPricingTiers || formData.groupPricingTiers.length === 0) && (
                 <div className="rounded-lg border border-dashed p-8 text-center">
                   <p className="text-sm text-muted-foreground">
                     No pricing tiers yet. Click "Add Tier" to create one.

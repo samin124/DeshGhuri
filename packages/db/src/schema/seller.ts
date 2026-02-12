@@ -1,13 +1,5 @@
 import { relations } from 'drizzle-orm';
-import {
-  pgTable,
-  text,
-  timestamp,
-  json,
-  integer,
-  boolean,
-  index,
-} from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, json, integer, boolean, index } from 'drizzle-orm/pg-core';
 import { user } from './auth';
 
 export const seller = pgTable(
@@ -19,12 +11,14 @@ export const seller = pgTable(
     businessName: text('business_name').notNull(),
     category: text('category').notNull(), // 'agency' | 'hotel' | 'tour-operator'
     registrationNumber: text('registration_number').notNull(),
-    address: json('address').$type<{
-      street: string;
-      city: string;
-      district: string;
-      postalCode?: string;
-    }>().notNull(),
+    address: json('address')
+      .$type<{
+        street: string;
+        city: string;
+        district: string;
+        postalCode?: string;
+      }>()
+      .notNull(),
     contactPhone: text('contact_phone').notNull(),
     contactEmail: text('contact_email').notNull(),
     businessDescription: text('business_description'),

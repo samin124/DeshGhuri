@@ -8,19 +8,13 @@ export const sellerHandlers = [
   http.post(`${API_BASE_URL}/api/seller/register`, async ({ request }) => {
     await delay(500); // Simulate network delay
 
-    const body = await request.json() as { userId: string };
+    const body = (await request.json()) as { userId: string };
 
     if (!body.userId) {
-      return HttpResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
+      return HttpResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    return HttpResponse.json(
-      { sellerId: mockSeller.id },
-      { status: 201 }
-    );
+    return HttpResponse.json({ sellerId: mockSeller.id }, { status: 201 });
   }),
 
   // GET /api/seller/by-user/:userId
@@ -34,17 +28,14 @@ export const sellerHandlers = [
       return HttpResponse.json({ seller: null }, { status: 200 });
     }
 
-    return HttpResponse.json(
-      { seller: mockSeller },
-      { status: 200 }
-    );
+    return HttpResponse.json({ seller: mockSeller }, { status: 200 });
   }),
 
   // POST /api/seller/onboarding/complete
   http.post(`${API_BASE_URL}/api/seller/onboarding/complete`, async ({ request }) => {
     await delay(800);
 
-    const body = await request.json() as any;
+    const body = (await request.json()) as any;
 
     if (!body.sellerId || !body.businessInfo || !body.bankAccount) {
       return HttpResponse.json(
@@ -70,10 +61,7 @@ export const sellerHandlers = [
     const { sellerId } = params;
 
     if (sellerId !== mockSeller.id) {
-      return HttpResponse.json(
-        { error: 'Seller not found' },
-        { status: 404 }
-      );
+      return HttpResponse.json({ error: 'Seller not found' }, { status: 404 });
     }
 
     return HttpResponse.json(
@@ -97,18 +85,12 @@ export const sellerHandlers = [
     const documentType = formData.get('documentType') as string;
 
     if (!file || !sellerId || !documentType) {
-      return HttpResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return HttpResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // Simulate file size validation
     if (file.size > 25 * 1024 * 1024) {
-      return HttpResponse.json(
-        { error: 'File size exceeds 25MB limit' },
-        { status: 400 }
-      );
+      return HttpResponse.json({ error: 'File size exceeds 25MB limit' }, { status: 400 });
     }
 
     const mockDocument = {
@@ -130,10 +112,7 @@ export const sellerHandlers = [
     const file = formData.get('file') as File | null;
 
     if (!file) {
-      return HttpResponse.json(
-        { error: 'File is required' },
-        { status: 400 }
-      );
+      return HttpResponse.json({ error: 'File is required' }, { status: 400 });
     }
 
     return HttpResponse.json(

@@ -114,7 +114,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const currentPath = matches[matches.length - 1]?.pathname || '';
 
   // Get user from route context
-  const routeContext = matches.find((m) => m.context && 'session' in m.context)?.context as { session?: { user?: { id: string; name: string; email: string } } } | undefined;
+  const routeContext = matches.find((m) => m.context && 'session' in m.context)?.context as
+    | { session?: { user?: { id: string; name: string; email: string } } }
+    | undefined;
   const session = routeContext?.session;
   const user = session?.user;
 
@@ -140,24 +142,24 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-background-subtle">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
+          className="fixed inset-0 z-40 bg-foreground/75 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white dark:bg-gray-800 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-card transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex h-full flex-col">
           {/* Sidebar header */}
-          <div className="flex h-16 items-center justify-between px-4 border-b dark:border-gray-700">
+          <div className="flex h-16 items-center justify-between px-4 border-b">
             <Link to="/admin/dashboard" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <Store className="h-5 w-5" />
@@ -184,9 +186,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             {navigation.map((item) => {
               if (item.children) {
                 const isExpanded = expandedItems.includes(item.name);
-                const isActive = item.children.some((child) =>
-                  currentPath.startsWith(child.href)
-                );
+                const isActive = item.children.some((child) => currentPath.startsWith(child.href));
 
                 return (
                   <div key={item.name}>
@@ -195,7 +195,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                         isActive
                           ? 'bg-primary/10 text-primary'
-                          : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -203,9 +203,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         {item.name}
                       </div>
                       <ChevronDown
-                        className={`h-4 w-4 transition-transform ${
-                          isExpanded ? 'rotate-180' : ''
-                        }`}
+                        className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                       />
                     </button>
                     {isExpanded && (
@@ -217,7 +215,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                             className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
                               currentPath === child.href
                                 ? 'bg-primary/10 text-primary font-medium'
-                                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
+                                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                             }`}
                             onClick={() => setSidebarOpen(false)}
                           >
@@ -240,7 +238,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                   className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-primary/10 text-primary'
-                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -256,15 +254,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {/* User section */}
           <div className="p-4">
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
+              <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback>{getUserInitials(user?.name)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 overflow-hidden">
-                  <p className="truncate text-sm font-medium">{user?.name}</p>
-                  <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                    {user?.email}
-                  </p>
+                  <p className="truncate text-sm font-medium text-foreground">{user?.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
                 </div>
                 <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
@@ -290,7 +286,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top header */}
-        <header className="flex h-16 items-center justify-between border-b bg-white px-4 dark:bg-gray-800 dark:border-gray-700 lg:px-6">
+        <header className="flex h-16 items-center justify-between border-b bg-card px-4 lg:px-6">
           <Button
             variant="ghost"
             size="sm"
@@ -308,7 +304,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+        <main className="flex-1 overflow-y-auto bg-background-subtle">
           <div className="p-4 lg:p-6">
             <div className="mx-auto max-w-7xl">{children}</div>
           </div>

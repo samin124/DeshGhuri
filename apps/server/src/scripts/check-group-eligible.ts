@@ -15,7 +15,6 @@ async function checkGroupEligible() {
     });
 
     console.log('✅ Check complete!');
-
   } catch (error) {
     console.error('❌ Error:', error);
     throw error;

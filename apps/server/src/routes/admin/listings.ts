@@ -1,16 +1,5 @@
 import { Hono } from 'hono';
-import {
-  db,
-  listing,
-  seller,
-  LISTING_STATUSES,
-  eq,
-  sql,
-  and,
-  or,
-  desc,
-  asc,
-} from '@DeshGhuri/db';
+import { db, listing, seller, LISTING_STATUSES, eq, sql, and, or, desc, asc } from '@DeshGhuri/db';
 import { z } from 'zod';
 import { createAuditLog, getRequestMetadata } from '../../lib/audit-log';
 
@@ -71,14 +60,18 @@ app.get('/review-queue', async (c) => {
     // Calculate days waiting
     const enrichedListings = listings.map(({ listing: l, seller: s }) => ({
       ...l,
-      seller: s ? {
-        id: s.id,
-        name: s.businessName,
-        verificationStatus: s.verificationStatus,
-        rating: s.rating,
-      } : undefined,
-      daysWaiting: Math.floor((Date.now() - new Date(l.createdAt).getTime()) / (1000 * 60 * 60 * 24)),
-      priority: (s?.rating && Number(s.rating) > 4.5) ? 'high' : 'normal',
+      seller: s
+        ? {
+            id: s.id,
+            name: s.businessName,
+            verificationStatus: s.verificationStatus,
+            rating: s.rating,
+          }
+        : undefined,
+      daysWaiting: Math.floor(
+        (Date.now() - new Date(l.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+      ),
+      priority: s?.rating && Number(s.rating) > 4.5 ? 'high' : 'normal',
     }));
 
     return c.json({
@@ -189,7 +182,7 @@ app.get('/', async (c) => {
 
     return c.json({
       success: true,
-      data: listings.map(l => ({
+      data: listings.map((l) => ({
         ...l.listing,
         seller: l.seller,
       })),
@@ -268,10 +261,7 @@ app.patch('/:id/review', async (c) => {
     const { action, rejectionReason, feedback, featured } = reviewSchema.parse(body);
 
     if (action === 'reject' && !rejectionReason) {
-      return c.json(
-        { error: 'Rejection reason is required when rejecting a listing' },
-        400
-      );
+      return c.json({ error: 'Rejection reason is required when rejecting a listing' }, 400);
     }
 
     // Get current listing
@@ -301,7 +291,6 @@ app.patch('/:id/review', async (c) => {
         .where(eq(listing.id, listingId));
 
       // TODO: Send approval email to seller
-
     } else {
       await db
         .update(listing)

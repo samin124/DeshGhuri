@@ -1,17 +1,17 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 
 const AMENITIES = [
-  { id: "wifi", label: "Free WiFi", icon: "📶" },
-  { id: "breakfast", label: "Breakfast Included", icon: "🍳" },
-  { id: "parking", label: "Free Parking", icon: "🅿️" },
-  { id: "pool", label: "Swimming Pool", icon: "🏊" },
-  { id: "gym", label: "Fitness Center", icon: "💪" },
-  { id: "spa", label: "Spa & Wellness", icon: "💆" },
-  { id: "restaurant", label: "Restaurant", icon: "🍽️" },
-  { id: "ac", label: "Air Conditioning", icon: "❄️" },
-  { id: "beach", label: "Beach Access", icon: "🏖️" },
-  { id: "pet", label: "Pet Friendly", icon: "🐕" },
+  { id: 'wifi', label: 'Free WiFi', icon: '📶' },
+  { id: 'breakfast', label: 'Breakfast Included', icon: '🍳' },
+  { id: 'parking', label: 'Free Parking', icon: '🅿️' },
+  { id: 'pool', label: 'Swimming Pool', icon: '🏊' },
+  { id: 'gym', label: 'Fitness Center', icon: '💪' },
+  { id: 'spa', label: 'Spa & Wellness', icon: '💆' },
+  { id: 'restaurant', label: 'Restaurant', icon: '🍽️' },
+  { id: 'ac', label: 'Air Conditioning', icon: '❄️' },
+  { id: 'beach', label: 'Beach Access', icon: '🏖️' },
+  { id: 'pet', label: 'Pet Friendly', icon: '🐕' },
 ] as const;
 
 interface AmenitiesFilterProps {
@@ -20,11 +20,7 @@ interface AmenitiesFilterProps {
   className?: string;
 }
 
-export function AmenitiesFilter({
-  selectedAmenities,
-  onChange,
-  className,
-}: AmenitiesFilterProps) {
+export function AmenitiesFilter({ selectedAmenities, onChange, className }: AmenitiesFilterProps) {
   const toggleAmenity = (amenityId: string) => {
     const updated = selectedAmenities.includes(amenityId)
       ? selectedAmenities.filter((a) => a !== amenityId)
@@ -34,7 +30,7 @@ export function AmenitiesFilter({
   };
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn('space-y-3', className)}>
       <label className="text-sm font-medium">Amenities</label>
       <div className="grid grid-cols-2 gap-3">
         {AMENITIES.map((amenity) => (

@@ -18,24 +18,24 @@ async function verifyData() {
     console.log(`✅ Active Listings: ${activeListings.length}`);
 
     // Check flash deals
-    const flashDeals = await db.select().from(listing).where(
-      and(
-        eq(listing.isFlashDeal, true),
-        sql`${listing.flashDealEndsAt} > NOW()`
-      )
-    );
+    const flashDeals = await db
+      .select()
+      .from(listing)
+      .where(and(eq(listing.isFlashDeal, true), sql`${listing.flashDealEndsAt} > NOW()`));
     console.log(`⚡ Active Flash Deals: ${flashDeals.length}`);
 
     // Check promo codes
-    const promoCodeListings = await db.select().from(listing).where(
-      sql`${listing.promoCode} IS NOT NULL`
-    );
+    const promoCodeListings = await db
+      .select()
+      .from(listing)
+      .where(sql`${listing.promoCode} IS NOT NULL`);
     console.log(`🏷️  Listings with Promo Codes: ${promoCodeListings.length}`);
 
     // Check discounts
-    const discountedListings = await db.select().from(listing).where(
-      sql`${listing.discountPercent} IS NOT NULL`
-    );
+    const discountedListings = await db
+      .select()
+      .from(listing)
+      .where(sql`${listing.discountPercent} IS NOT NULL`);
     console.log(`💰 Listings with Discounts: ${discountedListings.length}`);
 
     // Check featured & trending
@@ -64,7 +64,6 @@ async function verifyData() {
     }
 
     console.log('\n✨ Data verification complete!');
-
   } catch (error) {
     console.error('❌ Verification error:', error);
     throw error;

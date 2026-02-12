@@ -73,7 +73,6 @@ async function testFlashDealsAPI() {
     } else {
       console.log('\n⚠️  Some issues detected. Check the output above.');
     }
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     throw error;

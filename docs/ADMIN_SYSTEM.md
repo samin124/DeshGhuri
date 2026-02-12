@@ -21,6 +21,7 @@ The DeshGhuri admin system provides a secure, professional admin panel for manag
 **URL**: `http://localhost:3001/admin`
 
 **Flow**:
+
 1. Admin visits `/admin`
 2. If already logged in as admin → Redirects to `/admin/dashboard`
 3. If not logged in → Shows professional admin login page
@@ -41,11 +42,13 @@ The DeshGhuri admin system provides a secure, professional admin panel for manag
 ### 3. Access Control
 
 **Backend Protection** (Primary):
+
 - All `/api/admin/*` routes protected by `requireAdmin` middleware
 - Middleware checks for `admin` or `super_admin` role
 - Returns 403 Forbidden if user lacks admin role
 
 **Frontend Protection**:
+
 - `/admin/index.tsx` verifies admin role after login
 - `/admin/_admin.tsx` route guard checks authentication
 - Non-admin users cannot access admin dashboard
@@ -61,6 +64,7 @@ The DeshGhuri admin system provides a secure, professional admin panel for manag
    - Sign up with email and password
 
 2. **Edit the script**:
+
    ```typescript
    // In create-admin.ts
    const EMAIL_TO_PROMOTE = 'admin@example.com'; // Your email here
@@ -68,6 +72,7 @@ The DeshGhuri admin system provides a secure, professional admin panel for manag
    ```
 
 3. **Run the script**:
+
    ```bash
    bun run create-admin.ts
    ```
@@ -79,11 +84,13 @@ The DeshGhuri admin system provides a secure, professional admin panel for manag
 ### Method 2: Direct SQL
 
 1. **Find your user ID**:
+
    ```sql
    SELECT id, email, name FROM "user" WHERE email = 'your-email@example.com';
    ```
 
 2. **Grant admin role**:
+
    ```sql
    INSERT INTO user_role (id, user_id, role, created_at)
    VALUES (
@@ -109,11 +116,13 @@ See `create-admin.sql` for complete SQL script with all commands.
 ## Admin Roles
 
 ### `admin`
+
 - Full access to admin panel
 - Can manage users, sellers, listings, bookings, etc.
 - Cannot manage other admins
 
 ### `super_admin`
+
 - All permissions of `admin`
 - Can manage other admin users
 - Additional system-level permissions
@@ -124,20 +133,20 @@ See `create-admin.sql` for complete SQL script with all commands.
 
 Once logged in, admins can access:
 
-| Route | Description |
-|-------|-------------|
-| `/admin/dashboard` | Overview with key metrics and stats |
-| `/admin/users` | User management |
-| `/admin/sellers` | Seller management |
-| `/admin/sellers/verification-queue` | Review pending seller applications |
-| `/admin/bookings` | Booking management |
-| `/admin/listings` | Listing management |
-| `/admin/transactions` | Transaction monitoring |
-| `/admin/content` | Content management |
-| `/admin/promotions` | Promotional campaigns |
-| `/admin/reports` | Analytics and reports |
-| `/admin/documents` | Document review |
-| `/admin/audit-logs` | System audit logs |
+| Route                               | Description                         |
+| ----------------------------------- | ----------------------------------- |
+| `/admin/dashboard`                  | Overview with key metrics and stats |
+| `/admin/users`                      | User management                     |
+| `/admin/sellers`                    | Seller management                   |
+| `/admin/sellers/verification-queue` | Review pending seller applications  |
+| `/admin/bookings`                   | Booking management                  |
+| `/admin/listings`                   | Listing management                  |
+| `/admin/transactions`               | Transaction monitoring              |
+| `/admin/content`                    | Content management                  |
+| `/admin/promotions`                 | Promotional campaigns               |
+| `/admin/reports`                    | Analytics and reports               |
+| `/admin/documents`                  | Document review                     |
+| `/admin/audit-logs`                 | System audit logs                   |
 
 ---
 
@@ -146,11 +155,13 @@ Once logged in, admins can access:
 ### 1. Multi-Layer Protection
 
 **Backend**:
+
 - `requireAdmin` middleware on all admin routes
 - Session validation via Better Auth
 - Role verification against database
 
 **Frontend**:
+
 - Route guards check authentication
 - Admin role verified during login
 - Automatic sign-out if role missing
@@ -269,6 +280,7 @@ Sign out   Dashboard
 ### Adding New Admin Routes
 
 1. **Create route file**:
+
    ```typescript
    // apps/server/src/routes/admin/my-feature.ts
    import { Hono } from 'hono';
@@ -284,15 +296,17 @@ Sign out   Dashboard
    ```
 
 2. **Register route**:
+
    ```typescript
    // apps/server/src/index.ts
-   import myFeature from "./routes/admin/my-feature";
+   import myFeature from './routes/admin/my-feature';
 
    // After requireAdmin middleware
-   app.route("/api/admin/my-feature", myFeature);
+   app.route('/api/admin/my-feature', myFeature);
    ```
 
 3. **Create frontend page**:
+
    ```typescript
    // apps/web/src/routes/admin/_admin/my-feature.tsx
    import { createFileRoute } from '@tanstack/react-router';

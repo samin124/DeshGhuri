@@ -1,8 +1,14 @@
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Clock, XCircle, AlertCircle, FileCheck, Ban } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, AlertCircle, FileCheck } from 'lucide-react';
 
 type BookingStatus = 'confirmed' | 'completed' | 'cancelled' | 'disputed' | 'pending';
-type PaymentStatus = 'created' | 'pending-proof' | 'proof-submitted' | 'proof-verified' | 'released' | 'failed';
+type PaymentStatus =
+  | 'created'
+  | 'pending-proof'
+  | 'proof-submitted'
+  | 'proof-verified'
+  | 'released'
+  | 'failed';
 type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 interface StatusBadgeProps {

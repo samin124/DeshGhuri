@@ -6,9 +6,10 @@ import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Calendar, Users, Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import type { Listing } from '@/types/listing';
 
 interface DateGuestStepProps {
-  listing: any;
+  listing: Listing;
   onValidationChange: (isValid: boolean) => void;
   onNext: () => void;
   onClose: () => void;
@@ -65,7 +66,16 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
     }
 
     onValidationChange(isValid);
-  }, [checkInDate, checkOutDate, serviceDate, totalGuests, needsDates, needsServiceDate, listing?.maxGuests, onValidationChange]);
+  }, [
+    checkInDate,
+    checkOutDate,
+    serviceDate,
+    totalGuests,
+    needsDates,
+    needsServiceDate,
+    listing?.maxGuests,
+    onValidationChange,
+  ]);
 
   // Update form data and price breakdown
   useEffect(() => {
@@ -86,7 +96,18 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
       promoCode: promoApplied ? promoCode : undefined,
     });
     setPriceBreakdown(priceBreakdown);
-  }, [checkInDate, checkOutDate, serviceDate, adults, children, totalGuests, promoCode, promoApplied, needsDates, needsServiceDate]);
+  }, [
+    checkInDate,
+    checkOutDate,
+    serviceDate,
+    adults,
+    children,
+    totalGuests,
+    promoCode,
+    promoApplied,
+    needsDates,
+    needsServiceDate,
+  ]);
 
   const handleApplyPromo = () => {
     // In a real implementation, this would validate the promo code with the API
@@ -243,9 +264,7 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
           </Button>
         </div>
         {promoApplied && (
-          <p className="text-sm text-green-600 mt-2">
-            Promo code applied successfully!
-          </p>
+          <p className="text-sm text-green-600 mt-2">Promo code applied successfully!</p>
         )}
       </Card>
 
@@ -255,7 +274,8 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">
-              ৳{basePrice.toLocaleString()} × {totalGuests} {listing?.priceUnit === 'per-night' ? 'nights' : 'guests'}
+              ৳{basePrice.toLocaleString()} × {totalGuests}{' '}
+              {listing?.priceUnit === 'per-night' ? 'nights' : 'guests'}
             </span>
             <span>৳{parseFloat(priceBreakdown.baseAmount).toLocaleString()}</span>
           </div>

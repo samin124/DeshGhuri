@@ -38,7 +38,6 @@ async function testFlashDealImages() {
     }
 
     console.log('✨ Flash deal image check complete!');
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     throw error;

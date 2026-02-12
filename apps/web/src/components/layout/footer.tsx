@@ -1,10 +1,10 @@
-import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { APP_STORE_LINKS, PAYMENT_PARTNERS, SOCIAL_LINKS } from "@/lib/constants";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { APP_STORE_LINKS, PAYMENT_PARTNERS, SOCIAL_LINKS } from '@/lib/constants';
 
 export default function Footer() {
   return (
@@ -15,7 +15,8 @@ export default function Footer() {
           <div>
             <h3 className="mb-4 text-lg font-semibold">About DeshGhuri</h3>
             <p className="mb-4 text-sm text-muted-foreground">
-              Your trusted travel marketplace with escrow protection, group discounts, and verified sellers.
+              Your trusted travel marketplace with escrow protection, group discounts, and verified
+              sellers.
             </p>
             <p className="text-sm text-muted-foreground">
               Book with confidence. Travel with peace of mind.
@@ -32,17 +33,26 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/categories" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/categories"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Categories
                 </Link>
               </li>
               <li>
-                <Link to="/deals" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/deals"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Flash Deals
                 </Link>
               </li>
               <li>
-                <Link to="/group-bookings" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/group-bookings"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Group Bookings
                 </Link>
               </li>
@@ -54,22 +64,34 @@ export default function Footer() {
             <h3 className="mb-4 text-lg font-semibold">Customer Support</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/help" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/help"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/faq"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/contact"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link to="/track-booking" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/track-booking"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Track Booking
                 </Link>
               </li>
@@ -81,22 +103,34 @@ export default function Footer() {
             <h3 className="mb-4 text-lg font-semibold">For Sellers</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/seller" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/seller"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Become a Seller
                 </Link>
               </li>
               <li>
-                <Link to="/login" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/login"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Seller Sign In
                 </Link>
               </li>
               <li>
-                <Link to="/seller/support" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/seller/support"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Seller Support
                 </Link>
               </li>
               <li>
-                <Link to="/seller/dashboard" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/seller/dashboard"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Merchant Dashboard
                 </Link>
               </li>
@@ -112,11 +146,7 @@ export default function Footer() {
             Get the latest deals, travel tips, and exclusive offers delivered to your inbox.
           </p>
           <div className="flex max-w-md gap-2">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1"
-            />
+            <Input type="email" placeholder="Enter your email" className="flex-1" />
             <Button>Subscribe</Button>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">

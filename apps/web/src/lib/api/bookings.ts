@@ -58,7 +58,9 @@ export interface Booking {
   holdExpiresAt?: string;
 }
 
-async function createBooking(data: CreateBookingRequest): Promise<{ success: boolean; data: { booking: Booking; listing: any } }> {
+async function createBooking(
+  data: CreateBookingRequest
+): Promise<{ success: boolean; data: { booking: Booking; listing: any } }> {
   const response = await fetch(`${API_URL}/api/bookings`, {
     method: 'POST',
     headers: {
@@ -76,7 +78,9 @@ async function createBooking(data: CreateBookingRequest): Promise<{ success: boo
   return response.json();
 }
 
-async function submitPayment(data: SubmitPaymentRequest): Promise<{ success: boolean; data: Booking; message: string }> {
+async function submitPayment(
+  data: SubmitPaymentRequest
+): Promise<{ success: boolean; data: Booking; message: string }> {
   const response = await fetch(`${API_URL}/api/bookings/${data.bookingId}/submit-payment`, {
     method: 'POST',
     headers: {
@@ -120,7 +124,9 @@ async function getBookingById(bookingId: string): Promise<{ success: boolean; da
   return response.json();
 }
 
-async function cancelBooking(bookingId: string): Promise<{ success: boolean; data: Booking; message: string }> {
+async function cancelBooking(
+  bookingId: string
+): Promise<{ success: boolean; data: Booking; message: string }> {
   const response = await fetch(`${API_URL}/api/bookings/${bookingId}/cancel`, {
     method: 'POST',
     credentials: 'include',

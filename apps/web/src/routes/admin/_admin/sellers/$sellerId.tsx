@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
-import { ArrowLeft, FileText, Building, MapPin, Phone, Mail, Calendar, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  FileText,
+  Building,
+  MapPin,
+  Phone,
+  Mail,
+  Calendar,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from 'lucide-react';
 import { useSeller, useUpdateSellerVerification } from '@/hooks/use-admin-queries';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -20,7 +31,9 @@ function RouteComponent() {
   const { data, isLoading, error } = useSeller(sellerId);
   const updateVerificationMutation = useUpdateSellerVerification();
 
-  const [verificationAction, setVerificationAction] = useState<'approved' | 'rejected' | 'in-review' | 'incomplete' | null>(null);
+  const [verificationAction, setVerificationAction] = useState<
+    'approved' | 'rejected' | 'in-review' | 'incomplete' | null
+  >(null);
   const [message, setMessage] = useState('');
   const [reason, setReason] = useState('');
 
@@ -307,9 +320,7 @@ function RouteComponent() {
                       {entry.status === 'approved' && (
                         <CheckCircle className="h-5 w-5 text-green-600" />
                       )}
-                      {entry.status === 'rejected' && (
-                        <XCircle className="h-5 w-5 text-red-600" />
-                      )}
+                      {entry.status === 'rejected' && <XCircle className="h-5 w-5 text-red-600" />}
                       {entry.status === 'in-review' && (
                         <AlertCircle className="h-5 w-5 text-blue-600" />
                       )}

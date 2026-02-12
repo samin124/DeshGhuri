@@ -20,10 +20,13 @@ app.post('/', async (c) => {
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return c.json({
-        available: false,
-        error: 'Invalid email format'
-      }, 400);
+      return c.json(
+        {
+          available: false,
+          error: 'Invalid email format',
+        },
+        400
+      );
     }
 
     // Check if email exists in user table (covers all roles: customer, admin, super_admin)
@@ -35,7 +38,8 @@ app.post('/', async (c) => {
       return c.json({
         available: false,
         accountType: 'user',
-        message: 'This email is already registered. Each email can only be used for one account type. Please sign in or use a different email.',
+        message:
+          'This email is already registered. Each email can only be used for one account type. Please sign in or use a different email.',
       });
     }
 
@@ -48,7 +52,8 @@ app.post('/', async (c) => {
       return c.json({
         available: false,
         accountType: 'seller',
-        message: 'This email is already registered as a seller. Each email can only be used for one account type. Please sign in or use a different email.',
+        message:
+          'This email is already registered as a seller. Each email can only be used for one account type. Please sign in or use a different email.',
       });
     }
 

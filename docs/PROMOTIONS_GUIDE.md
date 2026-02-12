@@ -40,18 +40,21 @@ The platform supports three types of promotions:
 ## Visual Features
 
 ### Flash Sale Badge
+
 - **Appearance**: Orange-to-red gradient with pulse animation
 - **Shows**: "FLASH SALE" + discount percentage
 - **Includes**: Countdown timer showing time remaining
 - **Position**: Top-left of listing card
 
 ### Promo Code Badge
+
 - **Appearance**: Amber-to-yellow gradient with bounce animation
 - **Shows**: Actual promo code (e.g., "SAVE20")
 - **Includes**: Info box showing discount percentage
 - **Position**: Top-right of listing card
 
 ### Regular Discount Badge
+
 - **Appearance**: Green badge
 - **Shows**: Percentage off
 - **Position**: Top-left (if no flash sale)
@@ -116,12 +119,14 @@ An admin interface will be added to manage promotions through the UI.
 ## Best Practices
 
 ### Flash Sales
+
 - Keep duration between 24-72 hours for urgency
 - Use 30-50% discounts for maximum impact
 - Limit to 3-5 active flash deals at once
 - Always set an end date
 
 ### Promo Codes
+
 - Use memorable codes (e.g., "SAVE20", "WINTER25")
 - Set reasonable max uses (50-200)
 - Typical discounts: 10-30%
@@ -129,6 +134,7 @@ An admin interface will be added to manage promotions through the UI.
 - Track usage to prevent abuse
 
 ### Regular Discounts
+
 - Use for seasonal promotions
 - Typical range: 10-25% off
 - Can be long-term or permanent
@@ -157,6 +163,7 @@ bun run src/scripts/verify-promotions.ts
 ```
 
 This will show:
+
 - All active flash deals with time remaining
 - All promo codes with usage stats
 - All regular discounts
@@ -190,12 +197,14 @@ The listing API automatically includes all promotional fields:
 ## Frontend Components
 
 ### ListingCard
+
 - Automatically detects and displays all promotional badges
 - Shows countdown timers for flash sales
 - Displays promo code information
 - Calculates and shows discounted prices
 
 ### Usage
+
 ```tsx
 <ListingCard
   listing={listing}
@@ -221,12 +230,7 @@ await db
     discountPercent: null,
     discountedPrice: null,
   })
-  .where(
-    and(
-      eq(listing.isFlashDeal, true),
-      sql`${listing.flashDealEndsAt} < NOW()`
-    )
-  );
+  .where(and(eq(listing.isFlashDeal, true), sql`${listing.flashDealEndsAt} < NOW()`));
 ```
 
 ---

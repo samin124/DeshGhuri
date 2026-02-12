@@ -7,9 +7,10 @@ import { Card } from '@/components/ui/card';
 import { User, Mail, Phone, MessageSquare } from 'lucide-react';
 import { useCreateBooking } from '@/lib/api/bookings';
 import { toast } from 'sonner';
+import type { Listing } from '@/types/listing';
 
 interface GuestDetailsStepProps {
-  listing: any;
+  listing: Listing;
   onValidationChange: (isValid: boolean) => void;
   onNext: () => void;
   onClose: () => void;
@@ -66,10 +67,10 @@ export function GuestDetailsStep({ onValidationChange, onNext }: GuestDetailsSte
 
   // Intercept the "Continue" button click to create booking
   useEffect(() => {
-    const handleBeforeNext = async () => {
+    const _handleBeforeNext = async () => {
       if (!createBookingMutation.isPending && name && email && phone) {
         // Create booking request
-        const bookingRequest = {
+        const _bookingRequest = {
           listingId: formData.listingId,
           checkInDate: formData.checkInDate,
           checkOutDate: formData.checkOutDate,
@@ -178,8 +179,8 @@ export function GuestDetailsStep({ onValidationChange, onNext }: GuestDetailsSte
 
       <Card className="p-4 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
         <p className="text-sm text-blue-900 dark:text-blue-100">
-          <strong>Next Step:</strong> After providing your details, you'll proceed to payment.
-          Your booking will be placed on hold for 10 minutes while you complete the payment process.
+          <strong>Next Step:</strong> After providing your details, you'll proceed to payment. Your
+          booking will be placed on hold for 10 minutes while you complete the payment process.
         </p>
       </Card>
     </div>

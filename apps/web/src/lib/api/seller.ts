@@ -1,4 +1,4 @@
-import { env } from "@DeshGhuri/env/web";
+import { env } from '@DeshGhuri/env/web';
 
 const API_BASE_URL = `${env.VITE_SERVER_URL}/api`;
 
@@ -54,7 +54,7 @@ export async function uploadDocument(
     if (!response.ok) {
       const errorMessage = data.details
         ? `${data.error}: ${data.details}`
-        : (data.error || 'Failed to upload document');
+        : data.error || 'Failed to upload document';
       return { error: errorMessage };
     }
 
@@ -84,7 +84,10 @@ export async function completeOnboarding(data: {
     const responseData = await response.json();
 
     if (!response.ok) {
-      return { error: responseData.error || 'Failed to complete onboarding', details: responseData.details };
+      return {
+        error: responseData.error || 'Failed to complete onboarding',
+        details: responseData.details,
+      };
     }
 
     return { data: responseData };
@@ -120,7 +123,9 @@ export async function getVerificationStatus(sellerId: string): Promise<
 }
 
 // Get seller by user ID
-export async function getSellerByUserId(userId: string): Promise<ApiResponse<{ seller: any | null }>> {
+export async function getSellerByUserId(
+  userId: string
+): Promise<ApiResponse<{ seller: any | null }>> {
   try {
     const response = await fetch(`${API_BASE_URL}/seller/by-user/${userId}`);
 

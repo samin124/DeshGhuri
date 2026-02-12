@@ -1,44 +1,53 @@
-import { useState } from "react";
-import { Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 export default function NewsletterCTA() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      toast.success("Successfully subscribed to newsletter!");
-      setEmail("");
+      toast.success('Successfully subscribed to newsletter!');
+      setEmail('');
     }
   };
 
   return (
-    <section className="bg-primary py-16 text-primary-foreground">
+    <section className="relative py-16 overflow-hidden gradient-primary">
       <div className="container mx-auto px-4 text-center">
-        <Mail className="mx-auto mb-4 h-12 w-12" />
-        <h2 className="mb-2 text-3xl font-bold">Stay Updated</h2>
-        <p className="mb-6 text-primary-foreground/90">
-          Subscribe to get exclusive deals and travel tips delivered to your inbox
-        </p>
-        <form onSubmit={handleSubscribe} className="mx-auto flex max-w-md gap-2">
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            className="flex-1 bg-primary-foreground text-foreground"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Button type="submit" variant="secondary">
-            Subscribe
-          </Button>
-        </form>
-        <p className="mt-4 text-xs text-primary-foreground/70">
-          We respect your privacy. Unsubscribe anytime.
-        </p>
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-4 inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/20">
+            <Mail className="h-7 w-7 text-white" />
+          </div>
+          <h2 className="mb-3 text-3xl md:text-4xl font-bold text-white">Get Exclusive Deals</h2>
+          <p className="mb-8 text-lg text-white/95">
+            Subscribe to receive special offers and travel inspiration
+          </p>
+          <form
+            onSubmit={handleSubscribe}
+            className="mx-auto flex flex-col sm:flex-row max-w-md gap-3"
+          >
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 bg-white text-foreground h-12 px-4 border-0"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Button
+              type="submit"
+              size="lg"
+              className="bg-white text-primary hover:bg-white/90 font-semibold h-12 px-8"
+            >
+              Subscribe
+            </Button>
+          </form>
+          <p className="mt-4 text-sm text-white/80">No spam. Unsubscribe anytime.</p>
+        </div>
       </div>
     </section>
   );

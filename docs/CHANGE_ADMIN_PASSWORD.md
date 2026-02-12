@@ -5,6 +5,7 @@
 **Just implemented!** The admin login now has a "Forgot Password" link.
 
 ### Steps:
+
 1. Go to: `http://localhost:3001/admin`
 2. Enter your email in the email field
 3. Click "**Forgot password?**" link (next to the password field)
@@ -14,6 +15,7 @@
 7. Submit → You'll be redirected to login
 
 **Screenshot:**
+
 ```
 [Administrator Email field]
 Password                    Forgot password? ← Click here
@@ -21,6 +23,7 @@ Password                    Forgot password? ← Click here
 ```
 
 ### Files Created:
+
 - `/apps/web/src/routes/admin/index.tsx` - Added forgot password link
 - `/apps/web/src/routes/admin/reset-password.tsx` - Password reset page
 
@@ -31,6 +34,7 @@ Password                    Forgot password? ← Click here
 If you need to change the password immediately without email:
 
 ### Using SQL:
+
 ```sql
 -- Update password for admin user
 -- First, generate a hashed password using bcrypt or Better Auth
@@ -48,10 +52,10 @@ WHERE email = 'abxvein2001@gmail.com';
 Create `update-admin-password.ts`:
 
 ```typescript
-import { db } from "@DeshGhuri/db";
-import { user } from "@DeshGhuri/db/schema";
-import { eq } from "@DeshGhuri/db";
-import { hash } from "@node-rs/argon2";
+import { db } from '@DeshGhuri/db';
+import { user } from '@DeshGhuri/db/schema';
+import { eq } from '@DeshGhuri/db';
+import { hash } from '@node-rs/argon2';
 
 const ADMIN_EMAIL = 'abxvein2001@gmail.com';
 const NEW_PASSWORD = 'YourNewPassword123';
@@ -66,9 +70,7 @@ async function updatePassword() {
   });
 
   // Update in database
-  await db.update(user)
-    .set({ password: hashedPassword })
-    .where(eq(user.email, ADMIN_EMAIL));
+  await db.update(user).set({ password: hashedPassword }).where(eq(user.email, ADMIN_EMAIL));
 
   console.log('✅ Password updated successfully!');
   console.log('Email:', ADMIN_EMAIL);
@@ -87,6 +89,7 @@ Run: `cd apps/server && bun run ../../update-admin-password.ts`
 Add a "Change Password" section in the admin dashboard settings page.
 
 ### Implementation:
+
 1. Create `/admin/settings` page
 2. Add "Change Password" form with:
    - Current Password field
@@ -100,6 +103,7 @@ Add a "Change Password" section in the admin dashboard settings page.
 ## How Password Reset Works
 
 ### Email Flow:
+
 ```
 1. User clicks "Forgot password?" on /admin
    ↓
@@ -117,6 +121,7 @@ Add a "Change Password" section in the admin dashboard settings page.
 ```
 
 ### Token Security:
+
 - Reset tokens expire after 1 hour (Better Auth default)
 - Tokens are single-use (can't be reused)
 - Tokens are stored encrypted in database
@@ -128,11 +133,13 @@ Add a "Change Password" section in the admin dashboard settings page.
 ### Test the Flow:
 
 1. **Open admin login:**
+
    ```
    http://localhost:3001/admin
    ```
 
 2. **Enter your email:**
+
    ```
    abxvein2001@gmail.com
    ```
@@ -161,12 +168,14 @@ Add a "Change Password" section in the admin dashboard settings page.
 
 **Cause:** Email configuration might be missing
 **Check:**
+
 ```bash
 # Check email settings in .env
 grep EMAIL apps/server/.env
 ```
 
 **Should have:**
+
 ```
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password
@@ -177,6 +186,7 @@ EMAIL_FROM=noreply@deshghuri.com
 
 **Cause:** Token might be expired or invalid
 **Solution:**
+
 - Request a new reset link
 - Tokens expire after 1 hour
 
@@ -184,6 +194,7 @@ EMAIL_FROM=noreply@deshghuri.com
 
 **Cause:** Page needs refresh after code update
 **Solution:**
+
 ```bash
 # Restart dev server
 bun run dev
@@ -201,6 +212,7 @@ bun run dev
   - Special characters
 
 **Strong examples:**
+
 - `AdminPass2024!`
 - `Secure#Admin123`
 - `MyStr0ng!P@ssw0rd`
@@ -210,6 +222,7 @@ bun run dev
 ## Security Best Practices
 
 ✅ **DO:**
+
 - Use strong, unique passwords
 - Change password regularly
 - Use a password manager
@@ -217,6 +230,7 @@ bun run dev
 - Use Google OAuth for easier management
 
 ❌ **DON'T:**
+
 - Share admin passwords
 - Use same password as other accounts
 - Write passwords in plain text
@@ -227,11 +241,11 @@ bun run dev
 
 ## Quick Reference
 
-| Method | Speed | Requires Email | Complexity |
-|--------|-------|----------------|------------|
-| Forgot Password Link | Medium | Yes | Easy |
-| Direct DB Update | Fast | No | Hard |
-| Admin Settings | Medium | No | Medium |
+| Method               | Speed  | Requires Email | Complexity |
+| -------------------- | ------ | -------------- | ---------- |
+| Forgot Password Link | Medium | Yes            | Easy       |
+| Direct DB Update     | Fast   | No             | Hard       |
+| Admin Settings       | Medium | No             | Medium     |
 
 **Recommended:** Use "Forgot Password" link for normal password changes. It's secure, tracks changes, and sends confirmation emails.
 

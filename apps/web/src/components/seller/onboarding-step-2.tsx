@@ -54,7 +54,10 @@ export function OnboardingStep2({ data, category, sellerId, onUpdate }: Onboardi
 
       if (result.error) {
         // Check if seller not found error
-        if (result.error.includes('Seller not found') || result.error.includes('SELLER_NOT_FOUND')) {
+        if (
+          result.error.includes('Seller not found') ||
+          result.error.includes('SELLER_NOT_FOUND')
+        ) {
           toast.error('Session expired. Please restart the onboarding process.');
           localStorage.removeItem('sellerId');
           // Reload page to reinitialize
@@ -143,7 +146,8 @@ export function OnboardingStep2({ data, category, sellerId, onUpdate }: Onboardi
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
         <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
         <AlertDescription className="text-blue-900 dark:text-blue-100">
-          All documents will be reviewed by our verification team within 24-48 hours. You'll receive an email notification once the review is complete.
+          All documents will be reviewed by our verification team within 24-48 hours. You'll receive
+          an email notification once the review is complete.
         </AlertDescription>
       </Alert>
     </div>

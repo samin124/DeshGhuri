@@ -7,6 +7,7 @@
 **Problem**: After a user submits a booking, it shows in the cart with "pending" status, but the seller doesn't see it in their dashboard at `/seller/dashboard/bookings`.
 
 **Solution**:
+
 - Added comprehensive debugging to both booking creation and seller booking fetching
 - Added console logging to trace:
   - When booking is created: logs bookingId, sellerId, listingId
@@ -15,6 +16,7 @@
 - Route is properly configured at `/seller/dashboard/bookings/index.tsx`
 
 **How to Debug**:
+
 1. Open browser console (F12)
 2. Create a booking as a customer
 3. Check server logs for: `📝 Creating booking:` and `✅ Booking created successfully:`
@@ -24,6 +26,7 @@
 7. Compare the `sellerId` values - they should match
 
 **Files Modified**:
+
 - `apps/server/src/routes/customer/bookings.ts` - Added logging to booking creation
 - `apps/server/src/routes/seller/bookings.ts` - Added logging to booking fetching
 - `apps/web/src/routes/seller/dashboard/bookings/index.tsx` - Added error handling
@@ -35,6 +38,7 @@
 **Problem**: After seller approves a booking, user should see a ticket and money receipt.
 
 **Solution**:
+
 - Created two new API endpoints:
   - `GET /api/bookings/:bookingId/ticket` - Generates HTML ticket
   - `GET /api/bookings/:bookingId/receipt` - Generates HTML money receipt
@@ -42,6 +46,7 @@
 - Added download buttons in the customer bookings page
 
 **Ticket Features**:
+
 - Booking ID displayed prominently
 - Guest details (name, email)
 - Listing title and location
@@ -51,6 +56,7 @@
 - Confirmation date
 
 **Receipt Features**:
+
 - Receipt number (booking ID)
 - Customer details
 - Listing description
@@ -64,6 +70,7 @@
 - Verification stamp
 
 **Files Modified**:
+
 - `apps/server/src/routes/customer/bookings.ts` - Added ticket and receipt endpoints
 - `apps/web/src/components/layout/bookings-cart.tsx` - Added download buttons
 - `apps/web/src/routes/customer/bookings.tsx` - Can be extended with download buttons
@@ -75,6 +82,7 @@
 **Problem**: When user signs out, their bookings in the cart are still visible until page refresh.
 
 **Solution**:
+
 - Added real-time authentication checking in `BookingsCart` component
 - Monitors auth state every 5 seconds
 - When logout detected:
@@ -84,6 +92,7 @@
   - Hides bookings from cart
 
 **How It Works**:
+
 ```typescript
 useEffect(() => {
   const checkAuth = async () => {
@@ -107,6 +116,7 @@ useEffect(() => {
 ```
 
 **Files Modified**:
+
 - `apps/web/src/components/layout/bookings-cart.tsx` - Added auth state monitoring
 
 ---
@@ -114,6 +124,7 @@ useEffect(() => {
 ## Testing Instructions
 
 ### Test 1: Seller Seeing Bookings
+
 1. Log in as a customer
 2. Create a booking for a listing (select dates, enter details, submit payment)
 3. Open browser console and check for logs:
@@ -133,6 +144,7 @@ useEffect(() => {
 9. If no bookings appear, compare seller IDs from step 4 and step 7
 
 ### Test 2: Ticket and Receipt Download
+
 1. As seller, approve a booking
 2. Log in as the customer who made the booking
 3. Click the cart icon in navbar
@@ -142,6 +154,7 @@ useEffect(() => {
 7. Verify both documents contain correct information
 
 ### Test 3: Logout Cart Bug
+
 1. Log in as a customer
 2. Create at least one booking
 3. Click cart icon - verify bookings are visible
@@ -156,6 +169,7 @@ useEffect(() => {
 ## API Endpoints Summary
 
 ### Customer Endpoints
+
 - `POST /api/bookings` - Create booking
 - `POST /api/bookings/:id/submit-payment` - Submit payment
 - `GET /api/bookings` - List all customer bookings
@@ -165,6 +179,7 @@ useEffect(() => {
 - `POST /api/bookings/:id/cancel` - Cancel booking
 
 ### Seller Endpoints
+
 - `GET /api/seller/bookings` - List all seller bookings
 - `GET /api/seller/bookings/pending-approval` - Get pending bookings
 - `GET /api/seller/bookings/:id` - Get booking details
@@ -176,6 +191,7 @@ useEffect(() => {
 ## Known Issues & Next Steps
 
 ### If Seller Still Can't See Bookings:
+
 1. Check browser console for errors
 2. Check server logs for seller ID mismatch
 3. Verify seller account is approved (`verificationStatus = 'approved'`)
@@ -189,6 +205,7 @@ useEffect(() => {
    ```
 
 ### Future Enhancements:
+
 - [ ] Add PDF generation for ticket/receipt (currently HTML)
 - [ ] Add QR code generation for tickets
 - [ ] Add email notifications when booking status changes
@@ -202,6 +219,7 @@ useEffect(() => {
 ## Files Changed
 
 ### Backend
+
 - `apps/server/src/routes/customer/bookings.ts` (+200 lines)
   - Added ticket generation endpoint
   - Added receipt generation endpoint
@@ -211,6 +229,7 @@ useEffect(() => {
   - Added debugging logs for troubleshooting
 
 ### Frontend
+
 - `apps/web/src/components/layout/bookings-cart.tsx` (+50 lines)
   - Added auth state monitoring
   - Added ticket/receipt download buttons

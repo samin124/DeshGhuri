@@ -6,7 +6,6 @@ import { Step2Pricing } from '@/components/seller/listing-form/step-2-pricing';
 import { Step3Media } from '@/components/seller/listing-form/step-3-media';
 import { Step4Policies } from '@/components/seller/listing-form/step-4-policies';
 import { FormNavigation } from '@/components/seller/listing-form/form-navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const Route = createFileRoute('/seller/dashboard/listings/new')({
   component: () => (
@@ -30,7 +29,8 @@ function NewListingComponent() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Create New Listing</h1>
         <p className="text-muted-foreground">
-          Fill out the form below to create a new listing. You can save your progress and continue later.
+          Fill out the form below to create a new listing. You can save your progress and continue
+          later.
         </p>
       </div>
 

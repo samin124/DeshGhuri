@@ -16,7 +16,7 @@ async function checkAdminSeller() {
     where: eq(userRole.userId, testAdmin.id),
   });
 
-  console.log('📋 Roles:', roles.map(r => r.role).join(', '));
+  console.log('📋 Roles:', roles.map((r) => r.role).join(', '));
 
   const sellerAccount = await db.query.seller.findFirst({
     where: eq(seller.userId, testAdmin.id),

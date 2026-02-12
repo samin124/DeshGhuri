@@ -1,11 +1,11 @@
-import { db } from "@DeshGhuri/db";
-import { seller, sellerPaymentMethod } from "@DeshGhuri/db/schema/seller";
-import { user, account, userRole } from "@DeshGhuri/db/schema/auth";
-import { eq, and } from "drizzle-orm";
-import { customAlphabet } from "nanoid";
-import { hash, verify } from "@node-rs/argon2";
+import { db } from '@DeshGhuri/db';
+import { seller, sellerPaymentMethod } from '@DeshGhuri/db/schema/seller';
+import { user, account, userRole } from '@DeshGhuri/db/schema/auth';
+import { eq, and } from 'drizzle-orm';
+import { customAlphabet } from 'nanoid';
+import { hash, verify } from '@node-rs/argon2';
 
-const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 16);
+const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
 
 function generateId(prefix: string): string {
   return `${prefix}_${nanoid()}`;
@@ -192,10 +192,7 @@ export async function sellerSignin(data: SellerSigninData) {
 
   // Get account with password
   const userAccount = await db.query.account.findFirst({
-    where: and(
-      eq(account.userId, sellerAccount.userId!),
-      eq(account.providerId, 'credential')
-    ),
+    where: and(eq(account.userId, sellerAccount.userId!), eq(account.providerId, 'credential')),
   });
 
   if (!userAccount || !userAccount.password) {

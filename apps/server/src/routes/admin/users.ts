@@ -15,7 +15,6 @@ app.get('/', async (c) => {
     const limit = parseInt(c.req.query('limit') || '20');
     const search = c.req.query('search') || '';
     const role = c.req.query('role') || '';
-    const status = c.req.query('status') || ''; // active, suspended
     const sortBy = c.req.query('sortBy') || 'createdAt';
     const sortOrder = (c.req.query('sortOrder') || 'desc') as 'asc' | 'desc';
 
@@ -25,12 +24,7 @@ app.get('/', async (c) => {
     const conditions = [];
 
     if (search) {
-      conditions.push(
-        or(
-          like(user.name, `%${search}%`),
-          like(user.email, `%${search}%`)
-        )
-      );
+      conditions.push(or(like(user.name, `%${search}%`), like(user.email, `%${search}%`)));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -59,9 +53,7 @@ app.get('/', async (c) => {
     // If role filter is applied, filter in memory (since we need to join)
     let filteredUsers = users;
     if (role) {
-      filteredUsers = users.filter((u) =>
-        u.roles.some((r) => r.role === role)
-      );
+      filteredUsers = users.filter((u) => u.roles.some((r) => r.role === role));
     }
 
     // Get seller info for users who are sellers
@@ -267,15 +259,10 @@ app.delete('/:id', async (c) => {
       where: eq(userRole.userId, userId),
     });
 
-    const isAdmin = userRoles.some((r) =>
-      ['admin', 'super_admin'].includes(r.role)
-    );
+    const isAdmin = userRoles.some((r) => ['admin', 'super_admin'].includes(r.role));
 
     if (isAdmin) {
-      return c.json(
-        { error: 'Cannot delete admin users. Please remove admin role first.' },
-        403
-      );
+      return c.json({ error: 'Cannot delete admin users. Please remove admin role first.' }, 403);
     }
 
     // Delete user (cascade will handle related records)
@@ -344,10 +331,7 @@ app.post('/:id/roles', async (c) => {
     // Only super_admin can assign admin or super_admin roles
     const isSuperAdmin = c.get('isSuperAdmin') as boolean;
     if (['admin', 'super_admin'].includes(role) && !isSuperAdmin) {
-      return c.json(
-        { error: 'Only super admins can assign admin roles' },
-        403
-      );
+      return c.json({ error: 'Only super admins can assign admin roles' }, 403);
     }
 
     // Prevent sellers from becoming admins
@@ -357,9 +341,13 @@ app.post('/:id/roles', async (c) => {
       });
 
       if (existingSeller) {
-        return c.json({
-          error: 'Users with seller accounts cannot be assigned admin roles. Admin and seller roles must be kept separate for security and conflict of interest reasons.'
-        }, 403);
+        return c.json(
+          {
+            error:
+              'Users with seller accounts cannot be assigned admin roles. Admin and seller roles must be kept separate for security and conflict of interest reasons.',
+          },
+          403
+        );
       }
     }
 
@@ -373,9 +361,13 @@ app.post('/:id/roles', async (c) => {
       const isAdmin = roles.some((r) => r === 'admin' || r === 'super_admin');
 
       if (isAdmin) {
-        return c.json({
-          error: 'Admin users cannot be assigned the seller role. Admin and seller roles must be kept separate for security and conflict of interest reasons.'
-        }, 403);
+        return c.json(
+          {
+            error:
+              'Admin users cannot be assigned the seller role. Admin and seller roles must be kept separate for security and conflict of interest reasons.',
+          },
+          403
+        );
       }
     }
 
@@ -433,14 +425,8 @@ app.delete('/:id/roles/:roleId', async (c) => {
 
     // Only super_admin can remove admin or super_admin roles
     const isSuperAdmin = c.get('isSuperAdmin') as boolean;
-    if (
-      ['admin', 'super_admin'].includes(roleData.role) &&
-      !isSuperAdmin
-    ) {
-      return c.json(
-        { error: 'Only super admins can remove admin roles' },
-        403
-      );
+    if (['admin', 'super_admin'].includes(roleData.role) && !isSuperAdmin) {
+      return c.json({ error: 'Only super admins can remove admin roles' }, 403);
     }
 
     // Delete role

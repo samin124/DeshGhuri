@@ -41,8 +41,8 @@ export function DocumentReviewPanel({ sellerId, documents }: DocumentReviewPanel
   const getDocumentTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       'trade-license': 'Trade License',
-      'nid': 'National ID',
-      'passport': 'Passport',
+      nid: 'National ID',
+      passport: 'Passport',
       'tin-certificate': 'TIN Certificate',
       'property-docs': 'Property Documents',
       'tour-license': 'Tour License',
@@ -188,7 +188,9 @@ export function DocumentReviewPanel({ sellerId, documents }: DocumentReviewPanel
                 <div className="flex items-start gap-3 flex-1">
                   <FileText className="h-5 w-5 text-gray-500 mt-1" />
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate">{getDocumentTypeLabel(doc.documentType)}</h4>
+                    <h4 className="font-medium truncate">
+                      {getDocumentTypeLabel(doc.documentType)}
+                    </h4>
                     <p className="text-sm text-gray-500 truncate">{doc.fileName}</p>
                     <p className="text-xs text-gray-400 mt-1">
                       Uploaded: {new Date(doc.uploadedAt).toLocaleDateString()}
@@ -222,23 +224,14 @@ export function DocumentReviewPanel({ sellerId, documents }: DocumentReviewPanel
                   <Eye className="h-4 w-4 mr-2" />
                   View
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="flex-1"
-                >
+                <Button variant="outline" size="sm" asChild className="flex-1">
                   <a href={doc.fileUrl} download>
                     <Download className="h-4 w-4 mr-2" />
                     Download
                   </a>
                 </Button>
                 {doc.status === 'pending' && (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => setSelectedDocument(doc)}
-                  >
+                  <Button variant="default" size="sm" onClick={() => setSelectedDocument(doc)}>
                     Review
                   </Button>
                 )}
@@ -253,7 +246,8 @@ export function DocumentReviewPanel({ sellerId, documents }: DocumentReviewPanel
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              Review Document: {selectedDocument && getDocumentTypeLabel(selectedDocument.documentType)}
+              Review Document:{' '}
+              {selectedDocument && getDocumentTypeLabel(selectedDocument.documentType)}
             </DialogTitle>
           </DialogHeader>
 

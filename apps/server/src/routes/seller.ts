@@ -1,5 +1,14 @@
 import { Hono } from 'hono';
-import { db, seller, sellerDocument, sellerBankAccount, verificationTimeline, userRole, eq, desc } from '@DeshGhuri/db';
+import {
+  db,
+  seller,
+  sellerDocument,
+  sellerBankAccount,
+  verificationTimeline,
+  userRole,
+  eq,
+  desc,
+} from '@DeshGhuri/db';
 import { uploadFile, deleteFile, isStorageConfigured } from '../lib/storage';
 import { z } from 'zod';
 
@@ -9,7 +18,6 @@ const app = new Hono();
 function generateId(prefix: string): string {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
-
 
 // Validation schemas
 const businessInfoSchema = z.object({
@@ -55,9 +63,13 @@ app.post('/register', async (c) => {
     const isAdmin = roles.some((role) => role === 'admin' || role === 'super_admin');
 
     if (isAdmin) {
-      return c.json({
-        error: 'Admin users cannot register as sellers. Please use a separate account for seller activities.'
-      }, 403);
+      return c.json(
+        {
+          error:
+            'Admin users cannot register as sellers. Please use a separate account for seller activities.',
+        },
+        403
+      );
     }
 
     // Check if seller already exists for this user
@@ -98,9 +110,13 @@ app.post('/documents/upload', async (c) => {
     // Check if Supabase Storage is configured
     if (!isStorageConfigured) {
       console.log('❌ Supabase Storage not configured');
-      return c.json({
-        error: 'File upload service not configured. Please contact administrator to configure Supabase Storage.'
-      }, 503);
+      return c.json(
+        {
+          error:
+            'File upload service not configured. Please contact administrator to configure Supabase Storage.',
+        },
+        503
+      );
     }
 
     const formData = await c.req.formData();
@@ -113,7 +129,7 @@ app.post('/documents/upload', async (c) => {
       fileSize: file?.size,
       fileType: file?.type,
       sellerId,
-      documentType
+      documentType,
     });
 
     if (!file || !sellerId || !documentType) {
@@ -148,10 +164,13 @@ app.post('/documents/upload', async (c) => {
 
     if (!existingSeller) {
       console.log('❌ Seller not found:', sellerId);
-      return c.json({
-        error: 'Seller not found. Please restart the onboarding process.',
-        code: 'SELLER_NOT_FOUND'
-      }, 404);
+      return c.json(
+        {
+          error: 'Seller not found. Please restart the onboarding process.',
+          code: 'SELLER_NOT_FOUND',
+        },
+        404
+      );
     }
     console.log('✅ Seller verified:', existingSeller.id);
 
@@ -162,7 +181,7 @@ app.post('/documents/upload', async (c) => {
     });
 
     let documentId: string;
-    let uploadResult: any;
+    let uploadResult: { url: string; storageKey: string; format: string; bytes: number };
 
     if (existingDocument) {
       console.log('📄 Existing document found, updating:', existingDocument.id);
@@ -229,19 +248,25 @@ app.post('/documents/upload', async (c) => {
       console.log('✅ Database save successful, documentId:', documentId);
     }
 
-    return c.json({
-      documentId,
-      url: uploadResult.url,
-      fileName: file.name,
-      fileSize: file.size,
-      }, 201);
+    return c.json(
+      {
+        documentId,
+        url: uploadResult.url,
+        fileName: file.name,
+        fileSize: file.size,
+      },
+      201
+    );
   } catch (error) {
     console.error('Upload document error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return c.json({
-      error: 'Failed to upload document',
-      details: errorMessage
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to upload document',
+        details: errorMessage,
+      },
+      500
+    );
   }
 });
 
@@ -295,11 +320,14 @@ app.post('/onboarding/complete', async (c) => {
       message: 'Application submitted successfully',
     });
 
-    return c.json({
-      sellerId,
-      status: 'pending',
-      message: 'Onboarding completed successfully',
-    }, 200);
+    return c.json(
+      {
+        sellerId,
+        status: 'pending',
+        message: 'Onboarding completed successfully',
+      },
+      200
+    );
   } catch (error) {
     console.error('Complete onboarding error:', error);
     if (error instanceof z.ZodError) {
@@ -340,12 +368,15 @@ app.get('/verification-status/:sellerId', async (c) => {
       where: eq(sellerBankAccount.sellerId, sellerId),
     });
 
-    return c.json({
-      seller: sellerData,
-      documents,
-      timeline,
-      bankAccount,
-    }, 200);
+    return c.json(
+      {
+        seller: sellerData,
+        documents,
+        timeline,
+        bankAccount,
+      },
+      200
+    );
   } catch (error) {
     console.error('Get verification status error:', error);
     return c.json({ error: 'Failed to get verification status' }, 500);
@@ -424,11 +455,14 @@ app.patch('/documents/:documentId', async (c) => {
       })
       .where(eq(sellerDocument.id, documentId));
 
-    return c.json({
-      documentId,
-      url: uploadResult.url,
-      status: 'pending',
-    }, 200);
+    return c.json(
+      {
+        documentId,
+        url: uploadResult.url,
+        status: 'pending',
+      },
+      200
+    );
   } catch (error) {
     console.error('Update document error:', error);
     return c.json({ error: 'Failed to update document' }, 500);

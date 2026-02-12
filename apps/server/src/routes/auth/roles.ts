@@ -23,7 +23,7 @@ app.get('/', async (c) => {
       where: eq(userRole.userId, session.user.id),
     });
 
-    const roles = userRoles.map(r => r.role);
+    const roles = userRoles.map((r) => r.role);
     const primaryRole = determinePrimaryRole(roles);
 
     return c.json({

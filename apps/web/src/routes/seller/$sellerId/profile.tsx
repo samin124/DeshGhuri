@@ -42,8 +42,9 @@ function RouteComponent() {
     totalBookings: 1248,
     responseTime: '2 hours',
     memberSince: '2024',
-    description: 'We are a premier hospitality provider in Bangladesh, offering luxury accommodations and unforgettable experiences. Our mission is to provide exceptional service and create memorable moments for our guests.',
-    location: 'Cox\'s Bazar, Chittagong',
+    description:
+      'We are a premier hospitality provider in Bangladesh, offering luxury accommodations and unforgettable experiences. Our mission is to provide exceptional service and create memorable moments for our guests.',
+    location: "Cox's Bazar, Chittagong",
     contactEmail: 'contact@paradiseresorts.com',
     contactPhone: '+880 1XXX-XXXXXX',
     achievements: [
@@ -56,7 +57,7 @@ function RouteComponent() {
         id: '1',
         title: 'Luxury Beach Resort',
         category: 'Hotel',
-        location: 'Cox\'s Bazar',
+        location: "Cox's Bazar",
         price: 8500,
         currency: 'BDT' as const,
         rating: 4.8,
@@ -72,7 +73,7 @@ function RouteComponent() {
         id: '2',
         title: 'Premium Ocean View Suite',
         category: 'Hotel',
-        location: 'Cox\'s Bazar',
+        location: "Cox's Bazar",
         price: 12000,
         currency: 'BDT' as const,
         rating: 4.9,
@@ -206,9 +207,7 @@ function RouteComponent() {
                         <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                           <Icon className="h-5 w-5 text-primary" />
                         </div>
-                        <span className="font-medium text-sm">
-                          {achievement.label}
-                        </span>
+                        <span className="font-medium text-sm">{achievement.label}</span>
                       </div>
                     );
                   })}
@@ -224,11 +223,7 @@ function RouteComponent() {
           {seller.listings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {seller.listings.map((listing) => (
-                <ListingCard
-                  key={listing.id}
-                  listing={listing}
-                  onClick={handleListingClick}
-                />
+                <ListingCard key={listing.id} listing={listing} onClick={handleListingClick} />
               ))}
             </div>
           ) : (

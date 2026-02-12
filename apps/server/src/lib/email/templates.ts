@@ -8,25 +8,31 @@
 interface EmailData {
   userName: string;
   userEmail: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const emailStyles = {
-  container: 'font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;',
-  header: 'background-color: #1f2937; color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;',
+  container:
+    'font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;',
+  header:
+    'background-color: #1f2937; color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;',
   body: 'background-color: white; padding: 30px 20px; border-radius: 0 0 8px 8px;',
-  button: 'display: inline-block; background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0;',
-  footer: 'text-align: center; color: #6b7280; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;',
+  button:
+    'display: inline-block; background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0;',
+  footer:
+    'text-align: center; color: #6b7280; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;',
 };
 
 /**
  * Seller Verification Approved Email
  */
-export function sellerVerificationApprovedTemplate(data: EmailData & {
-  businessName: string;
-  message: string;
-  dashboardUrl: string;
-}): { subject: string; html: string; text: string } {
+export function sellerVerificationApprovedTemplate(
+  data: EmailData & {
+    businessName: string;
+    message: string;
+    dashboardUrl: string;
+  }
+): { subject: string; html: string; text: string } {
   const html = `
     <div style="${emailStyles.container}">
       <div style="${emailStyles.header}">
@@ -94,12 +100,14 @@ If you have any questions, please don't hesitate to contact our support team.
 /**
  * Seller Verification Rejected Email
  */
-export function sellerVerificationRejectedTemplate(data: EmailData & {
-  businessName: string;
-  message: string;
-  reason?: string;
-  reapplyUrl: string;
-}): { subject: string; html: string; text: string } {
+export function sellerVerificationRejectedTemplate(
+  data: EmailData & {
+    businessName: string;
+    message: string;
+    reason?: string;
+    reapplyUrl: string;
+  }
+): { subject: string; html: string; text: string } {
   const html = `
     <div style="${emailStyles.container}">
       <div style="${emailStyles.header}">
@@ -170,11 +178,13 @@ If you have any questions or need clarification, please contact our support team
 /**
  * Seller Application Incomplete - Request More Information
  */
-export function sellerVerificationIncompleteTemplate(data: EmailData & {
-  businessName: string;
-  message: string;
-  applicationUrl: string;
-}): { subject: string; html: string; text: string } {
+export function sellerVerificationIncompleteTemplate(
+  data: EmailData & {
+    businessName: string;
+    message: string;
+    applicationUrl: string;
+  }
+): { subject: string; html: string; text: string } {
   const html = `
     <div style="${emailStyles.container}">
       <div style="${emailStyles.header}">
@@ -242,10 +252,12 @@ If you have any questions, please contact our support team.
 /**
  * Seller Application In Review
  */
-export function sellerVerificationInReviewTemplate(data: EmailData & {
-  businessName: string;
-  message: string;
-}): { subject: string; html: string; text: string } {
+export function sellerVerificationInReviewTemplate(
+  data: EmailData & {
+    businessName: string;
+    message: string;
+  }
+): { subject: string; html: string; text: string } {
   const html = `
     <div style="${emailStyles.container}">
       <div style="${emailStyles.header}">
@@ -305,10 +317,12 @@ Thank you for your patience!
 /**
  * Document Approved Email
  */
-export function documentApprovedTemplate(data: EmailData & {
-  documentType: string;
-  businessName: string;
-}): { subject: string; html: string; text: string } {
+export function documentApprovedTemplate(
+  data: EmailData & {
+    documentType: string;
+    businessName: string;
+  }
+): { subject: string; html: string; text: string } {
   const html = `
     <div style="${emailStyles.container}">
       <div style="${emailStyles.header}">
@@ -364,12 +378,14 @@ This brings you one step closer to completing your seller verification.
 /**
  * Document Rejected Email
  */
-export function documentRejectedTemplate(data: EmailData & {
-  documentType: string;
-  businessName: string;
-  rejectionReason: string;
-  reuploadUrl: string;
-}): { subject: string; html: string; text: string } {
+export function documentRejectedTemplate(
+  data: EmailData & {
+    documentType: string;
+    businessName: string;
+    rejectionReason: string;
+    reuploadUrl: string;
+  }
+): { subject: string; html: string; text: string } {
   const html = `
     <div style="${emailStyles.container}">
       <div style="${emailStyles.header}">

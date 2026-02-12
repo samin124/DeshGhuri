@@ -308,9 +308,12 @@ function RouteComponent() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialog.isOpen} onOpenChange={(open) =>
-        !open && setDeleteDialog({ isOpen: false, userId: null, userName: null })
-      }>
+      <AlertDialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(open) =>
+          !open && setDeleteDialog({ isOpen: false, userId: null, userName: null })
+        }
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete User</AlertDialogTitle>

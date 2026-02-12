@@ -1,6 +1,6 @@
-import { redirect } from "@tanstack/react-router";
+import { redirect } from '@tanstack/react-router';
 
-const API_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 
 export interface UserRoles {
   roles: string[];
@@ -15,7 +15,7 @@ export interface UserRoles {
 export async function getUserRoles(): Promise<UserRoles | null> {
   try {
     const response = await fetch(`${API_URL}/api/auth/roles`, {
-      credentials: "include",
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -24,7 +24,7 @@ export async function getUserRoles(): Promise<UserRoles | null> {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching user roles:", error);
+    console.error('Error fetching user roles:', error);
     return null;
   }
 }
@@ -53,13 +53,13 @@ export async function requireCustomerAccess(currentPath: string) {
   const { roles } = userRoles;
 
   // Super admin and admin should go to admin dashboard
-  if (roles.includes("super_admin") || roles.includes("admin")) {
-    throw redirect({ to: "/admin/dashboard" });
+  if (roles.includes('super_admin') || roles.includes('admin')) {
+    throw redirect({ to: '/admin/dashboard' });
   }
 
   // Sellers should go to seller dashboard
-  if (roles.includes("seller")) {
-    throw redirect({ to: "/seller/dashboard" });
+  if (roles.includes('seller')) {
+    throw redirect({ to: '/seller/dashboard' });
   }
 
   // Customers can access (or no role = allow)
@@ -78,7 +78,7 @@ export async function requireSellerAccess(currentPath: string) {
       roles: [],
       primaryRole: null,
       userId: '',
-      userEmail: ''
+      userEmail: '',
     };
   }
 
@@ -95,7 +95,7 @@ export async function requireSellerAccess(currentPath: string) {
         roles: ['seller'],
         primaryRole: 'seller',
         userId: data.userId,
-        userEmail: data.email
+        userEmail: data.email,
       };
     }
   } catch (error) {
@@ -108,14 +108,14 @@ export async function requireSellerAccess(currentPath: string) {
   if (!userRoles) {
     // No session at all
     throw redirect({
-      to: "/login",
+      to: '/login',
       search: { return: currentPath },
     });
   }
 
-  if (!userRoles.roles.includes("seller")) {
+  if (!userRoles.roles.includes('seller')) {
     // User is logged in but not a seller
-    throw redirect({ to: "/" });
+    throw redirect({ to: '/' });
   }
 
   return userRoles;
@@ -132,7 +132,7 @@ export async function requireAdminAccess(currentPath: string) {
       roles: [],
       primaryRole: null,
       userId: '',
-      userEmail: ''
+      userEmail: '',
     };
   }
 
@@ -142,17 +142,14 @@ export async function requireAdminAccess(currentPath: string) {
   if (!userRoles) {
     // No session at all
     throw redirect({
-      to: "/login",
+      to: '/login',
       search: { return: currentPath },
     });
   }
 
-  if (
-    !userRoles.roles.includes("admin") &&
-    !userRoles.roles.includes("super_admin")
-  ) {
+  if (!userRoles.roles.includes('admin') && !userRoles.roles.includes('super_admin')) {
     // User is logged in but not an admin
-    throw redirect({ to: "/" });
+    throw redirect({ to: '/' });
   }
 
   return userRoles;

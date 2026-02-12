@@ -1,8 +1,8 @@
-import { Link } from "@tanstack/react-router";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { mockBlogPosts } from "@/lib/mock-data";
-import { Calendar, Clock } from "lucide-react";
+import { Link } from '@tanstack/react-router';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { mockBlogPosts } from '@/lib/mock-data';
+import { Calendar, Clock } from 'lucide-react';
 
 export default function BlogPreview() {
   return (
@@ -24,7 +24,9 @@ export default function BlogPreview() {
                 />
                 <CardContent className="p-4">
                   <Badge className="mb-2">{post.category}</Badge>
-                  <h3 className="mb-2 font-semibold line-clamp-2 group-hover:text-primary">{post.title}</h3>
+                  <h3 className="mb-2 font-semibold line-clamp-2 group-hover:text-primary">
+                    {post.title}
+                  </h3>
                   <p className="mb-3 text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">

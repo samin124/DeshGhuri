@@ -133,11 +133,8 @@ function RouteComponent() {
 
         return (
           <div className="text-sm">
-            <span className="text-green-600 font-medium">{approved}</span> /{' '}
-            <span>{total}</span>
-            {pending > 0 && (
-              <span className="ml-2 text-yellow-600">({pending} pending)</span>
-            )}
+            <span className="text-green-600 font-medium">{approved}</span> / <span>{total}</span>
+            {pending > 0 && <span className="ml-2 text-yellow-600">({pending} pending)</span>}
           </div>
         );
       },

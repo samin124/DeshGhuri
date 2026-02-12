@@ -12,9 +12,7 @@ function ProofCenterPlaceholder() {
     <div className="space-y-6 p-6">
       <div>
         <h1 className="text-3xl font-bold">Proof Center</h1>
-        <p className="text-muted-foreground">
-          Submit service completion proof
-        </p>
+        <p className="text-muted-foreground">Submit service completion proof</p>
       </div>
 
       <Card>
@@ -32,7 +30,8 @@ function ProofCenterPlaceholder() {
             <Info className="h-4 w-4" />
             <AlertTitle>Coming Soon in Epic 12</AlertTitle>
             <AlertDescription>
-              The proof center feature is currently under development and will be available in Epic 12 (Listing Management).
+              The proof center feature is currently under development and will be available in Epic
+              12 (Listing Management).
             </AlertDescription>
           </Alert>
         </CardContent>

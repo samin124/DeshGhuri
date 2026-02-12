@@ -2,7 +2,14 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { DollarSign, TrendingUp, Lock, AlertCircle } from 'lucide-react';
 import { DataTable, type Column } from '@/components/admin/data-table';
-import { useTransactions, useTransactionStats, useEscrowOverview, useProcessRefund, useReleaseEscrow, useHoldEscrow } from '@/hooks/use-admin-queries';
+import {
+  useTransactions,
+  useTransactionStats,
+  useEscrowOverview,
+  useProcessRefund,
+  useReleaseEscrow,
+  useHoldEscrow,
+} from '@/hooks/use-admin-queries';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -257,13 +264,16 @@ function RouteComponent() {
       id: 'status',
       header: 'Status',
       accessor: (escrow) => (
-        <Badge className={getEscrowStatusColor(escrow.status)}>{escrow.status?.replace('_', ' ') || 'N/A'}</Badge>
+        <Badge className={getEscrowStatusColor(escrow.status)}>
+          {escrow.status?.replace('_', ' ') || 'N/A'}
+        </Badge>
       ),
     },
     {
       id: 'releaseDate',
       header: 'Release Date',
-      accessor: (escrow) => escrow.releaseDate ? new Date(escrow.releaseDate).toLocaleDateString() : 'N/A',
+      accessor: (escrow) =>
+        escrow.releaseDate ? new Date(escrow.releaseDate).toLocaleDateString() : 'N/A',
     },
     {
       id: 'createdAt',
@@ -337,9 +347,7 @@ function RouteComponent() {
             Monitor transactions and manage escrow funds
           </p>
         </div>
-        <Button onClick={() => setRefundDialog(true)}>
-          Process Manual Refund
-        </Button>
+        <Button onClick={() => setRefundDialog(true)}>Process Manual Refund</Button>
       </div>
 
       {/* Statistics */}
@@ -378,7 +386,9 @@ function RouteComponent() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">BDT {stats.volume?.total?.toLocaleString() || 0}</div>
+              <div className="text-2xl font-bold">
+                BDT {stats.volume?.total?.toLocaleString() || 0}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -492,7 +502,9 @@ function RouteComponent() {
                   <Lock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">BDT {escrowData.summary?.totalInEscrow?.toLocaleString() || 0}</div>
+                  <div className="text-2xl font-bold">
+                    BDT {escrowData.summary?.totalInEscrow?.toLocaleString() || 0}
+                  </div>
                 </CardContent>
               </Card>
               <Card>
@@ -501,7 +513,9 @@ function RouteComponent() {
                   <AlertCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">BDT {escrowData.summary?.pendingRelease?.toLocaleString() || 0}</div>
+                  <div className="text-2xl font-bold">
+                    BDT {escrowData.summary?.pendingRelease?.toLocaleString() || 0}
+                  </div>
                 </CardContent>
               </Card>
               <Card>
@@ -510,7 +524,9 @@ function RouteComponent() {
                   <AlertCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">BDT {escrowData.summary?.pendingProof?.toLocaleString() || 0}</div>
+                  <div className="text-2xl font-bold">
+                    BDT {escrowData.summary?.pendingProof?.toLocaleString() || 0}
+                  </div>
                 </CardContent>
               </Card>
               <Card>
@@ -519,7 +535,9 @@ function RouteComponent() {
                   <Lock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">BDT {escrowData.summary?.onHold?.toLocaleString() || 0}</div>
+                  <div className="text-2xl font-bold">
+                    BDT {escrowData.summary?.onHold?.toLocaleString() || 0}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -550,9 +568,7 @@ function RouteComponent() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Process Manual Refund</DialogTitle>
-            <DialogDescription>
-              Issue a refund for a booking
-            </DialogDescription>
+            <DialogDescription>Issue a refund for a booking</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -628,13 +644,14 @@ function RouteComponent() {
       </Dialog>
 
       {/* Release Escrow Dialog */}
-      <Dialog open={releaseDialog.open} onOpenChange={(open) => !open && setReleaseDialog({ open: false, escrow: null })}>
+      <Dialog
+        open={releaseDialog.open}
+        onOpenChange={(open) => !open && setReleaseDialog({ open: false, escrow: null })}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Release Escrow</DialogTitle>
-            <DialogDescription>
-              Manually release escrow funds to seller
-            </DialogDescription>
+            <DialogDescription>Manually release escrow funds to seller</DialogDescription>
           </DialogHeader>
 
           {releaseDialog.escrow && (
@@ -693,13 +710,14 @@ function RouteComponent() {
       </Dialog>
 
       {/* Hold Escrow Dialog */}
-      <Dialog open={holdDialog.open} onOpenChange={(open) => !open && setHoldDialog({ open: false, escrow: null })}>
+      <Dialog
+        open={holdDialog.open}
+        onOpenChange={(open) => !open && setHoldDialog({ open: false, escrow: null })}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Hold Escrow</DialogTitle>
-            <DialogDescription>
-              Place escrow funds on hold
-            </DialogDescription>
+            <DialogDescription>Place escrow funds on hold</DialogDescription>
           </DialogHeader>
 
           {holdDialog.escrow && (

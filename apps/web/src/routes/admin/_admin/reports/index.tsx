@@ -90,13 +90,9 @@ function RouteComponent() {
             <Card className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Total Revenue
-                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
                   <p className="text-3xl font-bold mt-2">৳0</p>
-                  <p className="text-sm text-green-600 mt-1">
-                    +0% from last period
-                  </p>
+                  <p className="text-sm text-green-600 mt-1">+0% from last period</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
                   <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -107,13 +103,9 @@ function RouteComponent() {
             <Card className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Platform Fees
-                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Platform Fees</p>
                   <p className="text-3xl font-bold mt-2">৳0</p>
-                  <p className="text-sm text-green-600 mt-1">
-                    +0% from last period
-                  </p>
+                  <p className="text-sm text-green-600 mt-1">+0% from last period</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                   <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -124,13 +116,9 @@ function RouteComponent() {
             <Card className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Avg. Booking Value
-                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Avg. Booking Value</p>
                   <p className="text-3xl font-bold mt-2">৳0</p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    0% from last period
-                  </p>
+                  <p className="text-sm text-gray-600 mt-1">0% from last period</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
                   <ShoppingBag className="h-6 w-6 text-purple-600 dark:text-purple-400" />
@@ -159,21 +147,15 @@ function RouteComponent() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Total Bookings
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Bookings</p>
                 <p className="text-3xl font-bold mt-2">0</p>
-                <p className="text-sm text-green-600 mt-1">
-                  +0% from last period
-                </p>
+                <p className="text-sm text-green-600 mt-1">+0% from last period</p>
               </div>
             </Card>
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Confirmed
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Confirmed</p>
                 <p className="text-3xl font-bold mt-2">0</p>
                 <p className="text-sm text-gray-600 mt-1">0% of total</p>
               </div>
@@ -181,9 +163,7 @@ function RouteComponent() {
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Cancelled
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Cancelled</p>
                 <p className="text-3xl font-bold mt-2">0</p>
                 <p className="text-sm text-gray-600 mt-1">0% of total</p>
               </div>
@@ -191,9 +171,7 @@ function RouteComponent() {
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Conversion Rate
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Conversion Rate</p>
                 <p className="text-3xl font-bold mt-2">0%</p>
                 <p className="text-sm text-gray-600 mt-1">0% from last period</p>
               </div>
@@ -221,13 +199,9 @@ function RouteComponent() {
             <Card className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Total Users
-                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
                   <p className="text-3xl font-bold mt-2">0</p>
-                  <p className="text-sm text-green-600 mt-1">
-                    +0 new users
-                  </p>
+                  <p className="text-sm text-green-600 mt-1">+0 new users</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                   <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -237,9 +211,7 @@ function RouteComponent() {
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Active Users
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Active Users</p>
                 <p className="text-3xl font-bold mt-2">0</p>
                 <p className="text-sm text-gray-600 mt-1">In last 30 days</p>
               </div>
@@ -247,21 +219,15 @@ function RouteComponent() {
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  New Registrations
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">New Registrations</p>
                 <p className="text-3xl font-bold mt-2">0</p>
-                <p className="text-sm text-green-600 mt-1">
-                  +0% from last period
-                </p>
+                <p className="text-sm text-green-600 mt-1">+0% from last period</p>
               </div>
             </Card>
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Retention Rate
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Retention Rate</p>
                 <p className="text-3xl font-bold mt-2">0%</p>
                 <p className="text-sm text-gray-600 mt-1">0% from last period</p>
               </div>
@@ -288,9 +254,7 @@ function RouteComponent() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Total Sellers
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Sellers</p>
                 <p className="text-3xl font-bold mt-2">0</p>
                 <p className="text-sm text-green-600 mt-1">+0 new sellers</p>
               </div>
@@ -298,9 +262,7 @@ function RouteComponent() {
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Verified Sellers
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Verified Sellers</p>
                 <p className="text-3xl font-bold mt-2">0</p>
                 <p className="text-sm text-gray-600 mt-1">0% of total</p>
               </div>
@@ -308,9 +270,7 @@ function RouteComponent() {
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Pending Verification
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Pending Verification</p>
                 <p className="text-3xl font-bold mt-2">0</p>
                 <p className="text-sm text-gray-600 mt-1">Action required</p>
               </div>
@@ -318,9 +278,7 @@ function RouteComponent() {
 
             <Card className="p-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Active Listings
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Active Listings</p>
                 <p className="text-3xl font-bold mt-2">0</p>
                 <p className="text-sm text-gray-600 mt-1">Total listings</p>
               </div>

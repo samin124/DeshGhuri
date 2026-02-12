@@ -11,18 +11,18 @@ dotenv.config({
 
 const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 32);
 
-function generateId(prefix: string): string {
+function generateId(_prefix: string): string {
   return nanoid();
 }
 
 // Define user_role table inline since it might not exist yet
-const userRole = pgTable('user_role', {
-  id: text('id').primaryKey(),
-  userId: text('user_id').notNull(),
-  role: text('role').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  createdBy: text('created_by'),
-});
+// const userRole = pgTable('user_role', {
+//   id: text('id').primaryKey(),
+//   userId: text('user_id').notNull(),
+//   role: text('role').notNull(),
+//   createdAt: timestamp('created_at').defaultNow().notNull(),
+//   createdBy: text('created_by'),
+// });
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
@@ -90,17 +90,19 @@ async function createAdmin() {
 
     // Add super_admin role
     console.log('👑 Adding super_admin role...');
+    const adminRoleId = generateId('');
     await db.execute(`
       INSERT INTO user_role (id, user_id, role, created_at, created_by)
-      VALUES ('${generateId('')}', '${userId}', 'super_admin', NOW(), NULL)
+      VALUES ('${adminRoleId}', '${userId}', 'super_admin', NOW(), NULL)
     `);
     console.log('✅ Super admin role added\n');
 
     // Add customer role (default)
     console.log('🛍️  Adding customer role...');
+    const customerRoleId = generateId('');
     await db.execute(`
       INSERT INTO user_role (id, user_id, role, created_at, created_by)
-      VALUES ('${generateId('')}', '${userId}', 'customer', NOW(), NULL)
+      VALUES ('${customerRoleId}', '${userId}', 'customer', NOW(), NULL)
     `);
     console.log('✅ Customer role added\n');
 
@@ -111,7 +113,6 @@ async function createAdmin() {
     console.log('🔑 Password: ' + password);
     console.log('\n✨ You can now log in at: http://127.0.0.1:3001/login');
     console.log('🎯 Admin Dashboard: http://127.0.0.1:3001/admin/dashboard\n');
-
   } catch (error) {
     console.error('❌ Error creating admin account:', error);
     process.exit(1);

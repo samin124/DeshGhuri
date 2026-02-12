@@ -1,4 +1,4 @@
-import { mockPartners } from "@/lib/mock-data";
+import { mockPartners } from '@/lib/mock-data';
 
 export default function PartnersSection() {
   return (

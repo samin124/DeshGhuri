@@ -72,7 +72,7 @@ export async function getBookings(params?: GetBookingsParams): Promise<GetBookin
 
   if (params?.status) {
     if (Array.isArray(params.status)) {
-      params.status.forEach(s => queryParams.append('status', s));
+      params.status.forEach((s) => queryParams.append('status', s));
     } else {
       queryParams.append('status', params.status);
     }
@@ -122,10 +122,7 @@ export async function getEarnings(params?: {
 /**
  * Get payout history
  */
-export async function getPayouts(params?: {
-  page?: number;
-  limit?: number;
-}): Promise<{
+export async function getPayouts(params?: { page?: number; limit?: number }): Promise<{
   payouts: Payout[];
   total: number;
   page: number;

@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Users, Minus, Plus } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { Users, Minus, Plus } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface GuestSelectorProps {
   adults: number;
@@ -68,18 +68,16 @@ export function GuestSelector({
   };
 
   const displayText = () => {
-    const guestsText = `${totalGuests} Guest${totalGuests !== 1 ? "s" : ""}`;
-    const roomsText = `${rooms} Room${rooms !== 1 ? "s" : ""}`;
+    const guestsText = `${totalGuests} Guest${totalGuests !== 1 ? 's' : ''}`;
+    const roomsText = `${rooms} Room${rooms !== 1 ? 's' : ''}`;
     return `${guestsText}, ${roomsText}`;
   };
 
   return (
-    <div className={cn("", className)}>
+    <div className={cn('', className)}>
       <label className="text-sm font-medium mb-1 block">Guests & Rooms</label>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger
-          className="flex h-10 w-full items-center justify-start rounded-md border border-input bg-background px-3 py-2 text-sm font-normal ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
+        <PopoverTrigger className="flex h-10 w-full items-center justify-start rounded-md border border-input bg-background px-3 py-2 text-sm font-normal ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
           <Users className="mr-2 h-4 w-4" />
           <span className="flex-1 text-left">{displayText()}</span>
         </PopoverTrigger>

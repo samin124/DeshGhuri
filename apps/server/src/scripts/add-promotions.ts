@@ -11,10 +11,7 @@ async function addPromotions() {
 
   try {
     // Get all active listings
-    const allListings = await db
-      .select()
-      .from(listing)
-      .where(eq(listing.status, 'active'));
+    const allListings = await db.select().from(listing).where(eq(listing.status, 'active'));
 
     console.log(`Found ${allListings.length} active listings`);
 
@@ -111,7 +108,6 @@ async function addPromotions() {
     console.log(`  - Promo Codes: ${promoCodeListings.length} listings`);
     console.log(`  - Regular Discounts: ${discountListings.length} listings`);
     console.log('\n🎉 Visit the homepage to see the promotional badges!');
-
   } catch (error) {
     console.error('❌ Error adding promotions:', error);
     throw error;

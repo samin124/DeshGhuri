@@ -4,9 +4,9 @@ import { inArray } from 'drizzle-orm';
 async function deleteOldBookings() {
   // Old booking IDs from other sellers that need to be removed
   const oldBookingIds = [
-    'DG-20260210-KLDP5',  // Seller: cnOp2iyFaqS3AIQ5ohqis
-    'DG-20260210-WRQCC',  // Seller: bHWYNrUy5N3MXEgwmq0nn
-    'DG-20260210-W-JGZ'   // Seller: cnOp2iyFaqS3AIQ5ohqis
+    'DG-20260210-KLDP5', // Seller: cnOp2iyFaqS3AIQ5ohqis
+    'DG-20260210-WRQCC', // Seller: bHWYNrUy5N3MXEgwmq0nn
+    'DG-20260210-W-JGZ', // Seller: cnOp2iyFaqS3AIQ5ohqis
   ];
 
   console.log('🗑️  Deleting old bookings from other sellers...\n');

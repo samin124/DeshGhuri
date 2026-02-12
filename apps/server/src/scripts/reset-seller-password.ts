@@ -42,12 +42,7 @@ console.log('Updating account password...');
 await db
   .update(account)
   .set({ password: hashedPassword })
-  .where(
-    and(
-      eq(account.userId, sellerRecord.userId),
-      eq(account.providerId, 'credential')
-    )
-  );
+  .where(and(eq(account.userId, sellerRecord.userId), eq(account.providerId, 'credential')));
 
 console.log('✅ Password reset successfully!');
 console.log(`Email: ${sellerEmail}`);

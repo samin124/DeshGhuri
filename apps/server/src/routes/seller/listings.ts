@@ -1,14 +1,14 @@
-import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
-import { db, listing } from "@DeshGhuri/db";
-import { eq, and, desc } from "drizzle-orm";
-import { requireSeller } from "@/middleware/seller-auth";
-import { nanoid } from "nanoid";
+import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import { db, listing } from '@DeshGhuri/db';
+import { eq, and, desc } from 'drizzle-orm';
+import { requireSeller } from '@/middleware/seller-auth';
+import { nanoid } from 'nanoid';
 
 const app = new Hono();
 
 // Apply seller authentication to ALL routes
-app.use("*", requireSeller);
+app.use('*', requireSeller);
 
 /**
  * GET /api/seller/listings
@@ -16,9 +16,9 @@ app.use("*", requireSeller);
  * Query params:
  * - status: Filter by listing status (draft, pending-review, active, paused, rejected)
  */
-app.get("/", async (c) => {
-  const sellerId = c.get("sellerId") as string;
-  const statusFilter = c.req.query("status");
+app.get('/', async (c) => {
+  const sellerId = c.get('sellerId') as string;
+  const statusFilter = c.req.query('status');
 
   try {
     // Build WHERE conditions
@@ -40,8 +40,8 @@ app.get("/", async (c) => {
       count: listings.length,
     });
   } catch (error) {
-    console.error("Error fetching seller listings:", error);
-    throw new HTTPException(500, { message: "Failed to fetch listings" });
+    console.error('Error fetching seller listings:', error);
+    throw new HTTPException(500, { message: 'Failed to fetch listings' });
   }
 });
 
@@ -49,9 +49,9 @@ app.get("/", async (c) => {
  * GET /api/seller/listings/:listingId
  * Get a specific listing (with ownership check)
  */
-app.get("/:listingId", async (c) => {
-  const sellerId = c.get("sellerId") as string;
-  const listingId = c.req.param("listingId");
+app.get('/:listingId', async (c) => {
+  const sellerId = c.get('sellerId') as string;
+  const listingId = c.req.param('listingId');
 
   try {
     const listingRecord = await db.query.listing.findFirst({
@@ -73,8 +73,8 @@ app.get("/:listingId", async (c) => {
     });
   } catch (error) {
     if (error instanceof HTTPException) throw error;
-    console.error("Error fetching listing:", error);
-    throw new HTTPException(500, { message: "Failed to fetch listing" });
+    console.error('Error fetching listing:', error);
+    throw new HTTPException(500, { message: 'Failed to fetch listing' });
   }
 });
 
@@ -82,22 +82,22 @@ app.get("/:listingId", async (c) => {
  * POST /api/seller/listings
  * Create a new listing
  */
-app.post("/", async (c) => {
-  const sellerId = c.get("sellerId") as string;
+app.post('/', async (c) => {
+  const sellerId = c.get('sellerId') as string;
 
   try {
     const body = await c.req.json();
 
     // Validate required fields
     const requiredFields = [
-      "title",
-      "description",
-      "category",
-      "location",
-      "basePrice",
-      "priceUnit",
-      "capacity",
-      "maxGuests",
+      'title',
+      'description',
+      'category',
+      'location',
+      'basePrice',
+      'priceUnit',
+      'capacity',
+      'maxGuests',
     ];
 
     for (const field of requiredFields) {
@@ -111,8 +111,8 @@ app.post("/", async (c) => {
     // Generate slug from title
     const slug = body.title
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
     // Create listing with seller ownership
     const newListing = await db
@@ -126,7 +126,7 @@ app.post("/", async (c) => {
         category: body.category,
         location: body.location,
         basePrice: body.basePrice.toString(),
-        currency: body.currency || "BDT",
+        currency: body.currency || 'BDT',
         priceUnit: body.priceUnit,
         capacity: body.capacity,
         minGuests: body.minGuests || 1,
@@ -135,13 +135,13 @@ app.post("/", async (c) => {
         amenities: body.amenities || [],
         inclusions: body.inclusions || [],
         exclusions: body.exclusions || [],
-        houseRules: body.houseRules || "",
+        houseRules: body.houseRules || '',
         checkInTime: body.checkInTime || null,
         checkOutTime: body.checkOutTime || null,
-        cancellationPolicy: body.cancellationPolicy || "flexible",
+        cancellationPolicy: body.cancellationPolicy || 'flexible',
         groupEligible: body.groupEligible || false,
         groupPricingTiers: body.groupPricingTiers || [],
-        status: body.status || "draft", // Allow setting status (draft or pending-review)
+        status: body.status || 'draft', // Allow setting status (draft or pending-review)
         rejectionReason: null,
         viewCount: 0,
         bookingCount: 0,
@@ -159,14 +159,14 @@ app.post("/", async (c) => {
       {
         success: true,
         data: newListing[0],
-        message: "Listing created successfully",
+        message: 'Listing created successfully',
       },
       201
     );
   } catch (error) {
     if (error instanceof HTTPException) throw error;
-    console.error("Error creating listing:", error);
-    throw new HTTPException(500, { message: "Failed to create listing" });
+    console.error('Error creating listing:', error);
+    throw new HTTPException(500, { message: 'Failed to create listing' });
   }
 });
 
@@ -174,9 +174,9 @@ app.post("/", async (c) => {
  * PATCH /api/seller/listings/:listingId
  * Update a listing (with ownership check)
  */
-app.patch("/:listingId", async (c) => {
-  const sellerId = c.get("sellerId") as string;
-  const listingId = c.req.param("listingId");
+app.patch('/:listingId', async (c) => {
+  const sellerId = c.get('sellerId') as string;
+  const listingId = c.req.param('listingId');
 
   try {
     // Verify ownership first
@@ -212,8 +212,8 @@ app.patch("/:listingId", async (c) => {
     if (body.title && body.title !== existingListing.title) {
       const slug = body.title
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
       body.slug = `${slug}-${nanoid(6)}`;
     }
 
@@ -230,12 +230,12 @@ app.patch("/:listingId", async (c) => {
     return c.json({
       success: true,
       data: updatedListing[0],
-      message: "Listing updated successfully",
+      message: 'Listing updated successfully',
     });
   } catch (error) {
     if (error instanceof HTTPException) throw error;
-    console.error("Error updating listing:", error);
-    throw new HTTPException(500, { message: "Failed to update listing" });
+    console.error('Error updating listing:', error);
+    throw new HTTPException(500, { message: 'Failed to update listing' });
   }
 });
 
@@ -243,9 +243,9 @@ app.patch("/:listingId", async (c) => {
  * DELETE /api/seller/listings/:listingId
  * Delete a listing (with ownership check)
  */
-app.delete("/:listingId", async (c) => {
-  const sellerId = c.get("sellerId") as string;
-  const listingId = c.req.param("listingId");
+app.delete('/:listingId', async (c) => {
+  const sellerId = c.get('sellerId') as string;
+  const listingId = c.req.param('listingId');
 
   try {
     // Verify ownership first
@@ -265,7 +265,7 @@ app.delete("/:listingId", async (c) => {
     // Check if listing has active bookings
     const activeBookingsCount = await db.query.booking.findMany({
       where: and(
-        eq(listing.id, listingId),
+        eq(listing.id, listingId)
         // Add check for active bookings (pending, confirmed, in-progress)
       ),
     });
@@ -273,7 +273,7 @@ app.delete("/:listingId", async (c) => {
     if (activeBookingsCount.length > 0) {
       throw new HTTPException(400, {
         message:
-          "Cannot delete listing with active bookings. Please complete or cancel all bookings first.",
+          'Cannot delete listing with active bookings. Please complete or cancel all bookings first.',
       });
     }
 
@@ -291,12 +291,12 @@ app.delete("/:listingId", async (c) => {
 
     return c.json({
       success: true,
-      message: "Listing deleted successfully",
+      message: 'Listing deleted successfully',
     });
   } catch (error) {
     if (error instanceof HTTPException) throw error;
-    console.error("Error deleting listing:", error);
-    throw new HTTPException(500, { message: "Failed to delete listing" });
+    console.error('Error deleting listing:', error);
+    throw new HTTPException(500, { message: 'Failed to delete listing' });
   }
 });
 
@@ -304,17 +304,14 @@ app.delete("/:listingId", async (c) => {
  * PATCH /api/seller/listings/:listingId/toggle-active
  * Toggle listing active status (with ownership check)
  */
-app.patch("/:listingId/toggle-active", async (c) => {
-  const sellerId = c.get("sellerId") as string;
-  const listingId = c.req.param("listingId");
+app.patch('/:listingId/toggle-active', async (c) => {
+  const sellerId = c.get('sellerId') as string;
+  const listingId = c.req.param('listingId');
 
   try {
     // Verify ownership
     const existingListing = await db.query.listing.findFirst({
-      where: and(
-        eq(listing.id, listingId),
-        eq(listing.sellerId, sellerId)
-      ),
+      where: and(eq(listing.id, listingId), eq(listing.sellerId, sellerId)),
     });
 
     if (!existingListing) {
@@ -336,12 +333,12 @@ app.patch("/:listingId/toggle-active", async (c) => {
     return c.json({
       success: true,
       data: updatedListing[0],
-      message: `Listing ${updatedListing[0].isActive ? "activated" : "deactivated"} successfully`,
+      message: `Listing ${updatedListing[0].isActive ? 'activated' : 'deactivated'} successfully`,
     });
   } catch (error) {
     if (error instanceof HTTPException) throw error;
-    console.error("Error toggling listing status:", error);
-    throw new HTTPException(500, { message: "Failed to toggle listing status" });
+    console.error('Error toggling listing status:', error);
+    throw new HTTPException(500, { message: 'Failed to toggle listing status' });
   }
 });
 

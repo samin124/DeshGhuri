@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useBooking } from '@/contexts/booking-context';
 import { DateGuestStep } from './steps/date-guest-step';
@@ -9,11 +15,12 @@ import { ConfirmationStep } from './steps/confirmation-step';
 import { ChevronLeft } from 'lucide-react';
 import { useCreateBooking, useSubmitPayment } from '@/lib/api/bookings';
 import { toast } from 'sonner';
+import type { Listing } from '@/types/listing';
 
 interface BookingWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  listing: any;
+  listing: Listing;
 }
 
 const STEPS = [
@@ -24,7 +31,15 @@ const STEPS = [
 ];
 
 export function BookingWizard({ open, onOpenChange, listing }: BookingWizardProps) {
-  const { currentStep, setCurrentStep, resetBooking, updateFormData, formData, bookingId, setBookingId } = useBooking();
+  const {
+    currentStep,
+    setCurrentStep,
+    resetBooking,
+    updateFormData,
+    formData,
+    bookingId,
+    setBookingId,
+  } = useBooking();
   const [canProceed, setCanProceed] = useState(false);
   const createBookingMutation = useCreateBooking();
   const submitPaymentMutation = useSubmitPayment();
@@ -134,12 +149,7 @@ export function BookingWizard({ open, onOpenChange, listing }: BookingWizardProp
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             {currentStep > 1 && currentStep !== 4 && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleBack}
-                className="h-8 w-8"
-              >
+              <Button variant="ghost" size="icon" onClick={handleBack} className="h-8 w-8">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             )}
@@ -174,11 +184,17 @@ export function BookingWizard({ open, onOpenChange, listing }: BookingWizardProp
             )}
             <Button
               onClick={handleNext}
-              disabled={!canProceed || createBookingMutation.isPending || submitPaymentMutation.isPending}
+              disabled={
+                !canProceed || createBookingMutation.isPending || submitPaymentMutation.isPending
+              }
             >
-              {(currentStep === 2 && createBookingMutation.isPending) ? 'Creating Booking...' :
-               (currentStep === 3 && submitPaymentMutation.isPending) ? 'Submitting...' :
-               currentStep === 3 ? 'Submit Payment' : 'Continue'}
+              {currentStep === 2 && createBookingMutation.isPending
+                ? 'Creating Booking...'
+                : currentStep === 3 && submitPaymentMutation.isPending
+                  ? 'Submitting...'
+                  : currentStep === 3
+                    ? 'Submit Payment'
+                    : 'Continue'}
             </Button>
           </div>
         )}

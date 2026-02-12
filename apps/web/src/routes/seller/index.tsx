@@ -9,7 +9,7 @@ import {
   CheckCircle2,
   ArrowRight,
   LogIn,
-  UserPlus
+  UserPlus,
 } from 'lucide-react';
 
 export const Route = createFileRoute('/seller/')({
@@ -21,9 +21,7 @@ function BecomeASellerLanding() {
     <div className="container mx-auto px-4 py-12">
       {/* Hero Section */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Become a Seller on DeshGhuri
-        </h1>
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">Become a Seller on DeshGhuri</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Join Bangladesh's leading travel marketplace and reach thousands of travelers
         </p>
@@ -38,9 +36,7 @@ function BecomeASellerLanding() {
               <UserPlus className="h-6 w-6 text-primary" />
               <CardTitle>New Seller</CardTitle>
             </div>
-            <CardDescription>
-              Don't have an account yet? Start your seller journey
-            </CardDescription>
+            <CardDescription>Don't have an account yet? Start your seller journey</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 text-sm">
@@ -77,9 +73,7 @@ function BecomeASellerLanding() {
               <LogIn className="h-6 w-6 text-primary" />
               <CardTitle>Existing Seller</CardTitle>
             </div>
-            <CardDescription>
-              Already applied or have a seller account?
-            </CardDescription>
+            <CardDescription>Already applied or have a seller account?</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 text-sm">
@@ -112,9 +106,7 @@ function BecomeASellerLanding() {
 
       {/* Benefits Section */}
       <div className="max-w-6xl mx-auto mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Why Sell on DeshGhuri?
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-8">Why Sell on DeshGhuri?</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardHeader>
@@ -171,9 +163,7 @@ function BecomeASellerLanding() {
         <Card>
           <CardHeader>
             <CardTitle>What You Need to Get Started</CardTitle>
-            <CardDescription>
-              Make sure you have these ready before applying
-            </CardDescription>
+            <CardDescription>Make sure you have these ready before applying</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">

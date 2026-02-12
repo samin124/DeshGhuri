@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
-import { env } from "@DeshGhuri/env/server";
+import nodemailer from 'nodemailer';
+import { env } from '@DeshGhuri/env/server';
 
 // Create Gmail SMTP transporter
 const transporter = nodemailer.createTransport({
@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     // Do not fail on invalid certs in development
-    rejectUnauthorized: env.NODE_ENV === "production",
+    rejectUnauthorized: env.NODE_ENV === 'production',
   },
 });
 
@@ -28,20 +28,20 @@ export async function sendVerificationEmail({
   userName: string | null;
   verificationUrl: string;
 }) {
-  console.log("\n=== SENDING VERIFICATION EMAIL ===");
-  console.log("📧 To:", to);
-  console.log("👤 Name:", userName);
-  console.log("🔗 Verification URL:", verificationUrl);
-  console.log("🏠 Email Host:", env.EMAIL_HOST);
-  console.log("🔌 Email Port:", env.EMAIL_PORT);
-  console.log("👨‍💼 Email User:", env.EMAIL_USER);
-  console.log("==================================\n");
+  console.log('\n=== SENDING VERIFICATION EMAIL ===');
+  console.log('📧 To:', to);
+  console.log('👤 Name:', userName);
+  console.log('🔗 Verification URL:', verificationUrl);
+  console.log('🏠 Email Host:', env.EMAIL_HOST);
+  console.log('🔌 Email Port:', env.EMAIL_PORT);
+  console.log('👨‍💼 Email User:', env.EMAIL_USER);
+  console.log('==================================\n');
 
   try {
     const info = await transporter.sendMail({
       from: `"DeshGhuri" <${env.EMAIL_FROM}>`,
       to,
-      subject: "Verify your email address - DeshGhuri",
+      subject: 'Verify your email address - DeshGhuri',
       html: `
         <!DOCTYPE html>
         <html>
@@ -56,7 +56,7 @@ export async function sendVerificationEmail({
                 <p style="color: #6B7280; margin-top: 5px;">Multi-Vendor Travel Marketplace</p>
               </div>
 
-              <h2 style="color: #1F2937; margin-bottom: 20px;">Welcome, ${userName || "there"}!</h2>
+              <h2 style="color: #1F2937; margin-bottom: 20px;">Welcome, ${userName || 'there'}!</h2>
 
               <p style="color: #4B5563; line-height: 1.6; margin-bottom: 25px;">
                 Thank you for registering with DeshGhuri. To complete your registration and start booking amazing travel experiences, please verify your email address by clicking the button below:
@@ -93,20 +93,20 @@ export async function sendVerificationEmail({
       `,
     });
 
-    console.log("\n✅ Verification email sent successfully!");
-    console.log("📬 Message ID:", info.messageId);
-    console.log("📝 Response:", info.response);
-    console.log("✉️ Envelope:", JSON.stringify(info.envelope));
-    console.log("==================================\n");
+    console.log('\n✅ Verification email sent successfully!');
+    console.log('📬 Message ID:', info.messageId);
+    console.log('📝 Response:', info.response);
+    console.log('✉️ Envelope:', JSON.stringify(info.envelope));
+    console.log('==================================\n');
     return info;
   } catch (error) {
-    console.error("\n❌ ERROR SENDING VERIFICATION EMAIL");
-    console.error("Error details:", error);
+    console.error('\n❌ ERROR SENDING VERIFICATION EMAIL');
+    console.error('Error details:', error);
     if (error instanceof Error) {
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
     }
-    console.error("==================================\n");
+    console.error('==================================\n');
     throw error;
   }
 }
@@ -123,20 +123,20 @@ export async function sendResetPasswordEmail({
   userName: string | null;
   resetUrl: string;
 }) {
-  console.log("\n=== SENDING PASSWORD RESET EMAIL ===");
-  console.log("📧 To:", to);
-  console.log("👤 Name:", userName);
-  console.log("🔗 Reset URL:", resetUrl);
-  console.log("🏠 Email Host:", env.EMAIL_HOST);
-  console.log("🔌 Email Port:", env.EMAIL_PORT);
-  console.log("👨‍💼 Email User:", env.EMAIL_USER);
-  console.log("====================================\n");
+  console.log('\n=== SENDING PASSWORD RESET EMAIL ===');
+  console.log('📧 To:', to);
+  console.log('👤 Name:', userName);
+  console.log('🔗 Reset URL:', resetUrl);
+  console.log('🏠 Email Host:', env.EMAIL_HOST);
+  console.log('🔌 Email Port:', env.EMAIL_PORT);
+  console.log('👨‍💼 Email User:', env.EMAIL_USER);
+  console.log('====================================\n');
 
   try {
     const info = await transporter.sendMail({
       from: `"DeshGhuri" <${env.EMAIL_FROM}>`,
       to,
-      subject: "Reset your password - DeshGhuri",
+      subject: 'Reset your password - DeshGhuri',
       html: `
         <!DOCTYPE html>
         <html>
@@ -154,7 +154,7 @@ export async function sendResetPasswordEmail({
               <h2 style="color: #1F2937; margin-bottom: 20px;">Password Reset Request</h2>
 
               <p style="color: #4B5563; line-height: 1.6; margin-bottom: 10px;">
-                Hi ${userName || "there"},
+                Hi ${userName || 'there'},
               </p>
 
               <p style="color: #4B5563; line-height: 1.6; margin-bottom: 25px;">
@@ -198,40 +198,40 @@ export async function sendResetPasswordEmail({
       `,
     });
 
-    console.log("\n✅ Password reset email sent successfully!");
-    console.log("📬 Message ID:", info.messageId);
-    console.log("📝 Response:", info.response);
-    console.log("✉️ Envelope:", JSON.stringify(info.envelope));
-    console.log("====================================\n");
+    console.log('\n✅ Password reset email sent successfully!');
+    console.log('📬 Message ID:', info.messageId);
+    console.log('📝 Response:', info.response);
+    console.log('✉️ Envelope:', JSON.stringify(info.envelope));
+    console.log('====================================\n');
     return info;
   } catch (error) {
-    console.error("\n❌ ERROR SENDING PASSWORD RESET EMAIL");
-    console.error("Error details:", error);
+    console.error('\n❌ ERROR SENDING PASSWORD RESET EMAIL');
+    console.error('Error details:', error);
     if (error instanceof Error) {
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
     }
-    console.error("====================================\n");
+    console.error('====================================\n');
     throw error;
   }
 }
 
 // Test email configuration on startup
-console.log("\n=== INITIALIZING EMAIL CONFIGURATION ===");
-console.log("🏠 Host:", env.EMAIL_HOST);
-console.log("🔌 Port:", env.EMAIL_PORT);
-console.log("👨‍💼 User:", env.EMAIL_USER);
-console.log("📤 From:", env.EMAIL_FROM);
-console.log("=========================================\n");
+console.log('\n=== INITIALIZING EMAIL CONFIGURATION ===');
+console.log('🏠 Host:', env.EMAIL_HOST);
+console.log('🔌 Port:', env.EMAIL_PORT);
+console.log('👨‍💼 User:', env.EMAIL_USER);
+console.log('📤 From:', env.EMAIL_FROM);
+console.log('=========================================\n');
 
-transporter.verify((error, success) => {
+transporter.verify((error) => {
   if (error) {
-    console.error("\n❌ EMAIL CONFIGURATION ERROR");
-    console.error("Error:", error);
-    console.error("===============================\n");
+    console.error('\n❌ EMAIL CONFIGURATION ERROR');
+    console.error('Error:', error);
+    console.error('===============================\n');
   } else {
-    console.log("\n✅ EMAIL SERVER IS READY");
-    console.log("📧 Using:", env.EMAIL_USER);
-    console.log("========================\n");
+    console.log('\n✅ EMAIL SERVER IS READY');
+    console.log('📧 Using:', env.EMAIL_USER);
+    console.log('========================\n');
   }
 });

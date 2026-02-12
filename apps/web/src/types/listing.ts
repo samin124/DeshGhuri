@@ -1,4 +1,9 @@
-import type { ListingCategory, ListingStatus, CancellationPolicy, PriceUnit } from '@/lib/constants/categories';
+import type {
+  ListingCategory,
+  ListingStatus,
+  CancellationPolicy,
+  PriceUnit,
+} from '@/lib/constants/categories';
 
 export interface ListingImage {
   url: string;

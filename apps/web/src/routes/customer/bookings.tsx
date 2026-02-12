@@ -4,7 +4,17 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, User, CreditCard, MapPin, Clock, CheckCircle2, XCircle, AlertCircle, Package } from 'lucide-react';
+import {
+  Calendar,
+  User,
+  CreditCard,
+  MapPin,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Package,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useCustomerBookings } from '@/lib/api/bookings';
 import { authClient } from '@/lib/auth-client';
@@ -70,9 +80,7 @@ function RouteComponent() {
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">My Bookings</h1>
-          <p className="text-muted-foreground mt-2">
-            Track and manage all your bookings
-          </p>
+          <p className="text-muted-foreground mt-2">Track and manage all your bookings</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -80,9 +88,13 @@ function RouteComponent() {
             <TabsTrigger value="all">All Bookings</TabsTrigger>
             <TabsTrigger value="pending">
               Pending
-              {bookings.filter((item: any) => item.booking?.approvalStatus === 'pending').length > 0 && (
+              {bookings.filter((item: any) => item.booking?.approvalStatus === 'pending').length >
+                0 && (
                 <span className="ml-2 bg-yellow-500 text-white rounded-full px-2 py-0.5 text-xs">
-                  {bookings.filter((item: any) => item.booking?.approvalStatus === 'pending').length}
+                  {
+                    bookings.filter((item: any) => item.booking?.approvalStatus === 'pending')
+                      .length
+                  }
                 </span>
               )}
             </TabsTrigger>
@@ -105,9 +117,7 @@ function RouteComponent() {
                     ? "You haven't made any bookings yet"
                     : `No ${activeTab} bookings`}
                 </p>
-                <Button onClick={() => navigate({ to: '/' })}>
-                  Start Exploring
-                </Button>
+                <Button onClick={() => navigate({ to: '/' })}>Start Exploring</Button>
               </Card>
             ) : (
               <div className="space-y-4">
@@ -193,8 +203,8 @@ function RouteComponent() {
                             {booking.paymentMethod === 'bkash'
                               ? 'bKash'
                               : booking.paymentMethod === 'nagad'
-                              ? 'Nagad'
-                              : booking.paymentMethod}
+                                ? 'Nagad'
+                                : booking.paymentMethod}
                           </p>
                           <p className="text-xs text-muted-foreground">{booking.transactionId}</p>
                         </div>

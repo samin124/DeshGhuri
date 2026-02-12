@@ -8,10 +8,10 @@ import { eq } from 'drizzle-orm';
 
 // Category-specific Unsplash search terms for better image relevance
 const CATEGORY_IMAGE_TERMS: Record<string, string[]> = {
-  'hotel': ['hotel', 'resort', 'luxury-hotel', 'hotel-room', 'boutique-hotel'],
+  hotel: ['hotel', 'resort', 'luxury-hotel', 'hotel-room', 'boutique-hotel'],
   'tour-package': ['travel', 'tourism', 'vacation', 'adventure', 'landscape'],
-  'experience': ['adventure', 'activity', 'outdoor', 'experience', 'fun'],
-  'transport': ['car', 'bus', 'vehicle', 'transportation', 'travel-transport'],
+  experience: ['adventure', 'activity', 'outdoor', 'experience', 'fun'],
+  transport: ['car', 'bus', 'vehicle', 'transportation', 'travel-transport'],
 };
 
 function getUnsplashImageUrl(category: string, index: number, seed: string): string {
@@ -56,10 +56,7 @@ async function fixImages() {
         },
       ];
 
-      await db
-        .update(listing)
-        .set({ images: newImages })
-        .where(eq(listing.id, item.id));
+      await db.update(listing).set({ images: newImages }).where(eq(listing.id, item.id));
 
       updated++;
 
@@ -87,7 +84,6 @@ async function fixImages() {
 
     console.log('💡 Note: Unsplash Source API URLs will load different images on each request.');
     console.log('   This is normal and provides variety. Images are fetched from Unsplash.');
-
   } catch (error) {
     console.error('❌ Error fixing images:', error);
     throw error;

@@ -1,20 +1,17 @@
-import { Snowflake, Calendar, MapPin, Sparkles } from "lucide-react";
+import { Snowflake, Calendar, MapPin, Sparkles } from 'lucide-react';
 
-import { ListingCard } from "@/components/common/listing-card";
-import { useListingsByCategory } from "@/lib/api/listings";
-import { Skeleton } from "@/components/ui/skeleton";
-import { LISTING_CATEGORIES } from "@/lib/constants/categories";
-import { Badge } from "@/components/ui/badge";
+import { ListingCard } from '@/components/common/listing-card';
+import { useListingsByCategory } from '@/lib/api/listings';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LISTING_CATEGORIES } from '@/lib/constants/categories';
+import { Badge } from '@/components/ui/badge';
 
 interface SeasonalPackagesProps {
   onListingClick?: (listingId: string) => void;
 }
 
 export default function SeasonalPackages({ onListingClick }: SeasonalPackagesProps) {
-  const { data, isLoading, error } = useListingsByCategory(
-    LISTING_CATEGORIES.TOUR_PACKAGE,
-    3
-  );
+  const { data, isLoading, error } = useListingsByCategory(LISTING_CATEGORIES.TOUR_PACKAGE, 4);
 
   return (
     <section className="relative py-12 bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 dark:from-sky-950/20 dark:via-blue-950/20 dark:to-indigo-950/20">
@@ -41,7 +38,9 @@ export default function SeasonalPackages({ onListingClick }: SeasonalPackagesPro
             </div>
           </div>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <p className="text-muted-foreground">❄️ Perfect season for travel adventures in Bangladesh</p>
+            <p className="text-muted-foreground">
+              ❄️ Perfect season for travel adventures in Bangladesh
+            </p>
             <div className="flex gap-2">
               <Badge variant="outline" className="border-blue-500 text-blue-700 bg-blue-50">
                 <Calendar className="h-3 w-3 mr-1" />
@@ -56,9 +55,9 @@ export default function SeasonalPackages({ onListingClick }: SeasonalPackagesPro
         </div>
 
         {isLoading && (
-          <div className="grid gap-6 md:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-80 rounded-lg" />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-80 rounded-xl" />
             ))}
           </div>
         )}
@@ -72,9 +71,9 @@ export default function SeasonalPackages({ onListingClick }: SeasonalPackagesPro
         )}
 
         {data?.data && data.data.length > 0 && (
-          <div className="grid gap-6 md:grid-cols-3">
-            {data.data.slice(0, 3).map((pkg) => (
-              <ListingCard key={pkg.id} listing={pkg} onClick={onListingClick} />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 auto-rows-fr">
+            {data.data.slice(0, 4).map((pkg) => (
+              <ListingCard key={pkg.id} listing={pkg} onClick={onListingClick} className="h-full" />
             ))}
           </div>
         )}

@@ -4,25 +4,16 @@ import {
   LayoutDashboard,
   ListChecks,
   Package,
-  Calendar,
-  Mail,
-  Star,
-  DollarSign,
-  CreditCard,
-  FileCheck,
-  BarChart3,
-  Settings,
   Menu,
-  X,
   LogOut,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { DashboardFooter } from '@/components/layout/dashboard-footer';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { useSellerSession } from '@/contexts/seller-session-context';
+import { DashboardFooter } from '@/components/layout/dashboard-footer';
 
 const navigation = [
   {
@@ -43,54 +34,6 @@ const navigation = [
     icon: ListChecks,
     description: 'View and manage bookings',
   },
-  {
-    name: 'Calendar',
-    href: '/seller/dashboard/calendar',
-    icon: Calendar,
-    description: 'Availability management',
-  },
-  {
-    name: 'Reviews',
-    href: '/seller/dashboard/reviews',
-    icon: Star,
-    description: 'Customer reviews',
-  },
-  {
-    name: 'Earnings',
-    href: '/seller/dashboard/earnings',
-    icon: DollarSign,
-    description: 'Revenue and earnings',
-  },
-  {
-    name: 'Payouts',
-    href: '/seller/dashboard/payouts',
-    icon: CreditCard,
-    description: 'Payout history',
-  },
-  {
-    name: 'Proof Center',
-    href: '/seller/dashboard/proof-center',
-    icon: FileCheck,
-    description: 'Service proof submission',
-  },
-  {
-    name: 'Analytics',
-    href: '/seller/dashboard/analytics',
-    icon: BarChart3,
-    description: 'Performance insights',
-  },
-  {
-    name: 'Inbox',
-    href: '/seller/dashboard/inbox',
-    icon: Mail,
-    description: 'Messages and inquiries',
-  },
-  {
-    name: 'Settings',
-    href: '/seller/dashboard/settings',
-    icon: Settings,
-    description: 'Account settings',
-  },
 ];
 
 function SidebarContent() {
@@ -110,7 +53,8 @@ function SidebarContent() {
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-1">
           {navigation.map((item) => {
-            const isActive = location.pathname === item.href ||
+            const isActive =
+              location.pathname === item.href ||
               (item.href !== '/seller/dashboard' && location.pathname.startsWith(item.href));
 
             return (
@@ -128,9 +72,7 @@ function SidebarContent() {
                 <div className="flex-1 truncate">
                   <div>{item.name}</div>
                   {!isActive && (
-                    <div className="text-xs text-muted-foreground">
-                      {item.description}
-                    </div>
+                    <div className="text-xs text-muted-foreground">{item.description}</div>
                   )}
                 </div>
               </Link>
@@ -142,9 +84,7 @@ function SidebarContent() {
       {/* Footer */}
       <div className="border-t p-4 space-y-2">
         <Button variant="outline" size="sm" className="w-full" asChild>
-          <Link to="/">
-            Back to Website
-          </Link>
+          <Link to="/">Back to Website</Link>
         </Button>
       </div>
     </div>
@@ -190,12 +130,7 @@ export function DashboardLayout() {
               Seller Dashboard
             </Badge>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-          >
+          <Button variant="outline" size="sm" onClick={handleLogout} disabled={isLoggingOut}>
             <LogOut className="mr-2 h-4 w-4" />
             {isLoggingOut ? 'Logging out...' : 'Logout'}
           </Button>
@@ -208,11 +143,7 @@ export function DashboardLayout() {
               DeshGhuri
             </Link>
             <div className="flex items-center gap-2">
-                <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSidebarOpen(true)}
-              >
+              <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
                 <Menu className="h-6 w-6" />
               </Button>
             </div>

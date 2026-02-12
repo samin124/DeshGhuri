@@ -10,6 +10,7 @@
 ### 1. ✅ Wrong Bookings Page Showing (No Approve/Reject Buttons)
 
 **Problem**: There were TWO conflicting booking route files:
+
 - `bookings.tsx` - Table view without approval buttons ❌
 - `bookings/index.tsx` - Card view with Approve/Reject buttons ✅
 
@@ -22,6 +23,7 @@
 ### 2. ✅ Approval Workflow Working
 
 **Tested Successfully**:
+
 1. Customer creates booking → Status: "Pending"
 2. Seller sees booking in "Pending Approval" tab
 3. Seller clicks "Approve" → Booking moves to "Approved" tab
@@ -29,6 +31,7 @@
 5. Booking status changes from `hold` to `confirmed`
 
 **Verification**:
+
 - ✅ Booking ID: DG-20260210-SOZVA
 - ✅ Listing: Mini Bangladesh
 - ✅ Customer: shadmanyaser890@gmail.com
@@ -40,6 +43,7 @@
 ### 3. ✅ Old Bookings Removed
 
 **Deleted 3 old bookings from other sellers**:
+
 - DG-20260210-KLDP5 (Seller: cnOp2iyFaqS3AIQ5ohqis)
 - DG-20260210-WRQCC (Seller: bHWYNrUy5N3MXEgwmq0nn)
 - DG-20260210-W-JGZ (Seller: cnOp2iyFaqS3AIQ5ohqis)
@@ -55,6 +59,7 @@
 Located at: `/seller/dashboard/bookings`
 
 **Features**:
+
 1. **4 Tabs**:
    - Pending Approval - New bookings awaiting review
    - Approved - Bookings seller has approved
@@ -124,12 +129,14 @@ Located at: `/seller/dashboard/bookings`
 ## Ticket & Receipt Generation
 
 ### When Available
+
 - **Only after seller approves** the booking
 - Customer sees buttons in cart:
   - 🎫 **Ticket** button
   - 📄 **Receipt** button
 
 ### Ticket Features
+
 - Booking ID and confirmation code
 - Guest details (name, email)
 - Listing title and location
@@ -140,6 +147,7 @@ Located at: `/seller/dashboard/bookings`
 - Confirmation timestamp
 
 ### Receipt Features
+
 - Receipt number (booking ID)
 - Customer details
 - Seller details
@@ -157,6 +165,7 @@ Located at: `/seller/dashboard/bookings`
 ## API Endpoints
 
 ### Customer Endpoints
+
 - `POST /api/bookings` - Create booking
 - `POST /api/bookings/:id/submit-payment` - Submit payment proof
 - `GET /api/bookings` - List customer bookings
@@ -164,6 +173,7 @@ Located at: `/seller/dashboard/bookings`
 - `GET /api/bookings/:id/receipt` - Download receipt (approved only)
 
 ### Seller Endpoints
+
 - `GET /api/seller/dashboard/bookings` - List seller bookings (with filters)
 - `POST /api/seller/bookings/:id/approve-payment` - Approve/reject booking
 - `GET /api/seller/bookings/:id` - Get booking details
@@ -173,15 +183,18 @@ Located at: `/seller/dashboard/bookings`
 ## Files Modified
 
 ### Fixed
+
 - ❌ **DELETED**: `apps/web/src/routes/seller/dashboard/bookings.tsx` (wrong page)
 - ✅ **KEEPING**: `apps/web/src/routes/seller/dashboard/bookings/index.tsx` (correct page with approval)
 
 ### Enhanced
+
 - `apps/server/src/routes/seller/dashboard.ts` - Added `approvalStatus` filter support
 - `apps/server/src/routes/seller/bookings.ts` - Approval workflow endpoints
 - `apps/server/src/routes/customer/bookings.ts` - Ticket and receipt generation
 
 ### Previous Fixes (Still Working)
+
 - `apps/web/src/components/layout/bookings-cart.tsx` - Auth monitoring, logout fix, ticket/receipt buttons
 - `apps/web/src/routes/seller/dashboard/bookings/index.tsx` - Approval UI with tabs
 
@@ -235,6 +248,7 @@ Located at: `/seller/dashboard/bookings`
 **Status**: ✅ **FULLY FUNCTIONAL**
 
 **What Works**:
+
 - ✅ Booking creation
 - ✅ Seller dashboard with approval tabs
 - ✅ Approve/Reject workflow
@@ -244,10 +258,12 @@ Located at: `/seller/dashboard/bookings`
 - ✅ Old bookings cleaned up
 
 **Customer Verification Needed**:
+
 - Ticket/receipt download (requires customer login)
 - Cart badge updates (requires customer login)
 
 **Files Cleaned**:
+
 - Deleted duplicate booking page
 - Removed old test bookings
 

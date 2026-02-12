@@ -111,7 +111,9 @@ function RouteComponent() {
     return (
       <div>
         <h1 className="text-2xl font-bold">User Details</h1>
-        <p className="text-red-600 mt-2">Error loading user: {error?.message || 'User not found'}</p>
+        <p className="text-red-600 mt-2">
+          Error loading user: {error?.message || 'User not found'}
+        </p>
       </div>
     );
   }
@@ -200,9 +202,7 @@ function RouteComponent() {
               <div className="flex items-start gap-3">
                 <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
                 <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Joined
-                  </dt>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Joined</dt>
                   <dd className="text-sm mt-1">{new Date(user.createdAt).toLocaleString()}</dd>
                 </div>
               </div>

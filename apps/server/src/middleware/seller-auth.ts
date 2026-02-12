@@ -21,9 +21,10 @@ export async function requireSeller(c: Context, next: () => Promise<void>) {
     console.log('🍪 Cookies:', cookieHeader);
 
     // Extract session token from cookie
-    const sessionToken = cookieHeader?.split(';')
-      .map(c => c.trim())
-      .find(c => c.startsWith('better-auth.session_token='))
+    const sessionToken = cookieHeader
+      ?.split(';')
+      .map((c) => c.trim())
+      .find((c) => c.startsWith('better-auth.session_token='))
       ?.split('=')[1];
 
     if (sessionToken) {
@@ -43,7 +44,7 @@ export async function requireSeller(c: Context, next: () => Promise<void>) {
         session = {
           session: dbSession,
           user: dbSession.user,
-        } as any;
+        };
       } else {
         console.log('❌ No valid manual session found');
       }
@@ -67,7 +68,8 @@ export async function requireSeller(c: Context, next: () => Promise<void>) {
   // Only allow access if user has seller role
   if (!isSeller) {
     throw new HTTPException(403, {
-      message: 'Forbidden: This account is not registered as a seller. Please apply to become a seller.',
+      message:
+        'Forbidden: This account is not registered as a seller. Please apply to become a seller.',
     });
   }
 
@@ -135,7 +137,8 @@ export async function requireSellerAccount(c: Context, next: () => Promise<void>
   // Only allow access if user has seller role
   if (!isSeller) {
     throw new HTTPException(403, {
-      message: 'Forbidden: This account is not registered as a seller. Please apply to become a seller.',
+      message:
+        'Forbidden: This account is not registered as a seller. Please apply to become a seller.',
     });
   }
 

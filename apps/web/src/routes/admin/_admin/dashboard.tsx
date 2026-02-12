@@ -5,7 +5,16 @@ import { usePendingListingsCount, useAdminReviewQueue } from '@/lib/api/admin-li
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Store, FileText, Shield, AlertCircle, Clock, CheckCircle, Package } from 'lucide-react';
+import {
+  Users,
+  Store,
+  FileText,
+  Shield,
+  AlertCircle,
+  Clock,
+  CheckCircle,
+  Package,
+} from 'lucide-react';
 import { CATEGORY_DISPLAY_NAMES } from '@/lib/constants/categories';
 
 export const Route = createFileRoute('/admin/_admin/dashboard')({
@@ -21,7 +30,11 @@ function RouteComponent() {
 
   // Redirect if user is not authorized
   useEffect(() => {
-    if (statsError && 'status' in statsError && (statsError.status === 401 || statsError.status === 403)) {
+    if (
+      statsError &&
+      'status' in statsError &&
+      (statsError.status === 401 || statsError.status === 403)
+    ) {
       navigate({ to: '/dashboard' });
     }
   }, [statsError, navigate]);
@@ -30,9 +43,7 @@ function RouteComponent() {
     return (
       <div>
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Loading dashboard stats...
-        </p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Loading dashboard stats...</p>
       </div>
     );
   }
@@ -67,9 +78,7 @@ function RouteComponent() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
                   <p className="text-3xl font-bold mt-2">{stats.users.total}</p>
                   {stats.users.newToday > 0 && (
-                    <p className="text-sm text-green-600 mt-1">
-                      +{stats.users.newToday} today
-                    </p>
+                    <p className="text-sm text-green-600 mt-1">+{stats.users.newToday} today</p>
                   )}
                 </div>
                 <Users className="h-10 w-10 text-blue-500 opacity-75" />
@@ -95,9 +104,7 @@ function RouteComponent() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">Pending Verification</p>
                   <p className="text-3xl font-bold mt-2">{stats.sellers.pendingVerification}</p>
                   {stats.sellers.inReview > 0 && (
-                    <p className="text-sm text-blue-600 mt-1">
-                      {stats.sellers.inReview} in review
-                    </p>
+                    <p className="text-sm text-blue-600 mt-1">{stats.sellers.inReview} in review</p>
                   )}
                 </div>
                 <AlertCircle className="h-10 w-10 text-yellow-500 opacity-75" />
@@ -256,10 +263,7 @@ function RouteComponent() {
             {pending.pendingDocuments && pending.pendingDocuments.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {pending.pendingDocuments.slice(0, 6).map((doc: any) => (
-                  <div
-                    key={doc.id}
-                    className="p-3 border rounded-lg"
-                  >
+                  <div key={doc.id} className="p-3 border rounded-lg">
                     <div className="flex items-start justify-between mb-2">
                       <p className="font-medium text-sm">{doc.documentType}</p>
                       <Badge variant="secondary" className="text-xs">
@@ -328,7 +332,10 @@ function RouteComponent() {
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{listing.title}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {listing.category && CATEGORY_DISPLAY_NAMES[listing.category as keyof typeof CATEGORY_DISPLAY_NAMES]}
+                          {listing.category &&
+                            CATEGORY_DISPLAY_NAMES[
+                              listing.category as keyof typeof CATEGORY_DISPLAY_NAMES
+                            ]}
                         </p>
                       </div>
                       {listing.priority === 'high' && (

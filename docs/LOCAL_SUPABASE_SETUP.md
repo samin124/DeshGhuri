@@ -9,6 +9,7 @@ DeshGhuri uses **Supabase Local Development** with S3-compatible storage. This m
    - Make sure Docker is running before starting Supabase
 
 2. **Supabase CLI**
+
    ```bash
    # Install via npm
    npm install -g supabase
@@ -32,6 +33,7 @@ supabase start
 ```
 
 This will start:
+
 - **PostgreSQL** on port `54322`
 - **Supabase API** on port `54321`
 - **Supabase Studio** (UI) on `http://127.0.0.1:54323`
@@ -69,18 +71,21 @@ service_role key: eyJhbGci...
 4. Create these 3 buckets:
 
 **Bucket 1: seller-documents**
+
 - Name: `seller-documents`
 - Public: ❌ No (Private)
 - File size limit: 10 MB
 - Allowed MIME types: `image/jpeg,image/jpg,image/png,image/webp,application/pdf`
 
 **Bucket 2: listings**
+
 - Name: `listings`
 - Public: ✅ Yes
 - File size limit: 5 MB
 - Allowed MIME types: `image/jpeg,image/jpg,image/png,image/webp`
 
 **Bucket 3: avatars**
+
 - Name: `avatars`
 - Public: ✅ Yes
 - File size limit: 2 MB
@@ -108,6 +113,7 @@ allowed_mime_types = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 ```
 
 Then restart Supabase:
+
 ```bash
 supabase stop
 supabase start
@@ -141,6 +147,7 @@ Should show all services running.
 Go to: http://127.0.0.1:54323
 
 You should see:
+
 - Database tables (after running migrations)
 - Storage buckets (seller-documents, listings, avatars)
 - Authentication users
@@ -182,6 +189,7 @@ psql postgresql://postgres:postgres@127.0.0.1:54322/postgres
 Data persists between `supabase stop` and `supabase start`. Your database, uploaded files, and buckets remain intact.
 
 To completely reset and start fresh:
+
 ```bash
 supabase db reset
 ```
@@ -193,6 +201,7 @@ Files are stored locally in Docker volumes, NOT in the cloud. They're automatica
 ### 3. S3 Protocol
 
 The `supabase/config.toml` has S3 protocol enabled (line 119):
+
 ```toml
 [storage.s3_protocol]
 enabled = true
@@ -217,6 +226,7 @@ Everything runs locally. No Supabase cloud account required for development!
 ### Error: "Port already in use"
 
 **Solution**: Another service is using Supabase ports. Check what's using port 54321-54324:
+
 ```bash
 lsof -i :54321
 lsof -i :54322
@@ -225,6 +235,7 @@ lsof -i :54322
 ### Buckets not appearing
 
 **Solution**:
+
 1. Make sure Supabase is running: `supabase status`
 2. Refresh Supabase Studio (Ctrl+R or Cmd+R)
 3. If buckets defined in config.toml, restart Supabase
@@ -232,6 +243,7 @@ lsof -i :54322
 ### Files not uploading
 
 **Solution**:
+
 1. Check `SUPABASE_SERVICE_ROLE_KEY` in `.env` is correct
 2. Check bucket names match exactly: `seller-documents`, `listings`, `avatars`
 3. Check file MIME type is allowed in bucket settings
@@ -239,6 +251,7 @@ lsof -i :54322
 ### Database connection failed
 
 **Solution**:
+
 ```bash
 # Stop and start fresh
 supabase stop

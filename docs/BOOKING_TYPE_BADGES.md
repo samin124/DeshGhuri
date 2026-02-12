@@ -7,6 +7,7 @@ This document explains the Individual/Group booking badges added to all listing 
 ## Feature Overview
 
 Every listing now displays a badge indicating whether it supports:
+
 - **Individual Booking** - For solo travelers or small parties
 - **Group Booking** - For larger groups with special group pricing
 
@@ -15,22 +16,26 @@ Every listing now displays a badge indicating whether it supports:
 ## Visual Design
 
 ### Individual Booking Badge
+
 ```
 ┌──────────────────────┐
 │ 👤 Individual        │
 └──────────────────────┘
 ```
+
 - **Icon**: Single user icon (👤)
 - **Text**: "Individual"
 - **Colors**: Slate background with subtle border
 - **Style**: Outlined badge for clean appearance
 
 ### Group Booking Badge
+
 ```
 ┌──────────────────────┐
 │ 👥 Group Booking     │
 └──────────────────────┘
 ```
+
 - **Icon**: Multiple users icon (👥)
 - **Text**: "Group Booking"
 - **Colors**: Blue background (blue-50) with blue border and text
@@ -102,6 +107,7 @@ groupPricingTiers: json('group_pricing_tiers').$type<Array<{
 ```
 
 ### Logic
+
 - `groupEligible = true` → Shows "Group Booking" badge
 - `groupEligible = false` → Shows "Individual" badge
 
@@ -112,11 +118,13 @@ groupPricingTiers: json('group_pricing_tiers').$type<Array<{
 Based on current data (350 listings):
 
 **Tour Packages**: Mostly Group Eligible ✅
+
 - Example: "Sajek Valley Cloud Paradise 2-Day Trip"
 - Example: "Dhaka City Heritage Walk"
 - Example: "Jaflong & Bichnakandi Waterfall Tour"
 
 **Hotels**: Mixed (Individual & Group) ✅
+
 - Individual: "Rajshahi Silk City Inn"
 - Group: "Dinajpur Royal Palace Hotel"
 - Individual: "Rangpur Heritage Lodge"
@@ -135,6 +143,7 @@ Based on current data (350 listings):
 **File**: `apps/web/src/components/common/listing-card.tsx`
 
 **Code Added**:
+
 ```typescript
 {/* Booking Type Badge */}
 {listing.groupEligible ? (
@@ -157,6 +166,7 @@ Based on current data (350 listings):
 ```
 
 **Icons Used**:
+
 - `Users` from lucide-react (for Group Booking)
 - `User` from lucide-react (for Individual)
 
@@ -165,11 +175,13 @@ Based on current data (350 listings):
 ## Benefits
 
 ### For Customers
+
 1. **Instant Clarity**: Know at a glance if a package is for groups
 2. **Better Filtering**: Quickly identify group tour options
 3. **Expectation Setting**: Understand booking type before clicking
 
 ### For Sellers
+
 1. **Clear Communication**: Package type is immediately visible
 2. **Attract Right Audience**: Group packages attract group travelers
 3. **Reduce Inquiries**: Fewer questions about group availability
@@ -187,6 +199,7 @@ Based on current data (350 listings):
 ## Dark Mode Support
 
 Both badge variants support dark mode:
+
 - Individual: Subtle slate colors adapt to dark theme
 - Group: Blue accents remain visible and attractive
 
@@ -195,6 +208,7 @@ Both badge variants support dark mode:
 ## Sample Listings
 
 ### Group Booking Examples
+
 ```
 1. Sajek Valley Cloud Paradise 2-Day Trip
    Badge: 👥 Group Booking
@@ -210,6 +224,7 @@ Both badge variants support dark mode:
 ```
 
 ### Individual Booking Examples
+
 ```
 1. Rajshahi Silk City Inn
    Badge: 👤 Individual
@@ -229,9 +244,11 @@ Both badge variants support dark mode:
 ## Testing
 
 ### Verification Script
+
 Created: `apps/server/src/scripts/check-group-eligible.ts`
 
 **Usage**:
+
 ```bash
 cd apps/server
 bun run src/scripts/check-group-eligible.ts
@@ -244,6 +261,7 @@ bun run src/scripts/check-group-eligible.ts
 ## Future Enhancements
 
 Potential improvements:
+
 - [ ] Filter by booking type in search
 - [ ] Add "Group Discounts Available" sub-badge
 - [ ] Show group pricing tiers on hover
@@ -259,21 +277,23 @@ The `groupEligible` field is included in all listing API responses:
 ```json
 {
   "success": true,
-  "data": [{
-    "id": "listing-123",
-    "title": "Sajek Valley Tour",
-    "category": "tour-package",
-    "groupEligible": true,
-    "groupPricingTiers": [
-      {
-        "minParticipants": 10,
-        "maxParticipants": 20,
-        "discountPercentage": 15,
-        "pricePerPerson": 8500
-      }
-    ]
-    // ... other fields
-  }]
+  "data": [
+    {
+      "id": "listing-123",
+      "title": "Sajek Valley Tour",
+      "category": "tour-package",
+      "groupEligible": true,
+      "groupPricingTiers": [
+        {
+          "minParticipants": 10,
+          "maxParticipants": 20,
+          "discountPercentage": 15,
+          "pricePerPerson": 8500
+        }
+      ]
+      // ... other fields
+    }
+  ]
 }
 ```
 
@@ -282,6 +302,7 @@ The `groupEligible` field is included in all listing API responses:
 ## Summary
 
 **What Was Added**:
+
 - ✅ Visual badges showing Individual vs Group booking
 - ✅ Applied to all listing cards throughout the site
 - ✅ Uses existing `groupEligible` database field
@@ -289,11 +310,13 @@ The `groupEligible` field is included in all listing API responses:
 - ✅ Clear iconography (👤 Individual, 👥 Group)
 
 **Where They Appear**:
+
 - ✅ All homepage sections
 - ✅ Search and filter results
 - ✅ Admin and seller dashboards
 
 **User Benefit**:
+
 - ✅ Instant visibility of booking type
 - ✅ Better decision making
 - ✅ Clear expectations

@@ -6,17 +6,16 @@ import { auth } from '@DeshGhuri/auth';
 import { setCookie, deleteCookie } from 'hono/cookie';
 import { db, session, eq } from '@DeshGhuri/db';
 import { customAlphabet } from 'nanoid';
-import { createHash } from 'crypto';
 import { requireSeller } from '../../middleware/seller-auth';
 
-const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 16);
+const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
 
 function generateId(prefix: string): string {
   return `${prefix}_${nanoid()}`;
 }
 
 function generateSessionToken(): string {
-  return customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 32)();
+  return customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 32)();
 }
 
 const app = new Hono();
@@ -37,19 +36,25 @@ const sellerSignupSchema = z.object({
   contactPhone: z.string().min(11, 'Valid phone number required'),
   contactEmail: z.string().email(),
   businessDescription: z.string().optional(),
-  paymentMethods: z.array(z.object({
-    type: z.enum(['bkash', 'nagad']),
-    accountNumber: z.string().min(11, 'Valid account number required'),
-    accountName: z.string().min(2, 'Account name required'),
-  })).min(1, 'At least one payment method is required'),
-  bankAccount: z.object({
-    bankName: z.string(),
-    branchName: z.string(),
-    accountHolderName: z.string(),
-    accountNumber: z.string(),
-    routingNumber: z.string().optional(),
-    accountType: z.enum(['savings', 'current']),
-  }).optional(),
+  paymentMethods: z
+    .array(
+      z.object({
+        type: z.enum(['bkash', 'nagad']),
+        accountNumber: z.string().min(11, 'Valid account number required'),
+        accountName: z.string().min(2, 'Account name required'),
+      })
+    )
+    .min(1, 'At least one payment method is required'),
+  bankAccount: z
+    .object({
+      bankName: z.string(),
+      branchName: z.string(),
+      accountHolderName: z.string(),
+      accountNumber: z.string(),
+      routingNumber: z.string().optional(),
+      accountType: z.enum(['savings', 'current']),
+    })
+    .optional(),
 });
 
 // Seller signin schema
@@ -81,17 +86,23 @@ app.post('/signup', zValidator('json', sellerSignupSchema), async (c) => {
       }
     }
 
-    return c.json({
-      success: true,
-      data: result,
-      message: 'Seller account created successfully. Please check your email for verification.',
-    }, 201);
-  } catch (error: any) {
+    return c.json(
+      {
+        success: true,
+        data: result,
+        message: 'Seller account created successfully. Please check your email for verification.',
+      },
+      201
+    );
+  } catch (error: unknown) {
     console.error('Seller signup error:', error);
-    return c.json({
-      success: false,
-      message: error.message || 'Failed to create seller account',
-    }, 400);
+    return c.json(
+      {
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to create seller account',
+      },
+      400
+    );
   }
 });
 
@@ -106,12 +117,15 @@ app.post('/signin', zValidator('json', sellerSigninSchema), async (c) => {
     const result = await sellerSignin(data);
 
     if (!result.success) {
-      return c.json({
-        success: false,
-        status: result.status,
-        message: result.message,
-        email: (result as any).email,
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          status: result.status,
+          message: result.message,
+          email: (result as any).email,
+        },
+        403
+      );
     }
 
     // Create session manually with PLAIN token (Better Auth stores plain tokens)
@@ -158,12 +172,15 @@ app.post('/signin', zValidator('json', sellerSigninSchema), async (c) => {
       },
       message: 'Signin successful',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Seller signin error:', error);
-    return c.json({
-      success: false,
-      message: error.message || 'Invalid credentials',
-    }, 401);
+    return c.json(
+      {
+        success: false,
+        message: error instanceof Error ? error.message : 'Invalid credentials',
+      },
+      401
+    );
   }
 });
 
@@ -178,10 +195,13 @@ app.get('/status/:email', async (c) => {
     const seller = await getSellerByEmail(email);
 
     if (!seller) {
-      return c.json({
-        success: false,
-        message: 'No seller account found with this email',
-      }, 404);
+      return c.json(
+        {
+          success: false,
+          message: 'No seller account found with this email',
+        },
+        404
+      );
     }
 
     return c.json({
@@ -193,12 +213,15 @@ app.get('/status/:email', async (c) => {
         createdAt: seller.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Status check error:', error);
-    return c.json({
-      success: false,
-      message: 'Failed to check status',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        message: 'Failed to check status',
+      },
+      500
+    );
   }
 });
 
@@ -206,37 +229,50 @@ app.get('/status/:email', async (c) => {
  * POST /api/seller/auth/resend-verification
  * Resend verification email
  */
-app.post('/resend-verification', zValidator('json', z.object({
-  email: z.string().email(),
-})), async (c) => {
-  try {
-    const { email } = c.req.valid('json');
+app.post(
+  '/resend-verification',
+  zValidator(
+    'json',
+    z.object({
+      email: z.string().email(),
+    })
+  ),
+  async (c) => {
+    try {
+      const { email } = c.req.valid('json');
 
-    const seller = await getSellerByEmail(email);
-    if (!seller) {
+      const seller = await getSellerByEmail(email);
+      if (!seller) {
+        return c.json(
+          {
+            success: false,
+            message: 'No seller account found with this email',
+          },
+          404
+        );
+      }
+
+      await auth.api.sendVerificationEmail({
+        body: { email },
+        headers: c.req.raw.headers,
+      });
+
       return c.json({
-        success: false,
-        message: 'No seller account found with this email',
-      }, 404);
+        success: true,
+        message: 'Verification email sent successfully',
+      });
+    } catch (error: unknown) {
+      console.error('Resend verification error:', error);
+      return c.json(
+        {
+          success: false,
+          message: 'Failed to send verification email',
+        },
+        500
+      );
     }
-
-    await auth.api.sendVerificationEmail({
-      body: { email },
-      headers: c.req.raw.headers,
-    });
-
-    return c.json({
-      success: true,
-      message: 'Verification email sent successfully',
-    });
-  } catch (error: any) {
-    console.error('Resend verification error:', error);
-    return c.json({
-      success: false,
-      message: 'Failed to send verification email',
-    }, 500);
   }
-});
+);
 
 /**
  * GET /api/seller/auth/me
@@ -258,12 +294,15 @@ app.get('/me', requireSeller, async (c) => {
         userId,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Get seller info error:', error);
-    return c.json({
-      success: false,
-      message: 'Failed to get seller information',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        message: 'Failed to get seller information',
+      },
+      500
+    );
   }
 });
 
@@ -275,9 +314,10 @@ app.post('/logout', requireSeller, async (c) => {
   try {
     // Get session token from cookie
     const cookieHeader = c.req.header('cookie');
-    const sessionToken = cookieHeader?.split(';')
-      .map(c => c.trim())
-      .find(c => c.startsWith('better-auth.session_token='))
+    const sessionToken = cookieHeader
+      ?.split(';')
+      .map((c) => c.trim())
+      .find((c) => c.startsWith('better-auth.session_token='))
       ?.split('=')[1];
 
     if (sessionToken) {
@@ -297,12 +337,15 @@ app.post('/logout', requireSeller, async (c) => {
       success: true,
       message: 'Logged out successfully',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Logout error:', error);
-    return c.json({
-      success: false,
-      message: 'Failed to logout',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        message: 'Failed to logout',
+      },
+      500
+    );
   }
 });
 

@@ -1,6 +1,5 @@
-import { db, listing, seller, review, user, LISTING_CATEGORIES, LISTING_STATUSES } from '@DeshGhuri/db';
+import { db, listing, seller, LISTING_CATEGORIES, LISTING_STATUSES } from '@DeshGhuri/db';
 import { eq, and, sql } from 'drizzle-orm';
-import { hash } from '@node-rs/argon2';
 import { nanoid } from 'nanoid';
 
 /**
@@ -10,7 +9,7 @@ import { nanoid } from 'nanoid';
 
 // Bangladesh destinations
 const DESTINATIONS = [
-  { city: 'Cox\'s Bazar', district: 'Cox\'s Bazar', division: 'Chittagong' },
+  { city: "Cox's Bazar", district: "Cox's Bazar", division: 'Chittagong' },
   { city: 'Dhaka', district: 'Dhaka', division: 'Dhaka' },
   { city: 'Sylhet', district: 'Sylhet', division: 'Sylhet' },
   { city: 'Chittagong', district: 'Chittagong', division: 'Chittagong' },
@@ -19,7 +18,7 @@ const DESTINATIONS = [
   { city: 'Khagrachari', district: 'Khagrachari', division: 'Chittagong' },
   { city: 'Sundarbans', district: 'Khulna', division: 'Khulna' },
   { city: 'Kuakata', district: 'Patuakhali', division: 'Barisal' },
-  { city: 'Saint Martin\'s Island', district: 'Cox\'s Bazar', division: 'Chittagong' },
+  { city: "Saint Martin's Island", district: "Cox's Bazar", division: 'Chittagong' },
   { city: 'Sajek Valley', district: 'Rangamati', division: 'Chittagong' },
   { city: 'Sreemangal', district: 'Moulvibazar', division: 'Sylhet' },
   { city: 'Nilgiri', district: 'Bandarban', division: 'Chittagong' },
@@ -29,43 +28,107 @@ const DESTINATIONS = [
 
 // Listing templates
 const HOTEL_NAMES = [
-  'Luxury Beach Resort', 'Sea View Hotel', 'Heritage Boutique Hotel', 'Grand Palace Hotel',
-  'Eco Resort', 'Hill View Resort', 'Royal Garden Hotel', 'Paradise Resort',
-  'Seaside Inn', 'Mountain Lodge', 'Lake View Hotel', 'Green Valley Resort',
-  'Ocean Breeze Hotel', 'Sunset Beach Resort', 'Golden Sands Hotel',
-  'Premium Suites', 'Comfort Inn', 'Elite Hotel', 'Riverside Resort', 'Palm Beach Hotel'
+  'Luxury Beach Resort',
+  'Sea View Hotel',
+  'Heritage Boutique Hotel',
+  'Grand Palace Hotel',
+  'Eco Resort',
+  'Hill View Resort',
+  'Royal Garden Hotel',
+  'Paradise Resort',
+  'Seaside Inn',
+  'Mountain Lodge',
+  'Lake View Hotel',
+  'Green Valley Resort',
+  'Ocean Breeze Hotel',
+  'Sunset Beach Resort',
+  'Golden Sands Hotel',
+  'Premium Suites',
+  'Comfort Inn',
+  'Elite Hotel',
+  'Riverside Resort',
+  'Palm Beach Hotel',
 ];
 
 const TOUR_NAMES = [
-  'Complete Adventure Tour', 'Heritage & Culture Tour', 'Nature Explorer Package',
-  'Beach Paradise Tour', 'Hill Trekking Adventure', 'River Cruise Experience',
-  'Wildlife Safari Tour', 'City Discovery Tour', 'Waterfall Trek Package',
-  'Historical Sites Tour', 'Photography Expedition', 'Sunset Cruise Tour',
-  'Village Life Experience', 'Tea Garden Tour', 'Mangrove Forest Safari',
-  'Island Hopping Tour', 'Mountain Climbing Package', 'Cultural Immersion Tour'
+  'Complete Adventure Tour',
+  'Heritage & Culture Tour',
+  'Nature Explorer Package',
+  'Beach Paradise Tour',
+  'Hill Trekking Adventure',
+  'River Cruise Experience',
+  'Wildlife Safari Tour',
+  'City Discovery Tour',
+  'Waterfall Trek Package',
+  'Historical Sites Tour',
+  'Photography Expedition',
+  'Sunset Cruise Tour',
+  'Village Life Experience',
+  'Tea Garden Tour',
+  'Mangrove Forest Safari',
+  'Island Hopping Tour',
+  'Mountain Climbing Package',
+  'Cultural Immersion Tour',
 ];
 
 const EXPERIENCE_NAMES = [
-  'Scuba Diving Experience', 'Parasailing Adventure', 'River Rafting', 'Rock Climbing',
-  'Zip Lining Thrill', 'ATV Ride', 'Boat Safari', 'Night Safari',
-  'Camping Under Stars', 'Fishing Experience', 'Kayaking Adventure', 'Snorkeling Tour',
-  'Jungle Trek', 'Bird Watching Tour', 'Photography Workshop', 'Cooking Class',
-  'Traditional Dance Show', 'Handicraft Workshop'
+  'Scuba Diving Experience',
+  'Parasailing Adventure',
+  'River Rafting',
+  'Rock Climbing',
+  'Zip Lining Thrill',
+  'ATV Ride',
+  'Boat Safari',
+  'Night Safari',
+  'Camping Under Stars',
+  'Fishing Experience',
+  'Kayaking Adventure',
+  'Snorkeling Tour',
+  'Jungle Trek',
+  'Bird Watching Tour',
+  'Photography Workshop',
+  'Cooking Class',
+  'Traditional Dance Show',
+  'Handicraft Workshop',
 ];
 
 const TRANSPORT_NAMES = [
-  'Private Car Rental', 'Luxury Coach Service', 'Boat Transfer', 'Helicopter Tour',
-  'Speedboat Service', 'Minibus Rental', 'SUV Rental', 'Tourist Bus Service',
-  'Ferry Service', 'Private Yacht Charter', 'Airport Pickup Service', 'Sightseeing Van'
+  'Private Car Rental',
+  'Luxury Coach Service',
+  'Boat Transfer',
+  'Helicopter Tour',
+  'Speedboat Service',
+  'Minibus Rental',
+  'SUV Rental',
+  'Tourist Bus Service',
+  'Ferry Service',
+  'Private Yacht Charter',
+  'Airport Pickup Service',
+  'Sightseeing Van',
 ];
 
 const AMENITIES = [
-  'WiFi', 'Swimming Pool', 'Spa', 'Gym', 'Restaurant', 'Bar', 'Room Service',
-  'Air Conditioning', 'Parking', 'Beach Access', 'Garden', 'Conference Room',
-  'Kids Play Area', 'Terrace', 'BBQ Area', 'Laundry', '24/7 Security', 'Pet Friendly'
+  'WiFi',
+  'Swimming Pool',
+  'Spa',
+  'Gym',
+  'Restaurant',
+  'Bar',
+  'Room Service',
+  'Air Conditioning',
+  'Parking',
+  'Beach Access',
+  'Garden',
+  'Conference Room',
+  'Kids Play Area',
+  'Terrace',
+  'BBQ Area',
+  'Laundry',
+  '24/7 Security',
+  'Pet Friendly',
 ];
 
-const REVIEW_COMMENTS = [
+const _REVIEW_COMMENTS = [
   'Amazing experience! Highly recommended.',
   'Great service and beautiful location.',
   'Perfect for families. Kids loved it!',
@@ -80,11 +143,26 @@ const REVIEW_COMMENTS = [
 
 // Seller company names
 const SELLER_COMPANIES = [
-  'Paradise Resorts Ltd', 'Heritage Hospitality', 'Green Valley Tours', 'Ocean View Hotels',
-  'Mountain Adventures', 'Eco Tourism BD', 'Royal Travels', 'Sunrise Hotels',
-  'Dream Destinations', 'Golden Tours', 'Elite Hospitality', 'Nature Explorers',
-  'Beach Paradise Ltd', 'Hill Top Resorts', 'River Cruises BD', 'Safari Adventures',
-  'City Breaks BD', 'Luxury Stays', 'Adventure Seekers', 'Cultural Tours BD'
+  'Paradise Resorts Ltd',
+  'Heritage Hospitality',
+  'Green Valley Tours',
+  'Ocean View Hotels',
+  'Mountain Adventures',
+  'Eco Tourism BD',
+  'Royal Travels',
+  'Sunrise Hotels',
+  'Dream Destinations',
+  'Golden Tours',
+  'Elite Hospitality',
+  'Nature Explorers',
+  'Beach Paradise Ltd',
+  'Hill Top Resorts',
+  'River Cruises BD',
+  'Safari Adventures',
+  'City Breaks BD',
+  'Luxury Stays',
+  'Adventure Seekers',
+  'Cultural Tours BD',
 ];
 
 // Promo codes
@@ -133,7 +211,8 @@ async function main() {
     for (let i = 0; i < 20; i++) {
       const company = SELLER_COMPANIES[i];
       // Add unique suffix to avoid duplicate email errors
-      const email = company.toLowerCase().replace(/[^a-z0-9]/g, '') + '-' + nanoid(6) + '@example.com';
+      const email =
+        company.toLowerCase().replace(/[^a-z0-9]/g, '') + '-' + nanoid(6) + '@example.com';
       const location = randomElement(DESTINATIONS);
 
       const sellerId = nanoid();
@@ -153,7 +232,10 @@ async function main() {
         contactEmail: email,
         businessDescription: `Leading ${randomElement(['travel', 'hospitality', 'tourism'])} provider in ${location.city}`,
         verificationStatus: randomElement(['approved', 'approved', 'approved', 'pending']),
-        verifiedAt: Math.random() < 0.75 ? new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000) : null,
+        verifiedAt:
+          Math.random() < 0.75
+            ? new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000)
+            : null,
         rating: Math.floor((4 + Math.random()) * 10), // Store as integer (e.g., 45 = 4.5 stars)
         reviewCount: Math.floor(Math.random() * 200) + 50,
         totalBookings: Math.floor(Math.random() * 500) + 100,
@@ -202,7 +284,9 @@ async function main() {
 
       // Determine promotional status (40% get promotions)
       const hasPromotion = Math.random() < 0.4;
-      const promotionType = hasPromotion ? randomElement(['flash', 'promo', 'discount', 'none']) : 'none';
+      const promotionType = hasPromotion
+        ? randomElement(['flash', 'promo', 'discount', 'none'])
+        : 'none';
 
       let isFlashDeal = false;
       let flashDealEndsAt = null;
@@ -250,15 +334,35 @@ async function main() {
         },
         basePrice: basePrice.toString(),
         currency: 'BDT',
-        priceUnit: category === 'hotel' ? 'per-night' : category === 'transport' ? 'per-booking' : 'per-person',
+        priceUnit:
+          category === 'hotel'
+            ? 'per-night'
+            : category === 'transport'
+              ? 'per-booking'
+              : 'per-person',
         capacity,
         minGuests,
         maxGuests,
         groupEligible: Math.random() < 0.6, // 60% eligible for groups
         groupPricingTiers: [
-          { minParticipants: 5, maxParticipants: 10, discountPercentage: 10, pricePerPerson: basePrice * 0.9 },
-          { minParticipants: 11, maxParticipants: 20, discountPercentage: 20, pricePerPerson: basePrice * 0.8 },
-          { minParticipants: 21, maxParticipants: 50, discountPercentage: 30, pricePerPerson: basePrice * 0.7 },
+          {
+            minParticipants: 5,
+            maxParticipants: 10,
+            discountPercentage: 10,
+            pricePerPerson: basePrice * 0.9,
+          },
+          {
+            minParticipants: 11,
+            maxParticipants: 20,
+            discountPercentage: 20,
+            pricePerPerson: basePrice * 0.8,
+          },
+          {
+            minParticipants: 21,
+            maxParticipants: 50,
+            discountPercentage: 30,
+            pricePerPerson: basePrice * 0.7,
+          },
         ],
         amenities: randomElements(AMENITIES, 5 + Math.floor(Math.random() * 8)),
         inclusions: [
@@ -268,11 +372,7 @@ async function main() {
           'Refreshments',
           'Safety Equipment',
         ],
-        exclusions: [
-          'Personal Expenses',
-          'Tips & Gratuities',
-          'Travel Insurance',
-        ],
+        exclusions: ['Personal Expenses', 'Tips & Gratuities', 'Travel Insurance'],
         cancellationPolicy: randomElement(['flexible', 'moderate', 'strict']),
         houseRules: 'No smoking. Respect local customs. Follow guide instructions.',
         checkInTime: category === 'hotel' ? '14:00' : null,
@@ -336,21 +436,24 @@ async function main() {
     console.log(`  📦 Listings: ${createdListings.length}`);
     console.log(`  ⭐ Reviews: ${reviewCount}`);
 
-    const promotionStats = {
+    const _promotionStats = {
       flashDeals: createdListings.length, // Will be calculated from DB
       promoCodes: createdListings.length,
       discounts: createdListings.length,
     };
 
-    const flashDeals = await db.select().from(listing).where(and(
-      eq(listing.isFlashDeal, true),
-      sql`${listing.flashDealEndsAt} > NOW()`
-    ));
-    const promoCodeListings = await db.select().from(listing).where(sql`${listing.promoCode} IS NOT NULL`);
-    const discountListings = await db.select().from(listing).where(and(
-      sql`${listing.discountPercent} IS NOT NULL`,
-      eq(listing.isFlashDeal, false)
-    ));
+    const flashDeals = await db
+      .select()
+      .from(listing)
+      .where(and(eq(listing.isFlashDeal, true), sql`${listing.flashDealEndsAt} > NOW()`));
+    const promoCodeListings = await db
+      .select()
+      .from(listing)
+      .where(sql`${listing.promoCode} IS NOT NULL`);
+    const discountListings = await db
+      .select()
+      .from(listing)
+      .where(and(sql`${listing.discountPercent} IS NOT NULL`, eq(listing.isFlashDeal, false)));
 
     console.log(`\n  ⚡ Flash Deals: ${flashDeals.length}`);
     console.log(`  🏷️  Promo Codes: ${promoCodeListings.length}`);
@@ -358,7 +461,6 @@ async function main() {
 
     console.log('\n✨ All data inserted successfully!');
     console.log('🌐 Visit your homepage to see the new listings!');
-
   } catch (error) {
     console.error('❌ Error during data generation:', error);
     throw error;

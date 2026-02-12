@@ -9,6 +9,7 @@ Never manually kill ports again! This guide will help you set up a convenient `p
 `pkill` is a custom PowerShell command that instantly kills all development server processes on commonly used ports (3000, 3001, 3002, 5173, 8080, 8000, 4000, 5000).
 
 **Before `pkill`:**
+
 ```powershell
 netstat -ano | findstr :3000
 taskkill /PID 12345 /F
@@ -18,6 +19,7 @@ taskkill /PID 67890 /F
 ```
 
 **After `pkill`:**
+
 ```powershell
 pkill
 # ✅ Done! All ports killed in one command 🎉
@@ -67,6 +69,7 @@ cd E:\Learn-Typescript\DeshGhuri
 ```
 
 If no processes are found:
+
 ```
 🔍 Scanning for processes on development ports...
 ✨ No processes found on development ports. All clear!
@@ -79,6 +82,7 @@ If no processes are found:
 ### Issue: "Running scripts is disabled"
 
 **Solution:**
+
 ```powershell
 # Run PowerShell as Administrator
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -87,6 +91,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Issue: "pkill not recognized"
 
 **Solution:**
+
 ```powershell
 # Reload PowerShell profile
 . $PROFILE
@@ -124,6 +129,7 @@ $ports = @(3000, 3001, 3002, 5173, 8080, 8000, 4000, 5000, 9000, 9001)
 ## 📚 More Info
 
 See `scripts/README.md` for:
+
 - Detailed documentation
 - Manual setup instructions
 - Troubleshooting guide
@@ -134,6 +140,7 @@ See `scripts/README.md` for:
 ## ✅ Current Status
 
 **Ports Cleared:**
+
 - ✅ Port 3000 (backend)
 - ✅ Port 3001 (frontend)
 

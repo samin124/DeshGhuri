@@ -3,7 +3,6 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { customAlphabet } from 'nanoid';
 import { hash } from '@node-rs/argon2';
 import * as schema from '../../db/src/schema';
-import { user, account } from '../../db/src/schema/auth';
 
 // Load environment variables
 dotenv.config({
@@ -90,7 +89,6 @@ async function createAdmin() {
     console.log('🔑 Password: ' + password);
     console.log('\n✨ You can now log in at: http://127.0.0.1:3001/login');
     console.log('🎯 Admin Dashboard: http://127.0.0.1:3001/admin/dashboard\n');
-
   } catch (error) {
     console.error('❌ Error creating admin account:', error);
     process.exit(1);

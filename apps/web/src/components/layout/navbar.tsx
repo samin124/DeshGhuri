@@ -1,20 +1,30 @@
-import { Heart, Menu, ShoppingCart, X, Store, LayoutDashboard, LogOut } from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import {
+  Heart,
+  Menu,
+  ShoppingCart,
+  X,
+  Store,
+  LayoutDashboard,
+  LogOut,
+  MapPin,
+  ChevronDown,
+} from 'lucide-react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { CITIES, LANGUAGES } from "@/lib/constants";
-import UserMenu from "../user-menu";
-import { ThemeToggle } from "./theme-toggle";
-import { SearchAutocomplete } from "@/components/search";
-import { BookingsCart } from "./bookings-cart";
+import { Button } from '@/components/ui/button';
+import { CITIES } from '@/lib/constants';
+import UserMenu from '../user-menu';
+import { ThemeToggle } from './theme-toggle';
+import { SearchAutocomplete } from '@/components/search';
+import { BookingsCart } from './bookings-cart';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +33,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuGroup,
-} from "@/components/ui/dropdown-menu";
-import { useSellerSession } from "@/contexts/seller-session-context";
-import { authClient } from "@/lib/auth-client";
+} from '@/components/ui/dropdown-menu';
+import { useSellerSession } from '@/contexts/seller-session-context';
+import { authClient } from '@/lib/auth-client';
 
 function SellerMenu() {
   const { seller, logout } = useSellerSession();
@@ -46,24 +56,30 @@ function SellerMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-3 h-9 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-        <Store className="h-4 w-4" />
-        <span className="hidden md:inline">{seller.businessName}</span>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          className="gap-2 rounded-full border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
+        >
+          <Store className="h-4 w-4" />
+          <span className="hidden md:inline max-w-[120px] truncate">{seller.businessName}</span>
+          <ChevronDown className="h-3 w-3" />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel>
             <div className="flex flex-col">
-              <span className="font-medium">{seller.businessName}</span>
-              <span className="text-xs text-muted-foreground">{seller.email}</span>
+              <span className="font-semibold">{seller.businessName}</span>
+              <span className="text-xs text-muted-foreground font-normal">{seller.email}</span>
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link to="/seller/dashboard" className="cursor-pointer">
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link to="/seller/dashboard">
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            Dashboard
+            Seller Dashboard
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -73,7 +89,7 @@ function SellerMenu() {
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="mr-2 h-4 w-4" />
-          {isLoggingOut ? 'Logging out...' : 'Logout'}
+          {isLoggingOut ? 'Logging out...' : 'Sign Out'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -83,14 +99,11 @@ function SellerMenu() {
 export default function Navbar() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("All Cities");
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [selectedCity, setSelectedCity] = useState('All Cities');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Get seller session (will be null if not logged in as seller)
   const { seller } = useSellerSession();
 
-  // Check if user is authenticated
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -102,40 +115,73 @@ export default function Navbar() {
     };
 
     checkAuth();
-
-    // Re-check auth periodically (every 30 seconds)
     const interval = setInterval(checkAuth, 30000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border/60 bg-gradient-to-r from-sky-50 via-white to-emerald-50 shadow-[0_14px_40px_-22px_rgba(15,23,42,0.45)] backdrop-blur supports-[backdrop-filter]:bg-white/75">
-      <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-500 via-sky-500 to-emerald-500" />
+    <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto max-w-7xl">
+        {/* Main Navbar */}
+        <div className="flex h-16 items-center justify-between px-4">
+          {/* Left: Logo & Brand */}
+          <div className="flex items-center gap-8">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+                  <span className="text-xl">🌏</span>
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-foreground tracking-tight">DeshGhuri</span>
+                <span className="text-[10px] text-muted-foreground font-medium -mt-0.5 hidden sm:block">
+                  Travel Bangladesh
+                </span>
+              </div>
+            </Link>
 
-      {/* Main navbar */}
-      <div className="container mx-auto">
-        <div className="flex items-center justify-between px-4 py-4 lg:py-5">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="group flex items-center gap-3 text-2xl font-bold text-slate-900"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500 via-sky-500 to-emerald-500 text-sm font-semibold text-white shadow-md">
-              DG
-            </span>
-            <span className="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-600 bg-clip-text text-transparent tracking-tight">
-              DeshGhuri
-            </span>
-          </Link>
-
-          {/* Desktop Search Bar */}
-          <div className="hidden flex-1 mx-8 max-w-2xl md:flex">
-            <div className="flex w-full items-center rounded-full border border-slate-200 bg-white/90 px-2 py-1 shadow-[0_8px_20px_-14px_rgba(14,116,144,0.9)] transition-shadow focus-within:shadow-[0_10px_26px_-16px_rgba(16,185,129,0.8)]">
-              <SearchAutocomplete />
-            </div>
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-1">
+              <Button
+                variant="ghost"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  navigate({ to: '/' });
+                  setTimeout(() => {
+                    document.getElementById('deals')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }}
+              >
+                Deals
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  navigate({ to: '/' });
+                  setTimeout(() => {
+                    document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }}
+              >
+                Categories
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                asChild
+              >
+                <Link to="/search">Explore</Link>
+              </Button>
+            </nav>
           </div>
 
-          {/* Right side actions */}
+          {/* Center: Search Bar */}
+          <div className="hidden md:flex flex-1 max-w-md mx-6">
+            <SearchAutocomplete placeholder="Search destinations, tours, hotels..." />
+          </div>
+
+          {/* Right: Actions */}
           <div className="flex items-center gap-2">
             {/* City Selector - Desktop */}
             <div className="hidden lg:block">
@@ -143,17 +189,15 @@ export default function Navbar() {
                 value={selectedCity}
                 onValueChange={(value) => {
                   setSelectedCity(value);
-                  if (value === "All Cities") {
-                    navigate({ to: "/search" });
+                  if (value === 'All Cities') {
+                    navigate({ to: '/search' });
                   } else {
-                    navigate({
-                      to: "/search",
-                      search: { location: value },
-                    });
+                    navigate({ to: '/search', search: { location: value } });
                   }
                 }}
               >
-                <SelectTrigger className="h-9 w-36 rounded-full border-slate-200 bg-white/90 shadow-sm hover:border-sky-300">
+                <SelectTrigger className="h-9 w-[140px] rounded-full border-border bg-transparent hover:bg-muted text-sm">
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground mr-1.5" />
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -167,43 +211,9 @@ export default function Navbar() {
               </Select>
             </div>
 
-            {/* Categories Menu - Desktop */}
-            <div className="hidden lg:block">
-              <Button
-                variant="ghost"
-                className="rounded-full px-4 font-medium text-slate-700 transition-colors hover:bg-sky-100 hover:text-sky-700"
-                onClick={() => {
-                  navigate({ to: "/" });
-                  // Small delay to ensure navigation completes before scrolling
-                  setTimeout(() => {
-                    document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" });
-                  }, 100);
-                }}
-              >
-                Categories
-              </Button>
-            </div>
-
-            {/* Deals Link - Desktop */}
-            <div className="hidden lg:block">
-              <Button
-                variant="ghost"
-                className="rounded-full px-4 font-medium text-slate-700 transition-colors hover:bg-emerald-100 hover:text-emerald-700"
-                onClick={() => {
-                  navigate({ to: "/" });
-                  // Small delay to ensure navigation completes before scrolling
-                  setTimeout(() => {
-                    document.getElementById("deals")?.scrollIntoView({ behavior: "smooth" });
-                  }, 100);
-                }}
-              >
-                Deals
-              </Button>
-            </div>
-
-            {/* Seller Menu - Desktop */}
+            {/* Seller Menu */}
             {seller && (
-              <div className="hidden lg:block">
+              <div className="hidden md:block">
                 <SellerMenu />
               </div>
             )}
@@ -212,142 +222,122 @@ export default function Navbar() {
             <ThemeToggle />
 
             {/* Wishlist */}
-            <Button variant="ghost" size="icon" className="relative rounded-full border border-slate-200 bg-white/90 shadow-sm transition-colors hover:bg-pink-100">
-                  <Heart className="h-5 w-5" />
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-white">
-                    0
-                  </span>
-                </Button>
+            <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+              <Heart className="h-[18px] w-[18px]" />
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                0
+              </span>
+            </Button>
 
-            {/* Cart / Bookings */}
+            {/* Cart */}
             {isAuthenticated ? (
               <BookingsCart />
             ) : (
-              <Button variant="ghost" size="icon" className="relative rounded-full border border-slate-200 bg-white/90 shadow-sm transition-colors hover:bg-emerald-100">
-                <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-white">
+              <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+                <ShoppingCart className="h-[18px] w-[18px]" />
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
                   0
                 </span>
               </Button>
             )}
 
-            {/* User Menu (existing component - no changes) */}
+            {/* User Menu */}
             <UserMenu />
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden rounded-full border border-slate-200 bg-white/90 shadow-sm transition-colors hover:bg-sky-100"
+              className="h-9 w-9 rounded-full md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
-        {/* Mobile Search Bar */}
-        <div className="px-4 pb-3 md:hidden">
-          <div className="flex w-full items-center rounded-full border border-slate-200 bg-white/90 px-2 py-1 shadow-[0_8px_20px_-14px_rgba(14,116,144,0.9)]">
-            <SearchAutocomplete placeholder="Search..." />
-          </div>
+        {/* Mobile Search */}
+        <div className="md:hidden px-4 pb-3">
+          <SearchAutocomplete placeholder="Search..." />
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="border-t border-border/60 bg-white/95 p-4 shadow-inner lg:hidden">
-            <div className="flex flex-col gap-4">
-              {/* Customer-only features - Hidden for sellers */}
-              {!seller && (
-                <>
-                  <Select
-                    value={selectedCity}
-                    onValueChange={(value) => {
-                      setSelectedCity(value);
-                      setMobileMenuOpen(false);
-                      if (value === "All Cities") {
-                        navigate({ to: "/search" });
-                      } else {
-                        navigate({
-                          to: "/search",
-                          search: { location: value },
-                        });
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="rounded-full border-slate-200 bg-white/90 shadow-sm hover:border-sky-300">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="All Cities">All Cities</SelectItem>
-                      {CITIES.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start rounded-full border-slate-200 bg-white/90 text-slate-700 hover:bg-sky-100"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      navigate({ to: "/" });
-                      setTimeout(() => {
-                        document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" });
-                      }, 100);
-                    }}
-                  >
-                    Categories
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start rounded-full border-slate-200 bg-white/90 text-slate-700 hover:bg-emerald-100"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      navigate({ to: "/" });
-                      setTimeout(() => {
-                        document.getElementById("deals")?.scrollIntoView({ behavior: "smooth" });
-                      }, 100);
-                    }}
-                  >
-                    Deals
-                  </Button>
-
-                  <Button variant="outline" className="w-full justify-start rounded-full border-slate-200 bg-white/90 text-slate-700 hover:bg-fuchsia-100" asChild>
-                    <Link to="/group-bookings">Group Booking</Link>
-                  </Button>
-
-                  <Button variant="outline" className="w-full justify-start rounded-full border-slate-200 bg-white/90 text-slate-700 hover:bg-amber-100" asChild>
-                    <Link to="/help">Help</Link>
-                  </Button>
-                </>
-              )}
-
-              {seller && <SellerMenu />}
-
-              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                <SelectTrigger className="rounded-full border-slate-200 bg-white/90 shadow-sm hover:border-sky-300">
+          <div className="md:hidden border-t border-border bg-background">
+            <div className="p-4 space-y-3">
+              {/* City Selector */}
+              <Select
+                value={selectedCity}
+                onValueChange={(value) => {
+                  setSelectedCity(value);
+                  setMobileMenuOpen(false);
+                  if (value === 'All Cities') {
+                    navigate({ to: '/search' });
+                  } else {
+                    navigate({ to: '/search', search: { location: value } });
+                  }
+                }}
+              >
+                <SelectTrigger className="w-full h-11 rounded-lg">
+                  <MapPin className="h-4 w-4 text-muted-foreground mr-2" />
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {LANGUAGES.map((lang) => (
-                    <SelectItem key={lang.code} value={lang.code}>
-                      {lang.flag} {lang.name}
+                  <SelectItem value="All Cities">All Cities</SelectItem>
+                  {CITIES.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+
+              {/* Mobile Nav Links */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  className="h-11 justify-center rounded-lg"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate({ to: '/' });
+                    setTimeout(() => {
+                      document.getElementById('deals')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                >
+                  Deals
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-11 justify-center rounded-lg"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate({ to: '/' });
+                    setTimeout(() => {
+                      document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                >
+                  Categories
+                </Button>
+              </div>
+
+              <Button variant="outline" className="w-full h-11 justify-center rounded-lg" asChild>
+                <Link to="/search" onClick={() => setMobileMenuOpen(false)}>
+                  Explore All Packages
+                </Link>
+              </Button>
+
+              {/* Seller Menu Mobile */}
+              {seller && (
+                <div className="pt-2 border-t border-border">
+                  <SellerMenu />
+                </div>
+              )}
             </div>
           </div>
         )}
       </div>
-    </nav>
+    </header>
   );
 }

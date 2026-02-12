@@ -128,7 +128,7 @@ function RouteComponent() {
     // Validate required business information
     const businessInfo = formData.businessInfo;
     const missingBusinessFields = [];
-    
+
     if (!businessInfo.businessName?.trim()) missingBusinessFields.push('Business Name');
     if (!businessInfo.category) missingBusinessFields.push('Business Category');
     if (!businessInfo.registrationNumber?.trim()) missingBusinessFields.push('Registration Number');
@@ -141,7 +141,7 @@ function RouteComponent() {
     // Validate required bank account information
     const bankAccount = formData.bankAccount;
     const missingBankFields = [];
-    
+
     if (!bankAccount.bankName?.trim()) missingBankFields.push('Bank Name');
     if (!bankAccount.branchName?.trim()) missingBankFields.push('Branch Name');
     if (!bankAccount.accountHolderName?.trim()) missingBankFields.push('Account Holder Name');
@@ -152,9 +152,11 @@ function RouteComponent() {
     if (missingBusinessFields.length > 0 || missingBankFields.length > 0) {
       const errorMessage = [
         missingBusinessFields.length > 0 && `Business Info: ${missingBusinessFields.join(', ')}`,
-        missingBankFields.length > 0 && `Bank Account: ${missingBankFields.join(', ')}`
-      ].filter(Boolean).join('\n');
-      
+        missingBankFields.length > 0 && `Bank Account: ${missingBankFields.join(', ')}`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
       toast.error('Please complete all required fields:\n' + errorMessage, {
         duration: 8000,
       });
@@ -227,8 +229,8 @@ function RouteComponent() {
                       currentStep > step.id
                         ? 'bg-primary border-primary text-primary-foreground'
                         : currentStep === step.id
-                        ? 'border-primary text-primary bg-primary/10'
-                        : 'border-muted-foreground/30 text-muted-foreground bg-background'
+                          ? 'border-primary text-primary bg-primary/10'
+                          : 'border-muted-foreground/30 text-muted-foreground bg-background'
                     )}
                   >
                     {currentStep > step.id ? (
@@ -267,7 +269,9 @@ function RouteComponent() {
             {currentStep === 1 && (
               <OnboardingStep1
                 data={formData.businessInfo}
-                onUpdate={(data) => updateFormData({ businessInfo: { ...formData.businessInfo, ...data } })}
+                onUpdate={(data) =>
+                  updateFormData({ businessInfo: { ...formData.businessInfo, ...data } })
+                }
               />
             )}
             {currentStep === 2 && (
@@ -275,18 +279,20 @@ function RouteComponent() {
                 data={formData.documents}
                 category={formData.businessInfo.category}
                 sellerId={sellerId || ''}
-                onUpdate={(data) => updateFormData({ documents: { ...formData.documents, ...data } })}
+                onUpdate={(data) =>
+                  updateFormData({ documents: { ...formData.documents, ...data } })
+                }
               />
             )}
             {currentStep === 3 && (
               <OnboardingStep3
                 data={formData.bankAccount}
-                onUpdate={(data) => updateFormData({ bankAccount: { ...formData.bankAccount, ...data } })}
+                onUpdate={(data) =>
+                  updateFormData({ bankAccount: { ...formData.bankAccount, ...data } })
+                }
               />
             )}
-            {currentStep === 4 && (
-              <OnboardingStep4 data={formData} />
-            )}
+            {currentStep === 4 && <OnboardingStep4 data={formData} />}
           </CardContent>
         </Card>
 

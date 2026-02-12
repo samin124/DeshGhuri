@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Upload, X, Star, Image as ImageIcon, Plus } from 'lucide-react';
-import { Label } from '@/components/ui/label';
+import { Upload, X, Star, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -180,12 +179,8 @@ export function Step3Media() {
             />
             <label htmlFor="image-upload" className="cursor-pointer">
               <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-sm font-medium mb-1">
-                Click to upload or drag and drop
-              </p>
-              <p className="text-xs text-muted-foreground">
-                PNG, JPG, WebP up to 5MB each
-              </p>
+              <p className="text-sm font-medium mb-1">Click to upload or drag and drop</p>
+              <p className="text-xs text-muted-foreground">PNG, JPG, WebP up to 5MB each</p>
             </label>
           </div>
 
@@ -210,7 +205,10 @@ export function Step3Media() {
           {formData.images && formData.images.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {formData.images.map((image, index) => (
-                <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border-2 border-border">
+                <div
+                  key={index}
+                  className="relative group aspect-square rounded-lg overflow-hidden border-2 border-border"
+                >
                   <img
                     src={image.url}
                     alt={`Upload ${index + 1}`}
@@ -261,9 +259,7 @@ export function Step3Media() {
       <Card>
         <CardHeader>
           <CardTitle>Amenities</CardTitle>
-          <CardDescription>
-            Select all amenities that apply to your listing
-          </CardDescription>
+          <CardDescription>Select all amenities that apply to your listing</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

@@ -1,42 +1,40 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface PriceDisplayProps {
   price: number;
-  currency?: "BDT";
+  currency?: 'BDT';
   discountPercent?: number;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 export function PriceDisplay({
   price,
-  currency = "BDT",
+  currency = 'BDT',
   discountPercent,
-  size = "md",
+  size = 'md',
   className,
 }: PriceDisplayProps) {
-  const currencySymbol = currency === "BDT" ? "৳" : "৳";
-  const originalPrice = discountPercent
-    ? Math.round(price / (1 - discountPercent / 100))
-    : null;
+  const currencySymbol = currency === 'BDT' ? '৳' : '৳';
+  const originalPrice = discountPercent ? Math.round(price / (1 - discountPercent / 100)) : null;
 
   const sizeClasses = {
-    sm: "text-sm",
-    md: "text-base",
-    lg: "text-2xl",
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-2xl',
   };
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <span className={cn("font-bold text-primary", sizeClasses[size])}>
+    <div className={cn('flex items-center gap-2', className)}>
+      <span className={cn('font-bold text-primary', sizeClasses[size])}>
         {currencySymbol}
         {price.toLocaleString()}
       </span>
       {originalPrice && (
         <span
           className={cn(
-            "text-muted-foreground line-through",
-            size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-lg"
+            'text-muted-foreground line-through',
+            size === 'sm' ? 'text-xs' : size === 'md' ? 'text-sm' : 'text-lg'
           )}
         >
           {currencySymbol}

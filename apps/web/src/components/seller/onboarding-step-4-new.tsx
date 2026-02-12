@@ -1,4 +1,4 @@
-import { CheckCircle2, Building2, Mail, Phone, MapPin, CreditCard } from 'lucide-react';
+import { CheckCircle2, Building2, Mail, MapPin, CreditCard } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface OnboardingStep4NewProps {
@@ -45,7 +45,9 @@ export function OnboardingStep4New({ data, email }: OnboardingStep4NewProps) {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Category:</span>
-            <span className="font-medium capitalize">{businessInfo.category?.replace('-', ' ') || '-'}</span>
+            <span className="font-medium capitalize">
+              {businessInfo.category?.replace('-', ' ') || '-'}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Registration Number:</span>

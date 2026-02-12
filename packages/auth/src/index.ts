@@ -1,12 +1,12 @@
-import { db, userRole, seller, eq } from "@DeshGhuri/db";
-import * as schema from "@DeshGhuri/db/schema/auth";
-import { env } from "@DeshGhuri/env/server";
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { sendVerificationEmail, sendResetPasswordEmail } from "./email";
-import { customAlphabet } from "nanoid";
+import { db, userRole } from '@DeshGhuri/db';
+import * as schema from '@DeshGhuri/db/schema/auth';
+import { env } from '@DeshGhuri/env/server';
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { sendVerificationEmail, sendResetPasswordEmail } from './email';
+import { customAlphabet } from 'nanoid';
 
-const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 16);
+const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
 
 function generateId(prefix: string): string {
   return `${prefix}_${nanoid()}`;
@@ -14,38 +14,38 @@ function generateId(prefix: string): string {
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
     schema: schema,
   }),
-  trustedOrigins: ["http://localhost:3001", "http://127.0.0.1:3001", env.CORS_ORIGIN],
+  trustedOrigins: ['http://localhost:3001', 'http://127.0.0.1:3001', env.CORS_ORIGIN],
 
   // Enhanced email & password configuration
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false, // Disabled for now due to email verification issues
-    async onSignUp({ user }: { user: any }) {
+    async onSignUp({ user }: { user: { id: string; email: string } }) {
       // Assign default 'customer' role to new users
       try {
         await db.insert(userRole).values({
-          id: generateId("role"),
+          id: generateId('role'),
           userId: user.id,
-          role: "customer",
+          role: 'customer',
           createdAt: new Date(),
           createdBy: null,
         });
         console.log(`✅ Assigned 'customer' role to new user: ${user.email}`);
       } catch (error) {
-        console.error("❌ Error assigning role to new user:", error);
+        console.error('❌ Error assigning role to new user:', error);
         // Don't throw - allow signup to continue even if role assignment fails
       }
     },
     sendResetPassword: async ({ user, url, token }) => {
-      console.log("\n=== PASSWORD RESET TRIGGERED ===");
-      console.log("📧 User:", user.email);
-      console.log("👤 Name:", user.name);
-      console.log("🔗 URL:", url);
-      console.log("🎟️ Token:", token);
-      console.log("================================\n");
+      console.log('\n=== PASSWORD RESET TRIGGERED ===');
+      console.log('📧 User:', user.email);
+      console.log('👤 Name:', user.name);
+      console.log('🔗 URL:', url);
+      console.log('🎟️ Token:', token);
+      console.log('================================\n');
 
       try {
         // Use Better Auth's URL which handles callbacks properly
@@ -54,9 +54,9 @@ export const auth = betterAuth({
           userName: user.name,
           resetUrl: url,
         });
-        console.log("✅ Password reset email handler completed successfully");
+        console.log('✅ Password reset email handler completed successfully');
       } catch (error) {
-        console.error("❌ Error in password reset email handler:", error);
+        console.error('❌ Error in password reset email handler:', error);
         throw error;
       }
     },
@@ -66,12 +66,12 @@ export const auth = betterAuth({
   // Email verification configuration
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
-      console.log("\n=== EMAIL VERIFICATION TRIGGERED ===");
-      console.log("📧 User:", user.email);
-      console.log("👤 Name:", user.name);
-      console.log("🔗 URL:", url);
-      console.log("🎟️ Token:", token);
-      console.log("===================================\n");
+      console.log('\n=== EMAIL VERIFICATION TRIGGERED ===');
+      console.log('📧 User:', user.email);
+      console.log('👤 Name:', user.name);
+      console.log('🔗 URL:', url);
+      console.log('🎟️ Token:', token);
+      console.log('===================================\n');
 
       try {
         // Use Better Auth's URL which handles callbacks properly
@@ -80,9 +80,9 @@ export const auth = betterAuth({
           userName: user.name,
           verificationUrl: url,
         });
-        console.log("✅ Verification email handler completed successfully");
+        console.log('✅ Verification email handler completed successfully');
       } catch (error) {
-        console.error("❌ Error in verification email handler:", error);
+        console.error('❌ Error in verification email handler:', error);
         throw error;
       }
     },
@@ -96,8 +96,8 @@ export const auth = betterAuth({
           google: {
             clientId: env.GOOGLE_CLIENT_ID,
             clientSecret: env.GOOGLE_CLIENT_SECRET,
-            accessType: "offline", // Get refresh tokens
-            prompt: "select_account consent", // Always show account picker
+            accessType: 'offline', // Get refresh tokens
+            prompt: 'select_account consent', // Always show account picker
           },
         },
       }
@@ -110,8 +110,8 @@ export const auth = betterAuth({
 
   advanced: {
     defaultCookieAttributes: {
-      sameSite: "lax",
-      secure: env.NODE_ENV === "production",
+      sameSite: 'lax',
+      secure: env.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 7, // 7 days (in seconds)
     },

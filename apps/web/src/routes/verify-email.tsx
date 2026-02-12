@@ -1,16 +1,16 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { authClient } from '@/lib/auth-client';
 
-export const Route = createFileRoute("/verify-email")({
+export const Route = createFileRoute('/verify-email')({
   component: VerifyEmailComponent,
   validateSearch: (search: Record<string, unknown>) => {
     return {
-      token: (search.token as string) || "",
-      error: (search.error as string) || "",
+      token: (search.token as string) || '',
+      error: (search.error as string) || '',
     };
   },
 });
@@ -25,17 +25,17 @@ function VerifyEmailComponent() {
     const verifyEmail = async () => {
       if (error) {
         const errorMessages: Record<string, string> = {
-          invalid_token: "This verification link is invalid or has expired.",
-          already_verified: "This email is already verified.",
+          invalid_token: 'This verification link is invalid or has expired.',
+          already_verified: 'This email is already verified.',
         };
 
-        setVerificationError(errorMessages[error] || "An error occurred during verification.");
+        setVerificationError(errorMessages[error] || 'An error occurred during verification.');
         setIsVerifying(false);
         return;
       }
 
       if (!token) {
-        setVerificationError("No verification token provided.");
+        setVerificationError('No verification token provided.');
         setIsVerifying(false);
         return;
       }
@@ -47,20 +47,20 @@ function VerifyEmailComponent() {
         });
 
         if (result.error) {
-          setVerificationError("Failed to verify email. The link may have expired.");
+          setVerificationError('Failed to verify email. The link may have expired.');
           setIsVerifying(false);
           return;
         }
 
         setIsVerifying(false);
-        toast.success("Email verified successfully!");
+        toast.success('Email verified successfully!');
 
         // Redirect to login after 2 seconds
         setTimeout(() => {
-          navigate({ to: "/login" });
+          navigate({ to: '/login' });
         }, 2000);
-      } catch (err) {
-        setVerificationError("An error occurred during verification.");
+      } catch (_err) {
+        setVerificationError('An error occurred during verification.');
         setIsVerifying(false);
       }
     };
@@ -83,18 +83,13 @@ function VerifyEmailComponent() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>
-            {verificationError ? "Verification Failed" : "Email Verified!"}
-          </CardTitle>
+          <CardTitle>{verificationError ? 'Verification Failed' : 'Email Verified!'}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {verificationError ? (
             <>
               <p className="text-red-500">{verificationError}</p>
-              <Button
-                className="w-full"
-                onClick={() => navigate({ to: "/login" })}
-              >
+              <Button className="w-full" onClick={() => navigate({ to: '/login' })}>
                 Back to Login
               </Button>
             </>

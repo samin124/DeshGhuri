@@ -3,8 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Package, Eye, Calendar, Edit, Trash2, Pause, Play } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Plus, Package, Eye, Edit, Play } from 'lucide-react';
 import { useState } from 'react';
 
 const API_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
@@ -38,17 +45,21 @@ function ListingsPage() {
   });
 
   // Filter listings on the frontend based on selected status
-  const filteredListings = data?.data?.filter((listing: Listing) =>
-    statusFilter === 'all' || listing.status === statusFilter
-  ) || [];
+  const filteredListings =
+    data?.data?.filter(
+      (listing: Listing) => statusFilter === 'all' || listing.status === statusFilter
+    ) || [];
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline', label: string }> = {
-      'draft': { variant: 'secondary', label: 'Draft' },
+    const variants: Record<
+      string,
+      { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }
+    > = {
+      draft: { variant: 'secondary', label: 'Draft' },
       'pending-review': { variant: 'outline', label: 'Pending Review' },
-      'active': { variant: 'default', label: 'Active' },
-      'paused': { variant: 'secondary', label: 'Paused' },
-      'rejected': { variant: 'destructive', label: 'Rejected' },
+      active: { variant: 'default', label: 'Active' },
+      paused: { variant: 'secondary', label: 'Paused' },
+      rejected: { variant: 'destructive', label: 'Rejected' },
     };
     const config = variants[status] || { variant: 'outline', label: status };
     return <Badge variant={config.variant}>{config.label}</Badge>;
@@ -56,10 +67,10 @@ function ListingsPage() {
 
   const getCategoryDisplay = (category: string) => {
     const map: Record<string, string> = {
-      'hotel': 'Hotel',
+      hotel: 'Hotel',
       'tour-package': 'Tour Package',
-      'experience': 'Experience',
-      'transport': 'Transportation',
+      experience: 'Experience',
+      transport: 'Transportation',
     };
     return map[category] || category;
   };
@@ -70,9 +81,7 @@ function ListingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Listings</h1>
-          <p className="text-muted-foreground">
-            Manage your property and tour listings
-          </p>
+          <p className="text-muted-foreground">Manage your property and tour listings</p>
         </div>
         <Button asChild>
           <Link to="/seller/dashboard/listings/new">
@@ -137,7 +146,12 @@ function ListingsPage() {
             size="sm"
             onClick={() => setStatusFilter(status)}
           >
-            {status === 'all' ? 'All' : status.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+            {status === 'all'
+              ? 'All'
+              : status
+                  .split('-')
+                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(' ')}
           </Button>
         ))}
       </div>
@@ -146,15 +160,11 @@ function ListingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Your Listings</CardTitle>
-          <CardDescription>
-            View and manage all your listings
-          </CardDescription>
+          <CardDescription>View and manage all your listings</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading && (
-            <div className="text-center py-8 text-muted-foreground">
-              Loading listings...
-            </div>
+            <div className="text-center py-8 text-muted-foreground">Loading listings...</div>
           )}
 
           {error && (

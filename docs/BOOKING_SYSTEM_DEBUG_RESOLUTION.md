@@ -5,6 +5,7 @@
 User reported: "When the seller submits the form then it submits successfully and goes to the cart with status pending. But I don't see that in my dashboard."
 
 **Seller Account Used for Testing:**
+
 - Email: shadmanyaser959@gmail.com
 - Password: Samin@12345
 - Seller ID: `seller_ros6sfmwglljzw8o`
@@ -33,6 +34,7 @@ User reported: "When the seller submits the form then it submits successfully an
 ```
 
 **Existing Bookings in Database:**
+
 - 3 bookings found in total
 - All belong to OTHER sellers:
   - `cnOp2iyFaqS3AIQ5ohqis` (Kayaking Adventure listing)
@@ -41,6 +43,7 @@ User reported: "When the seller submits the form then it submits successfully an
 
 **Seller's Listings:**
 The seller has 5 active listings:
+
 1. Saint Martin
 2. Cox's Bazar Beach Resort - 3 Days 2 Nights Package
 3. Mini Bangladesh
@@ -64,11 +67,13 @@ The existing bookings in the database are for completely different sellers' list
 **File:** `apps/server/src/routes/seller/dashboard.ts` (lines 212-288)
 
 **Changes:**
+
 - Added support for `approvalStatus` query parameter
 - Added comprehensive debugging logs
 - Now properly filters by both `status` and `approvalStatus`
 
 **Before:**
+
 ```typescript
 app.get('/bookings', async (c) => {
   const sellerId = c.get('sellerId') as string;
@@ -78,6 +83,7 @@ app.get('/bookings', async (c) => {
 ```
 
 **After:**
+
 ```typescript
 app.get('/bookings', async (c) => {
   const sellerId = c.get('sellerId') as string;
@@ -87,7 +93,7 @@ app.get('/bookings', async (c) => {
   console.log('🔍 Seller Dashboard Bookings Request:', {
     sellerId,
     status,
-    approvalStatus
+    approvalStatus,
   });
 
   // Build conditions with both status and approvalStatus
@@ -153,6 +159,7 @@ To verify the booking workflow works:
 ## API Endpoints Working Correctly
 
 ### Customer Endpoints
+
 - `POST /api/bookings` - Create booking ✅
 - `POST /api/bookings/:id/submit-payment` - Submit payment ✅
 - `GET /api/bookings` - List customer bookings ✅
@@ -160,6 +167,7 @@ To verify the booking workflow works:
 - `GET /api/bookings/:id/receipt` - Generate receipt ✅
 
 ### Seller Endpoints
+
 - `GET /api/seller/dashboard/bookings` - List seller bookings ✅ (Enhanced)
 - `GET /api/seller/bookings/:id/approve-payment` - Approve/reject ✅
 - `POST /api/seller/bookings/:id/approve-payment` - Process approval ✅
@@ -182,15 +190,18 @@ All previous fixes are still in place:
 **Issue Status:** ✅ RESOLVED
 
 **What was wrong:** Nothing! The system is working correctly. The seller simply has no bookings yet because:
+
 - No customers have completed bookings for their listings
 - The test bookings in the database belong to other sellers
 
 **What was fixed:**
+
 - Enhanced the seller dashboard bookings endpoint to support approval status filtering
 - Added debugging logs for easier troubleshooting in future
 - Created database verification scripts
 
 **Next Steps:**
+
 1. User should log in as a customer
 2. Create a test booking for one of their own listings
 3. Then verify it appears in the seller dashboard

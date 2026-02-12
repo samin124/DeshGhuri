@@ -13,12 +13,7 @@ async function verifyPromotions() {
     const flashDeals = await db
       .select()
       .from(listing)
-      .where(
-        and(
-          eq(listing.status, 'active'),
-          eq(listing.isFlashDeal, true)
-        )
-      );
+      .where(and(eq(listing.status, 'active'), eq(listing.isFlashDeal, true)));
 
     console.log('⚡ FLASH DEALS:');
     console.log(`Found ${flashDeals.length} flash deals\n`);
@@ -28,7 +23,9 @@ async function verifyPromotions() {
       console.log(`   - Original: ৳${deal.basePrice}`);
       console.log(`   - Discounted: ৳${deal.discountedPrice} (${deal.discountPercent}% OFF)`);
       console.log(`   - Ends: ${deal.flashDealEndsAt?.toLocaleString() || 'N/A'}`);
-      console.log(`   - Active: ${deal.flashDealEndsAt ? new Date(deal.flashDealEndsAt) > new Date() : false}`);
+      console.log(
+        `   - Active: ${deal.flashDealEndsAt ? new Date(deal.flashDealEndsAt) > new Date() : false}`
+      );
       console.log('');
     });
 
@@ -36,24 +33,23 @@ async function verifyPromotions() {
     const promoListings = await db
       .select()
       .from(listing)
-      .where(
-        and(
-          eq(listing.status, 'active'),
-          sql`${listing.promoCode} IS NOT NULL`
-        )
-      );
+      .where(and(eq(listing.status, 'active'), sql`${listing.promoCode} IS NOT NULL`));
 
     console.log('🏷️  PROMO CODES:');
     console.log(`Found ${promoListings.length} listings with promo codes\n`);
 
     promoListings.forEach((item, index) => {
-      const isActive = item.promoCodeExpiresAt ? new Date(item.promoCodeExpiresAt) > new Date() : false;
+      const isActive = item.promoCodeExpiresAt
+        ? new Date(item.promoCodeExpiresAt) > new Date()
+        : false;
       const usesLeft = (item.promoCodeMaxUses || 0) - (item.promoCodeUsedCount || 0);
 
       console.log(`${index + 1}. ${item.title}`);
       console.log(`   - Code: ${item.promoCode}`);
       console.log(`   - Discount: ${item.promoCodeDiscount}%`);
-      console.log(`   - Uses: ${item.promoCodeUsedCount}/${item.promoCodeMaxUses} (${usesLeft} left)`);
+      console.log(
+        `   - Uses: ${item.promoCodeUsedCount}/${item.promoCodeMaxUses} (${usesLeft} left)`
+      );
       console.log(`   - Expires: ${item.promoCodeExpiresAt?.toLocaleDateString() || 'N/A'}`);
       console.log(`   - Active: ${isActive}`);
       console.log('');
@@ -86,11 +82,14 @@ async function verifyPromotions() {
     console.log(`  ⚡ Flash Deals: ${flashDeals.length}`);
     console.log(`  🏷️  Promo Codes: ${promoListings.length}`);
     console.log(`  💰 Regular Discounts: ${discountedListings.length}`);
-    console.log(`  📦 Total Promoted: ${flashDeals.length + promoListings.length + discountedListings.length}`);
+    console.log(
+      `  📦 Total Promoted: ${flashDeals.length + promoListings.length + discountedListings.length}`
+    );
 
     console.log('\n✅ Verification complete!');
-    console.log('💡 Tip: Visit http://localhost:5173 to see the promotional badges on the homepage');
-
+    console.log(
+      '💡 Tip: Visit http://localhost:5173 to see the promotional badges on the homepage'
+    );
   } catch (error) {
     console.error('❌ Error during verification:', error);
     throw error;

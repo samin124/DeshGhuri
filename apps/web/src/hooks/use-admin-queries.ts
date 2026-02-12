@@ -64,8 +64,7 @@ export function useDeleteUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      adminUsers.delete(id, reason),
+    mutationFn: ({ id, reason }: { id: string; reason: string }) => adminUsers.delete(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
       toast.success('User deleted successfully');
@@ -80,8 +79,7 @@ export function useAddUserRole() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, role }: { id: string; role: string }) =>
-      adminUsers.addRole(id, role),
+    mutationFn: ({ id, role }: { id: string; role: string }) => adminUsers.addRole(id, role),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'users', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
@@ -197,13 +195,8 @@ export function useReviewDocument() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: Parameters<typeof adminDocuments.review>[1];
-    }) => adminDocuments.review(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof adminDocuments.review>[1] }) =>
+      adminDocuments.review(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'documents', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'documents'] });
@@ -310,13 +303,8 @@ export function useReviewListing() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: Parameters<typeof adminListings.review>[1];
-    }) => adminListings.review(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof adminListings.review>[1] }) =>
+      adminListings.review(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'listings', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'listings'] });
@@ -332,13 +320,8 @@ export function useUpdateListing() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: Parameters<typeof adminListings.update>[1];
-    }) => adminListings.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof adminListings.update>[1] }) =>
+      adminListings.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'listings', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'listings'] });
@@ -394,13 +377,8 @@ export function useCancelBooking() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: Parameters<typeof adminBookings.cancel>[1];
-    }) => adminBookings.cancel(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof adminBookings.cancel>[1] }) =>
+      adminBookings.cancel(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'bookings', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'bookings'] });
@@ -438,8 +416,7 @@ export function useAddBookingNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, note }: { id: string; note: string }) =>
-      adminBookings.addNote(id, note),
+    mutationFn: ({ id, note }: { id: string; note: string }) => adminBookings.addNote(id, note),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'bookings', variables.id] });
       toast.success('Note added successfully');

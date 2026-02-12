@@ -12,10 +12,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 // Helper to make authenticated requests
-async function apiRequest<T>(
-  endpoint: string,
-  options?: RequestInit
-): Promise<T> {
+async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     credentials: 'include',
@@ -69,8 +66,7 @@ export const adminUsers = {
     }>(`/api/admin/users?${query}`);
   },
 
-  getById: (id: string) =>
-    apiRequest<{ user: any; seller: any | null }>(`/api/admin/users/${id}`),
+  getById: (id: string) => apiRequest<{ user: any; seller: any | null }>(`/api/admin/users/${id}`),
 
   update: (id: string, data: { action: string; email?: string; reason?: string }) =>
     apiRequest<{ user: any; message: string }>(`/api/admin/users/${id}`, {
@@ -132,8 +128,7 @@ export const adminSellers = {
     }>(`/api/admin/sellers/verification-queue?${query}`);
   },
 
-  getById: (id: string) =>
-    apiRequest<{ seller: any }>(`/api/admin/sellers/${id}`),
+  getById: (id: string) => apiRequest<{ seller: any }>(`/api/admin/sellers/${id}`),
 
   updateVerification: (
     id: string,
@@ -143,13 +138,10 @@ export const adminSellers = {
       message: string;
     }
   ) =>
-    apiRequest<{ seller: any; message: string }>(
-      `/api/admin/sellers/${id}/verification`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      }
-    ),
+    apiRequest<{ seller: any; message: string }>(`/api/admin/sellers/${id}/verification`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
 
   update: (
     id: string,
@@ -191,8 +183,7 @@ export const adminDocuments = {
     }>(`/api/admin/documents?${query}`);
   },
 
-  getById: (id: string) =>
-    apiRequest<{ document: any }>(`/api/admin/documents/${id}`),
+  getById: (id: string) => apiRequest<{ document: any }>(`/api/admin/documents/${id}`),
 
   review: (id: string, data: { status: 'approved' | 'rejected'; rejectionReason?: string }) =>
     apiRequest<{ document: any; message: string; documentsReviewStatus?: any }>(
@@ -207,13 +198,10 @@ export const adminDocuments = {
     sellerId: string,
     data: { status: 'approved' | 'rejected'; rejectionReason?: string }
   ) =>
-    apiRequest<{ message: string; count: number }>(
-      `/api/admin/documents/${sellerId}/bulk-review`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data),
-      }
-    ),
+    apiRequest<{ message: string; count: number }>(`/api/admin/documents/${sellerId}/bulk-review`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
 
 // Listings API
@@ -253,8 +241,7 @@ export const adminListings = {
     }>(`/api/admin/listings/review-queue?${query}`);
   },
 
-  getById: (id: string) =>
-    apiRequest<{ listing: any }>(`/api/admin/listings/${id}`),
+  getById: (id: string) => apiRequest<{ listing: any }>(`/api/admin/listings/${id}`),
 
   review: (
     id: string,
@@ -323,8 +310,7 @@ export const adminBookings = {
       revenue: Record<string, number>;
     }>('/api/admin/bookings/stats'),
 
-  getById: (id: string) =>
-    apiRequest<{ booking: any }>(`/api/admin/bookings/${id}`),
+  getById: (id: string) => apiRequest<{ booking: any }>(`/api/admin/bookings/${id}`),
 
   cancel: (
     id: string,
@@ -424,8 +410,7 @@ export const adminTransactions = {
       body: JSON.stringify({ reason }),
     }),
 
-  getById: (id: string) =>
-    apiRequest<{ transaction: any }>(`/api/admin/transactions/${id}`),
+  getById: (id: string) => apiRequest<{ transaction: any }>(`/api/admin/transactions/${id}`),
 };
 
 // Audit Logs API
@@ -463,8 +448,7 @@ export const adminAuditLogs = {
       topAdmins: { userId: string; count: number; user: any }[];
     }>('/api/admin/audit-logs/stats'),
 
-  getById: (id: string) =>
-    apiRequest<{ log: any }>(`/api/admin/audit-logs/${id}`),
+  getById: (id: string) => apiRequest<{ log: any }>(`/api/admin/audit-logs/${id}`),
 
   export: (params?: { startDate?: string; endDate?: string; userId?: string }) => {
     const query = new URLSearchParams();

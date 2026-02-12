@@ -24,8 +24,17 @@ const categories: { value: SellerCategory; label: string }[] = [
 ];
 
 const districts = [
-  'Dhaka', 'Chittagong', 'Rajshahi', 'Khulna', 'Barisal', 'Sylhet',
-  'Rangpur', 'Mymensingh', 'Comilla', 'Narayanganj', 'Gazipur',
+  'Dhaka',
+  'Chittagong',
+  'Rajshahi',
+  'Khulna',
+  'Barisal',
+  'Sylhet',
+  'Rangpur',
+  'Mymensingh',
+  'Comilla',
+  'Narayanganj',
+  'Gazipur',
 ];
 
 export function OnboardingStep1({ data, onUpdate }: OnboardingStep1Props) {
@@ -79,8 +88,7 @@ export function OnboardingStep1({ data, onUpdate }: OnboardingStep1Props) {
       <form.Field
         name="businessName"
         validators={{
-          onChange: ({ value }) =>
-            !value ? 'Business name is required' : undefined,
+          onChange: ({ value }) => (!value ? 'Business name is required' : undefined),
         }}
       >
         {(field) => (
@@ -136,8 +144,7 @@ export function OnboardingStep1({ data, onUpdate }: OnboardingStep1Props) {
       <form.Field
         name="registrationNumber"
         validators={{
-          onChange: ({ value }) =>
-            !value ? 'Registration number is required' : undefined,
+          onChange: ({ value }) => (!value ? 'Registration number is required' : undefined),
         }}
       >
         {(field) => (

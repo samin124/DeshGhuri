@@ -1,5 +1,13 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { db, seller, sellerDocument, sellerBankAccount, verificationTimeline, eq, desc } from '@DeshGhuri/db';
+import {
+  db,
+  seller,
+  sellerDocument,
+  sellerBankAccount,
+  verificationTimeline,
+  eq,
+  desc,
+} from '@DeshGhuri/db';
 import {
   registerSellerRoute,
   getSellerByUserRoute,
@@ -103,11 +111,14 @@ app.openapi(completeOnboardingRoute, async (c) => {
       message: 'Application submitted successfully',
     });
 
-    return c.json({
-      sellerId,
-      status: 'pending' as const,
-      message: 'Onboarding completed successfully',
-    }, 200);
+    return c.json(
+      {
+        sellerId,
+        status: 'pending' as const,
+        message: 'Onboarding completed successfully',
+      },
+      200
+    );
   } catch (error) {
     console.error('Complete onboarding error:', error);
     return c.json({ error: 'Failed to complete onboarding' }, 500);
@@ -141,18 +152,20 @@ app.openapi(getVerificationStatusRoute, async (c) => {
       where: eq(sellerBankAccount.sellerId, sellerId),
     });
 
-    return c.json({
-      seller: sellerData,
-      documents,
-      timeline,
-      bankAccount,
-    }, 200);
+    return c.json(
+      {
+        seller: sellerData,
+        documents,
+        timeline,
+        bankAccount,
+      },
+      200
+    );
   } catch (error) {
     console.error('Get verification status error:', error);
     return c.json({ error: 'Failed to get verification status' }, 500);
   }
 });
-
 
 // Generate OpenAPI documentation
 app.doc31('/openapi.json', {
@@ -160,7 +173,8 @@ app.doc31('/openapi.json', {
   info: {
     version: '1.0.0',
     title: 'DeshGhuri API',
-    description: 'REST API for DeshGhuri - Bangladesh Tourism & Travel Platform. This API provides endpoints for seller registration, onboarding, verification, and document management.',
+    description:
+      'REST API for DeshGhuri - Bangladesh Tourism & Travel Platform. This API provides endpoints for seller registration, onboarding, verification, and document management.',
     contact: {
       name: 'API Support',
       email: 'support@deshghuri.com',

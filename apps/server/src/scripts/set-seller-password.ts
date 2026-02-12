@@ -16,10 +16,7 @@ const hashedPassword = await hash(password, {
   parallelism: 1,
 });
 
-await db
-  .update(seller)
-  .set({ passwordHash: hashedPassword })
-  .where(eq(seller.contactEmail, email));
+await db.update(seller).set({ passwordHash: hashedPassword }).where(eq(seller.contactEmail, email));
 
 console.log('Password set successfully!');
 console.log(`Email: ${email}`);

@@ -133,9 +133,7 @@ function validateStep(step: number, formData: Partial<ListingFormData>): string[
       if (formData.groupEligible) {
         formData.groupPricingTiers?.forEach((tier, index) => {
           if (tier.minParticipants >= tier.maxParticipants) {
-            errors.push(
-              `Tier ${index + 1}: Min participants must be less than max participants`
-            );
+            errors.push(`Tier ${index + 1}: Min participants must be less than max participants`);
           }
           if (tier.discountPercentage <= 0 || tier.discountPercentage >= 100) {
             errors.push(`Tier ${index + 1}: Discount must be between 0% and 100%`);
@@ -167,10 +165,7 @@ function validateStep(step: number, formData: Partial<ListingFormData>): string[
 }
 
 // Reducer
-function listingFormReducer(
-  state: ListingFormState,
-  action: ListingFormAction
-): ListingFormState {
+function listingFormReducer(state: ListingFormState, action: ListingFormAction): ListingFormState {
   switch (action.type) {
     case 'SET_STEP':
       return { ...state, currentStep: action.payload };
@@ -359,7 +354,7 @@ export function ListingFormProvider({ children }: { children: React.ReactNode })
         throw new Error('Failed to save draft');
       }
 
-      const result = await response.json();
+      const _result = await response.json();
 
       dispatch({ type: 'SET_LISTING_ID', payload: result.data.id });
       dispatch({ type: 'SET_LAST_SAVED', payload: new Date() });
@@ -412,7 +407,7 @@ export function ListingFormProvider({ children }: { children: React.ReactNode })
         throw new Error(errorData.message || 'Failed to submit for review');
       }
 
-      const result = await response.json();
+      const _result = await response.json();
 
       dispatch({ type: 'SET_SUBMITTING', payload: false });
       console.log('Listing submitted for review successfully');
@@ -439,7 +434,7 @@ export function ListingFormProvider({ children }: { children: React.ReactNode })
         throw new Error('Failed to load draft');
       }
 
-      const result = await response.json();
+      const _result = await response.json();
       const listing = result.data;
 
       dispatch({
@@ -503,9 +498,7 @@ export function ListingFormProvider({ children }: { children: React.ReactNode })
     getValidationErrors,
   };
 
-  return (
-    <ListingFormContext.Provider value={value}>{children}</ListingFormContext.Provider>
-  );
+  return <ListingFormContext.Provider value={value}>{children}</ListingFormContext.Provider>;
 }
 
 // Hook to use the context

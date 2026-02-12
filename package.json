@@ -29,6 +29,9 @@
     "db:studio": "bun run --filter @DeshGhuri/db db:studio",
     "db:generate": "bun run --filter @DeshGhuri/db db:generate",
     "db:migrate": "bun run --filter @DeshGhuri/db db:migrate",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
     "prepare": "husky"
   },
   "dependencies": {
@@ -45,8 +48,14 @@
   "devDependencies": {
     "@DeshGhuri/config": "workspace:*",
     "@types/bun": "catalog:",
+    "@typescript-eslint/eslint-plugin": "^8.55.0",
+    "@typescript-eslint/parser": "^8.55.0",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
+    "prettier": "^3.8.1",
     "typescript": "catalog:"
   },
   "lint-staged": {

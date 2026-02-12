@@ -30,12 +30,15 @@ This folder contains scripts to help you easily kill development server processe
 If you prefer to add the function manually:
 
 1. Open PowerShell and find your profile location:
+
    ```powershell
    $PROFILE
    ```
+
    (Usually: `C:\Users\YourName\Documents\PowerShell\Microsoft.PowerShell_profile.ps1`)
 
 2. Open the profile file in your favorite editor:
+
    ```powershell
    notepad $PROFILE
    ```
@@ -60,6 +63,7 @@ pkill
 ```
 
 **Example output:**
+
 ```
 🔍 Scanning for processes on development ports...
 ✅ Killed node (PID: 12345) on port 3000
@@ -73,6 +77,7 @@ pkill
 ## 🔧 What Ports Are Checked?
 
 The `pkill` command automatically scans and kills processes on these ports:
+
 - **3000** - Backend server (Hono/Express)
 - **3001** - Frontend server (Vite/React)
 - **3002** - Alternative frontend port
@@ -100,6 +105,7 @@ The `pkill` command automatically scans and kills processes on these ports:
 ### Issue: "pkill is not recognized"
 
 **Solution:** Reload your PowerShell profile:
+
 ```powershell
 . $PROFILE
 ```
@@ -109,6 +115,7 @@ Or restart PowerShell.
 ### Issue: "Access Denied" when killing a process
 
 **Solution:** Run PowerShell as Administrator:
+
 1. Right-click PowerShell
 2. Select "Run as Administrator"
 3. Try `pkill` again
@@ -148,16 +155,19 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyConti
 To add more ports to check, edit your PowerShell profile:
 
 1. Open profile:
+
    ```powershell
    notepad $PROFILE
    ```
 
 2. Find the line:
+
    ```powershell
    $ports = @(3000, 3001, 3002, 5173, 8080, 8000, 4000, 5000)
    ```
 
 3. Add your ports:
+
    ```powershell
    $ports = @(3000, 3001, 3002, 5173, 8080, 8000, 4000, 5000, 9000, 9001)
    ```
@@ -174,6 +184,7 @@ To add more ports to check, edit your PowerShell profile:
 To update the pkill function:
 
 1. Run the setup script again:
+
    ```powershell
    .\scripts\setup-pkill.ps1
    ```
@@ -192,11 +203,13 @@ To update the pkill function:
 To remove pkill from your PowerShell profile:
 
 1. Open profile:
+
    ```powershell
    notepad $PROFILE
    ```
 
 2. Find and delete the entire `pkill` function block:
+
    ```powershell
    # pkill - Kill processes on development ports
    function pkill {
@@ -218,6 +231,7 @@ A: No, it only kills processes on development ports (3000, 3001, etc.). Your dat
 
 **Q: Can I use this on Mac/Linux?**
 A: This is specifically for Windows PowerShell. For Mac/Linux, use:
+
 ```bash
 # Create alias in ~/.bashrc or ~/.zshrc
 alias pkill='lsof -ti:3000,3001,3002 | xargs kill -9'
@@ -225,6 +239,7 @@ alias pkill='lsof -ti:3000,3001,3002 | xargs kill -9'
 
 **Q: Do I need to run this every time I start development?**
 A: Only if you have leftover processes from a previous session. Usually, you'll only need it when:
+
 - You closed your terminal without stopping servers
 - A server crashed but the port is still occupied
 - You're getting "Port already in use" errors

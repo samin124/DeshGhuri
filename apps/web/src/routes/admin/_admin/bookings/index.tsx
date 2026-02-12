@@ -2,7 +2,13 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Calendar, DollarSign, XCircle, FileText } from 'lucide-react';
 import { DataTable, type Column } from '@/components/admin/data-table';
-import { useBookings, useBookingStats, useCancelBooking, useUpdateBookingStatus, useAddBookingNote } from '@/hooks/use-admin-queries';
+import {
+  useBookings,
+  useBookingStats,
+  useCancelBooking,
+  useUpdateBookingStatus,
+  useAddBookingNote,
+} from '@/hooks/use-admin-queries';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -70,7 +76,9 @@ function RouteComponent() {
   const [cancelReason, setCancelReason] = useState('');
   const [refundAmount, setRefundAmount] = useState<number | ''>('');
   const [notifyCustomer, setNotifyCustomer] = useState(true);
-  const [newStatus, setNewStatus] = useState<'confirmed' | 'completed' | 'cancelled' | 'disputed' | ''>('');
+  const [newStatus, setNewStatus] = useState<
+    'confirmed' | 'completed' | 'cancelled' | 'disputed' | ''
+  >('');
   const [statusReason, setStatusReason] = useState('');
   const [note, setNote] = useState('');
 
@@ -212,18 +220,10 @@ function RouteComponent() {
 
   const renderActions = (booking: Booking) => (
     <div className="flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setStatusDialog({ open: true, booking })}
-      >
+      <Button variant="outline" size="sm" onClick={() => setStatusDialog({ open: true, booking })}>
         Update Status
       </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setNoteDialog({ open: true, booking })}
-      >
+      <Button variant="outline" size="sm" onClick={() => setNoteDialog({ open: true, booking })}>
         <FileText className="h-4 w-4" />
       </Button>
       {booking.status !== 'cancelled' && (
@@ -307,7 +307,9 @@ function RouteComponent() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">BDT {stats.revenue?.thisMonth?.toLocaleString() || 0}</div>
+              <div className="text-2xl font-bold">
+                BDT {stats.revenue?.thisMonth?.toLocaleString() || 0}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -389,7 +391,10 @@ function RouteComponent() {
       />
 
       {/* Cancel Booking Dialog */}
-      <Dialog open={cancelDialog.open} onOpenChange={(open) => !open && setCancelDialog({ open: false, booking: null })}>
+      <Dialog
+        open={cancelDialog.open}
+        onOpenChange={(open) => !open && setCancelDialog({ open: false, booking: null })}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Booking</DialogTitle>
@@ -467,13 +472,14 @@ function RouteComponent() {
       </Dialog>
 
       {/* Update Status Dialog */}
-      <Dialog open={statusDialog.open} onOpenChange={(open) => !open && setStatusDialog({ open: false, booking: null })}>
+      <Dialog
+        open={statusDialog.open}
+        onOpenChange={(open) => !open && setStatusDialog({ open: false, booking: null })}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Booking Status</DialogTitle>
-            <DialogDescription>
-              Change the status of this booking
-            </DialogDescription>
+            <DialogDescription>Change the status of this booking</DialogDescription>
           </DialogHeader>
 
           {statusDialog.booking && (
@@ -532,13 +538,14 @@ function RouteComponent() {
       </Dialog>
 
       {/* Add Note Dialog */}
-      <Dialog open={noteDialog.open} onOpenChange={(open) => !open && setNoteDialog({ open: false, booking: null })}>
+      <Dialog
+        open={noteDialog.open}
+        onOpenChange={(open) => !open && setNoteDialog({ open: false, booking: null })}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Note</DialogTitle>
-            <DialogDescription>
-              Add an internal note to this booking
-            </DialogDescription>
+            <DialogDescription>Add an internal note to this booking</DialogDescription>
           </DialogHeader>
 
           {noteDialog.booking && (
@@ -570,10 +577,7 @@ function RouteComponent() {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleAddNote}
-              disabled={!note.trim() || addNoteMutation.isPending}
-            >
+            <Button onClick={handleAddNote} disabled={!note.trim() || addNoteMutation.isPending}>
               {addNoteMutation.isPending ? 'Adding...' : 'Add Note'}
             </Button>
           </DialogFooter>

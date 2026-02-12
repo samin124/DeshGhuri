@@ -8,7 +8,6 @@ import {
   decimal,
   boolean,
   index,
-  varchar,
 } from 'drizzle-orm/pg-core';
 import { seller } from './seller';
 import { user } from './auth';
@@ -24,7 +23,7 @@ export const LISTING_CATEGORIES = {
   TRANSPORT: 'transport',
 } as const;
 
-export type ListingCategory = typeof LISTING_CATEGORIES[keyof typeof LISTING_CATEGORIES];
+export type ListingCategory = (typeof LISTING_CATEGORIES)[keyof typeof LISTING_CATEGORIES];
 
 export const LISTING_STATUSES = {
   DRAFT: 'draft',
@@ -34,7 +33,7 @@ export const LISTING_STATUSES = {
   REJECTED: 'rejected',
 } as const;
 
-export type ListingStatus = typeof LISTING_STATUSES[keyof typeof LISTING_STATUSES];
+export type ListingStatus = (typeof LISTING_STATUSES)[keyof typeof LISTING_STATUSES];
 
 export const CANCELLATION_POLICIES = {
   FLEXIBLE: 'flexible',
@@ -43,7 +42,7 @@ export const CANCELLATION_POLICIES = {
   NON_REFUNDABLE: 'non-refundable',
 } as const;
 
-export type CancellationPolicy = typeof CANCELLATION_POLICIES[keyof typeof CANCELLATION_POLICIES];
+export type CancellationPolicy = (typeof CANCELLATION_POLICIES)[keyof typeof CANCELLATION_POLICIES];
 
 export const PRICE_UNITS = {
   PER_PERSON: 'per-person',
@@ -51,7 +50,7 @@ export const PRICE_UNITS = {
   PER_BOOKING: 'per-booking',
 } as const;
 
-export type PriceUnit = typeof PRICE_UNITS[keyof typeof PRICE_UNITS];
+export type PriceUnit = (typeof PRICE_UNITS)[keyof typeof PRICE_UNITS];
 
 // ============================================================================
 // LISTINGS
@@ -70,13 +69,15 @@ export const listing = pgTable(
     category: text('category').notNull(), // 'hotel' | 'tour-package' | 'experience' | 'transport'
 
     // Location
-    location: json('location').$type<{
-      city: string;
-      district: string;
-      address: string;
-      landmark?: string;
-      coordinates?: { lat: number; lng: number };
-    }>().notNull(),
+    location: json('location')
+      .$type<{
+        city: string;
+        district: string;
+        address: string;
+        landmark?: string;
+        coordinates?: { lat: number; lng: number };
+      }>()
+      .notNull(),
 
     // Pricing
     basePrice: decimal('base_price', { precision: 10, scale: 2 }).notNull(),
@@ -90,12 +91,14 @@ export const listing = pgTable(
 
     // Group Pricing
     groupEligible: boolean('group_eligible').default(false).notNull(),
-    groupPricingTiers: json('group_pricing_tiers').$type<Array<{
-      minParticipants: number;
-      maxParticipants: number;
-      discountPercentage: number;
-      pricePerPerson: number;
-    }>>(),
+    groupPricingTiers: json('group_pricing_tiers').$type<
+      Array<{
+        minParticipants: number;
+        maxParticipants: number;
+        discountPercentage: number;
+        pricePerPerson: number;
+      }>
+    >(),
 
     // Amenities & Features
     amenities: json('amenities').$type<string[]>().default([]),
@@ -109,12 +112,16 @@ export const listing = pgTable(
     checkOutTime: text('check_out_time'),
 
     // Media
-    images: json('images').$type<Array<{
-      url: string;
-      storageKey: string;
-      caption?: string;
-      isPrimary: boolean;
-    }>>().notNull(),
+    images: json('images')
+      .$type<
+        Array<{
+          url: string;
+          storageKey: string;
+          caption?: string;
+          isPrimary: boolean;
+        }>
+      >()
+      .notNull(),
 
     // Status
     status: text('status').notNull().default('draft'), // 'draft' | 'pending-review' | 'active' | 'paused' | 'rejected'
@@ -180,16 +187,18 @@ export const booking = pgTable(
     groupBookingId: text('group_booking_id'), // If part of a group
 
     // Guest Details
-    guestDetails: json('guest_details').$type<{
-      primaryGuest: {
-        name: string;
-        email: string;
-        phone: string;
-      };
-      adults: number;
-      children: number;
-      totalGuests: number;
-    }>().notNull(),
+    guestDetails: json('guest_details')
+      .$type<{
+        primaryGuest: {
+          name: string;
+          email: string;
+          phone: string;
+        };
+        adults: number;
+        children: number;
+        totalGuests: number;
+      }>()
+      .notNull(),
 
     // Dates
     checkInDate: timestamp('check_in_date'),
@@ -296,10 +305,14 @@ export const review = pgTable(
     // Review Content
     title: text('title'),
     comment: text('comment').notNull(),
-    photos: json('photos').$type<Array<{
-      url: string;
-      storageKey: string;
-    }>>().default([]),
+    photos: json('photos')
+      .$type<
+        Array<{
+          url: string;
+          storageKey: string;
+        }>
+      >()
+      .default([]),
 
     // Seller Response
     sellerResponse: text('seller_response'),
@@ -391,13 +404,17 @@ export const proofOfCompletion = pgTable(
       .references(() => seller.id, { onDelete: 'restrict' }),
 
     // Proof Files
-    files: json('files').$type<Array<{
-      url: string;
-      storageKey: string;
-      fileName: string;
-      fileType: string;
-      fileSize: number;
-    }>>().notNull(),
+    files: json('files')
+      .$type<
+        Array<{
+          url: string;
+          storageKey: string;
+          fileName: string;
+          fileType: string;
+          fileSize: number;
+        }>
+      >()
+      .notNull(),
 
     // Notes
     notes: text('notes'),
@@ -435,14 +452,16 @@ export const payout = pgTable(
     currency: text('currency').notNull().default('BDT'),
 
     // Bank Details (snapshot at payout time)
-    bankDetails: json('bank_details').$type<{
-      bankName: string;
-      branchName: string;
-      accountHolderName: string;
-      accountNumber: string;
-      routingNumber?: string;
-      accountType: string;
-    }>().notNull(),
+    bankDetails: json('bank_details')
+      .$type<{
+        bankName: string;
+        branchName: string;
+        accountHolderName: string;
+        accountNumber: string;
+        routingNumber?: string;
+        accountType: string;
+      }>()
+      .notNull(),
 
     // Included Escrow Transactions
     escrowTransactionIds: json('escrow_transaction_ids').$type<string[]>().notNull(),
@@ -543,9 +562,7 @@ export const sellerAnalytics = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [
-    index('sellerAnalytics_sellerId_date_idx').on(table.sellerId, table.date),
-  ]
+  (table) => [index('sellerAnalytics_sellerId_date_idx').on(table.sellerId, table.date)]
 );
 
 // ============================================================================

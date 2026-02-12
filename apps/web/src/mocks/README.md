@@ -7,6 +7,7 @@ This directory contains Mock Service Worker (MSW) setup for API mocking during d
 ### Enable Mocking
 
 Set in `apps/web/.env`:
+
 ```
 VITE_API_MOCKING_ENABLED=true
 ```
@@ -34,6 +35,7 @@ src/mocks/
 ## Adding New Mocks
 
 1. Create handler in `handlers/`:
+
 ```typescript
 import { http, HttpResponse } from 'msw';
 
@@ -45,6 +47,7 @@ export const myHandlers = [
 ```
 
 2. Add to `browser.ts`:
+
 ```typescript
 import { myHandlers } from './handlers/my-handlers';
 
@@ -72,6 +75,7 @@ const handlers = [...sellerHandlers, ...myHandlers];
 ## Debugging
 
 Check browser console for MSW logs:
+
 - `[MSW] Mocking enabled` - MSW is active
 - `[MSW] GET /api/...` - Request intercepted
 - `[MSW] Warning: captured a request without a matching request handler` - Add handler

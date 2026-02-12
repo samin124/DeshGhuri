@@ -9,24 +9,30 @@ Your DeshGhuri project is fully set up and running!
 ## 🎯 What's Working Right Now
 
 ### ✅ Admin Access
+
 **Login:** http://localhost:3001/login
+
 ```
 Email: admin@deshghuri.com
 Password: Admin@123456
 ```
+
 **Admin Panel:** http://localhost:3001/admin
 
 ### ✅ User Authentication
+
 - Sign Up: http://localhost:3001/login (click "Need an account?")
 - Sign In: http://localhost:3001/login
 - Email verification emails working
 
 ### ✅ Seller Registration
+
 - Landing: http://localhost:3001/seller
 - Signup: http://localhost:3001/seller/signup
 - **Document uploads available in Step 2 of registration**
 
 ### ✅ Development Servers
+
 - **Frontend:** http://localhost:3001
 - **Backend API:** http://localhost:3000
 - **API Docs:** http://localhost:3000/docs
@@ -51,7 +57,9 @@ http://127.0.0.1:3000/api/auth/callback/google
 ## 📊 Database
 
 ### Tables Created (19)
+
 All authentication and business tables are created and ready:
+
 - user, account, session, verification (Better Auth)
 - user_role (RBAC)
 - seller, seller_document, seller_bank_account, seller_payment_method
@@ -61,6 +69,7 @@ All authentication and business tables are created and ready:
 - audit_log, verification_timeline
 
 ### Storage Buckets (3)
+
 - `seller-documents` (private, 10MB)
 - `listings` (public, 5MB)
 - `avatars` (public, 2MB)
@@ -97,12 +106,14 @@ bun run db:migrate
 ## 🧪 Test Features
 
 ### Test Admin Access
+
 1. Go to http://localhost:3001/login
 2. Login with admin credentials (above)
 3. Access http://localhost:3001/admin
 4. See dashboard stats
 
 ### Test User Registration
+
 1. Go to http://localhost:3001/login
 2. Click "Need an account? Sign Up"
 3. Fill form with new email/password
@@ -110,6 +121,7 @@ bun run db:migrate
 5. Verify email (optional, can login without verification)
 
 ### Test Seller Registration
+
 1. Go to http://localhost:3001/seller
 2. Click "Sign Up as Seller"
 3. **Step 1:** Enter email/password
@@ -117,6 +129,7 @@ bun run db:migrate
 5. Submit for admin approval
 
 ### Test Role Switching
+
 1. Login as admin (has admin + customer roles)
 2. See "Customer View" / "Admin Panel" switcher in navbar
 3. Click to switch between dashboards
@@ -135,6 +148,7 @@ bun run db:migrate
 ## 🎉 Everything Fixed!
 
 ### Issues Resolved:
+
 - ✅ CORS blocking all requests → Fixed
 - ✅ Better Auth origin mismatch → Fixed
 - ✅ No admin account → Created with proper password hash
@@ -144,6 +158,7 @@ bun run db:migrate
 - ✅ Database tables missing → All 19 tables created
 
 ### What You Have Now:
+
 - ✅ Fully functional authentication system
 - ✅ Admin panel with dashboard
 - ✅ User registration with email verification
@@ -154,6 +169,7 @@ bun run db:migrate
 - ✅ Secure password hashing
 
 ### Google OAuth Status:
+
 ⚠️ Needs redirect URI configuration (5 minutes)
 
 ---

@@ -1,4 +1,14 @@
-import { ShoppingCart, Calendar, MapPin, Clock, CheckCircle2, XCircle, AlertCircle, Download, Ticket } from 'lucide-react';
+import {
+  ShoppingCart,
+  Calendar,
+  MapPin,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Download,
+  Ticket,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -18,7 +28,7 @@ export function BookingsCart() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const queryClient = useQueryClient();
   const { data, isLoading } = useCustomerBookings();
-  const bookings = isAuthenticated ? (data?.data || []) : [];
+  const bookings = isAuthenticated ? data?.data || [] : [];
 
   // Check authentication status
   useEffect(() => {
@@ -50,8 +60,8 @@ export function BookingsCart() {
   }, [isAuthenticated, queryClient]);
 
   // Count bookings by status
-  const pendingCount = bookings.filter((item: any) =>
-    item.booking?.approvalStatus === 'pending'
+  const pendingCount = bookings.filter(
+    (item: any) => item.booking?.approvalStatus === 'pending'
   ).length;
 
   const totalCount = bookings.length;
@@ -60,7 +70,10 @@ export function BookingsCart() {
     switch (status) {
       case 'pending':
         return (
-          <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-300">
+          <Badge
+            variant="outline"
+            className="text-xs bg-yellow-50 text-yellow-700 border-yellow-300"
+          >
             <Clock className="h-3 w-3 mr-1" />
             Pending
           </Badge>
@@ -147,9 +160,7 @@ export function BookingsCart() {
                             />
                           )}
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm truncate">
-                              {listing?.title}
-                            </h4>
+                            <h4 className="font-medium text-sm truncate">{listing?.title}</h4>
 
                             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                               <MapPin className="h-3 w-3" />
@@ -201,9 +212,12 @@ export function BookingsCart() {
                                 className="h-7 text-xs flex-1"
                                 onClick={async () => {
                                   try {
-                                    const response = await fetch(`http://localhost:3000/api/bookings/${booking.id}/ticket`, {
-                                      credentials: 'include',
-                                    });
+                                    const response = await fetch(
+                                      `http://localhost:3000/api/bookings/${booking.id}/ticket`,
+                                      {
+                                        credentials: 'include',
+                                      }
+                                    );
                                     if (response.ok) {
                                       const blob = await response.blob();
                                       const url = window.URL.createObjectURL(blob);
@@ -229,9 +243,12 @@ export function BookingsCart() {
                                 className="h-7 text-xs flex-1"
                                 onClick={async () => {
                                   try {
-                                    const response = await fetch(`http://localhost:3000/api/bookings/${booking.id}/receipt`, {
-                                      credentials: 'include',
-                                    });
+                                    const response = await fetch(
+                                      `http://localhost:3000/api/bookings/${booking.id}/receipt`,
+                                      {
+                                        credentials: 'include',
+                                      }
+                                    );
                                     if (response.ok) {
                                       const blob = await response.blob();
                                       const url = window.URL.createObjectURL(blob);
@@ -271,9 +288,7 @@ export function BookingsCart() {
               <DropdownMenuSeparator className="my-3" />
 
               <Button asChild className="w-full" variant="outline">
-                <Link to="/customer/bookings">
-                  View All Bookings
-                </Link>
+                <Link to="/customer/bookings">View All Bookings</Link>
               </Button>
             </>
           )}

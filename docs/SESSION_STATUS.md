@@ -8,7 +8,9 @@
 ## ✅ Completed Work
 
 ### 1. Unified Authentication System
+
 All changes from the previous session are complete:
+
 - ✅ Tabbed login page (`/login`) with Sign In, Sign Up, and Become a Seller tabs
 - ✅ All users (customers, sellers, admins) sign in through single login page
 - ✅ Automatic role-based redirects after login
@@ -17,7 +19,9 @@ All changes from the previous session are complete:
 - ✅ Enhanced error messages throughout
 
 ### 2. Single-Role Enforcement
+
 All UI and backend changes complete:
+
 - ✅ Removed RoleSwitcher component from:
   - `apps/web/src/components/layout/navbar.tsx`
   - `apps/web/src/components/admin/admin-layout.tsx`
@@ -26,14 +30,18 @@ All UI and backend changes complete:
 - ✅ Created database cleanup script: `apps/server/src/scripts/cleanup-duplicate-roles.ts`
 
 ### 3. Documentation
+
 All documentation created:
+
 - ✅ `AUTHENTICATION_UPDATES.md` - Complete auth system guide
 - ✅ `SINGLE_ROLE_ENFORCEMENT.md` - Single-role implementation details
 - ✅ `COMPLETE_CHANGES_SUMMARY.md` - Comprehensive summary of all changes
 - ✅ `PKILL_SETUP_GUIDE.md` - Port management guide
 
 ### 4. Port Management Tools
+
 All scripts created:
+
 - ✅ `scripts/kill-ports.bat` - Batch script to kill development ports
 - ✅ `scripts/pkill.ps1` - PowerShell script for port management
 - ✅ `scripts/setup-pkill.ps1` - Automatic installer
@@ -43,9 +51,11 @@ All scripts created:
 ## ⚠️ Current Issue: Port Occupation
 
 ### Problem
+
 Ports 3000, 3001, and 3002 are persistently occupied on your system, preventing the backend server from starting on port 3000 and the frontend from starting on port 3001.
 
 ### Why This Happens
+
 - Previous development server instances may have left processes in TIME_WAIT state
 - Windows TCP/IP stack caching
 - Bun process cleanup incomplete
@@ -54,6 +64,7 @@ Ports 3000, 3001, and 3002 are persistently occupied on your system, preventing 
 
 **Option 1: Restart Computer (Recommended)**
 This will completely release all ports and ensure a clean start:
+
 ```bash
 # Restart Windows
 # Then from project root:
@@ -62,6 +73,7 @@ bun run dev
 
 **Option 2: Wait 2-5 Minutes**
 TCP connections in TIME_WAIT state typically release after 2-5 minutes:
+
 ```bash
 # Wait 5 minutes
 # Then try:
@@ -70,6 +82,7 @@ bun run dev
 
 **Option 3: Use Alternate Ports (Temporary)**
 If you need to work immediately, the frontend can run on port 3003:
+
 - Backend: Will need manual port change or resolution
 - Frontend: Already falls back to 3003
 
@@ -87,12 +100,14 @@ bun run scripts/cleanup-duplicate-roles.ts
 ```
 
 **What it does:**
+
 - Scans all users for multiple role entries
 - Keeps highest priority role (super_admin > admin > seller > customer)
 - Deletes duplicate role entries
 - Verifies database is clean
 
 **Expected output:**
+
 ```
 🔍 Starting duplicate roles cleanup...
 
@@ -124,6 +139,7 @@ bun run dev
 ```
 
 This should start:
+
 - Backend on port 3000
 - Frontend on port 3001
 
@@ -132,21 +148,25 @@ This should start:
 Once servers are running, test the following:
 
 **Test 1: Tabbed Login Interface**
+
 1. Navigate to `http://localhost:3001/login`
 2. Verify you see 3 tabs: Sign In, Sign Up, Become a Seller
 3. Test tab switching works
 
 **Test 2: Email Uniqueness**
+
 1. Create a customer account with an email
 2. Try to create a seller account with the same email
 3. Should see error: "Email already registered"
 
 **Test 3: Role-Based Redirects**
+
 1. Sign in as admin - should redirect to `/admin/dashboard`
 2. Sign in as seller - should redirect to `/seller/dashboard`
 3. Sign in as customer - should redirect to home page
 
 **Test 4: No Role Switcher**
+
 1. Sign in as any user type
 2. Verify NO role switcher appears in navbar or dashboard
 3. Only logout option should be visible
@@ -156,6 +176,7 @@ Once servers are running, test the following:
 ## 📁 Files to Review
 
 ### Modified Frontend Files (11)
+
 - `apps/web/src/routes/login.tsx` - Tabbed interface
 - `apps/web/src/components/sign-in-form.tsx` - Role detection
 - `apps/web/src/components/sign-up-form.tsx` - Email validation
@@ -169,10 +190,12 @@ Once servers are running, test the following:
 - `apps/web/src/routes/__root.tsx` - Removed seller signin detection
 
 ### Modified Backend Files (2)
+
 - `apps/server/src/routes/auth/check-email.ts` - Enhanced validation
 - `packages/auth/src/seller-auth.ts` - Better error messages
 
 ### New Files (5)
+
 - `apps/server/src/routes/auth/check-email.ts` - Email availability endpoint
 - `apps/server/src/scripts/cleanup-duplicate-roles.ts` - Database cleanup
 - `scripts/kill-ports.bat` - Port management
@@ -180,6 +203,7 @@ Once servers are running, test the following:
 - `scripts/setup-pkill.ps1` - Port management installer
 
 ### Deleted Files (1)
+
 - `apps/web/src/routes/seller/signin.tsx` - No longer needed
 
 ---
@@ -187,6 +211,7 @@ Once servers are running, test the following:
 ## 🔍 Verification Commands
 
 ### Check for Multi-Role Users
+
 ```sql
 -- Run this in your database to verify no users have multiple roles
 SELECT user_id, COUNT(*) as role_count
@@ -198,6 +223,7 @@ HAVING COUNT(*) > 1;
 ```
 
 ### Check Email Uniqueness
+
 ```sql
 -- Verify email is unique in user table
 SELECT email, COUNT(*) FROM "user" GROUP BY email HAVING COUNT(*) > 1;
@@ -209,6 +235,7 @@ SELECT email, COUNT(*) FROM "seller" GROUP BY email HAVING COUNT(*) > 1;
 ```
 
 ### Check Server Status
+
 ```bash
 # Backend
 curl http://localhost:3000/api/auth/roles
@@ -224,6 +251,7 @@ curl http://localhost:3000/api/auth/roles
 ### Issue: Database cleanup script fails
 
 **Solution:**
+
 ```bash
 # Check database connection
 cd packages/db
@@ -235,6 +263,7 @@ bun run db:studio
 ### Issue: Backend won't start on port 3000
 
 **Solution:**
+
 ```bash
 # Kill all processes
 .\scripts\kill-ports.bat
@@ -248,6 +277,7 @@ bun run dev
 
 **Solution:**
 Check the `/api/auth/check-email` endpoint is working:
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/check-email \
   -H "Content-Type: application/json" \
@@ -257,6 +287,7 @@ curl -X POST http://localhost:3000/api/auth/check-email \
 ### Issue: Role switcher still appears
 
 **Solution:**
+
 ```bash
 # Clear browser cache and restart frontend
 # In browser DevTools: Application > Clear site data
@@ -279,6 +310,7 @@ For detailed information, refer to:
 ## ✨ Summary
 
 **All code changes are complete!** The authentication system has been fully updated with:
+
 - Unified login page with tabs
 - Single-role enforcement (one email = one role)
 - No role switching capability
@@ -286,6 +318,7 @@ For detailed information, refer to:
 - Complete documentation
 
 **Your action items:**
+
 1. ✅ Resolve port occupation (restart or wait)
 2. ✅ Run database cleanup script
 3. ✅ Start dev servers

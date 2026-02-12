@@ -23,11 +23,13 @@ All authentication and role-based redirect improvements have been successfully i
 ### Foundation (Fixes #1-2)
 
 **Backend Roles API** (`/api/auth/roles`)
+
 - Returns user's roles array and primary role
 - Used by all redirect logic
 - Cached on client-side for performance
 
 **Centralized Redirect Utility** (`/apps/web/src/lib/auth/redirect-after-login.ts`)
+
 - Single source of truth for post-login redirects
 - Handles return URL validation
 - Implements role priority logic
@@ -35,22 +37,26 @@ All authentication and role-based redirect improvements have been successfully i
 ### Login Updates (Fixes #3-7)
 
 **Main Login** (`/login`)
+
 - Email/password: Smart redirects based on role
 - Google OAuth: Preserves return URLs and verifies roles
 - Return URL: Deep linking works for all routes
 
 **Admin Login** (`/admin`)
+
 - Email/password: Redirects to return URL or dashboard
 - Google OAuth: Full support with role verification
 - Security: Non-admins are rejected with clear message
 
 **Seller Login** (`/seller/signin`)
+
 - Email/password: Return URL support
 - Google OAuth: **NEW** - Full OAuth support added
 - Role verification: Ensures only sellers can sign in
 - Consistent with main/admin login behavior
 
 **Admin Route Guards** (`/admin/*`)
+
 - Preserves destination when redirecting to login
 - Returns user to original page after authentication
 - Security: Non-admins blocked from admin routes
@@ -58,6 +64,7 @@ All authentication and role-based redirect improvements have been successfully i
 ### Role Switcher (Fixes #8-9)
 
 **RoleSwitcher Component** (`/apps/web/src/components/layout/role-switcher.tsx`)
+
 - Dropdown showing all available roles for user
 - Icons: Shield (Admin), Store (Seller), User (Customer)
 - React Query integration with 5-minute cache
@@ -65,6 +72,7 @@ All authentication and role-based redirect improvements have been successfully i
 - Detects current role from pathname
 
 **Integration in Layouts:**
+
 - **Main Navbar** - After theme toggle
 - **Admin Layout** - Top header next to "Admin Panel" badge
 - **Seller Dashboard** - Mobile header + desktop sidebar footer
@@ -76,16 +84,19 @@ All authentication and role-based redirect improvements have been successfully i
 ### Single-Role Users
 
 **Customer (Only has customer role):**
+
 1. Logs in at `/login`
 2. Redirects to `/` (home page)
 3. No role switcher shown
 
 **Admin (Only has admin role):**
+
 1. Logs in at `/login` or `/admin`
 2. Redirects to `/admin/dashboard`
 3. No role switcher shown
 
 **Seller (Only has seller role):**
+
 1. Logs in at `/seller/signin`
 2. Redirects to `/seller/dashboard`
 3. No role switcher shown
@@ -93,6 +104,7 @@ All authentication and role-based redirect improvements have been successfully i
 ### Multi-Role Users
 
 **Admin + Customer:**
+
 1. Logs in at `/login`
 2. Redirects to `/admin/dashboard` (higher priority)
 3. **Role switcher visible** in navbar
@@ -100,12 +112,14 @@ All authentication and role-based redirect improvements have been successfully i
 5. Can click "Admin Panel" → goes to `/admin/dashboard`
 
 **Seller + Customer:**
+
 1. Logs in at `/login`
 2. Redirects to `/seller/dashboard` (seller priority > customer)
 3. **Role switcher visible** in navbar
 4. Can switch between seller and customer views
 
 **Admin + Seller + Customer:**
+
 1. Logs in anywhere
 2. Redirects to `/admin/dashboard` (highest priority)
 3. **Role switcher shows all 3 options**
@@ -122,6 +136,7 @@ All authentication and role-based redirect improvements have been successfully i
 5. **Automatically redirected to `/admin/reports`** ✅
 
 **Works for:**
+
 - Admin routes (`/admin/*`)
 - Any login page (`/login`, `/admin`, `/seller/signin`)
 - All authentication methods (password + OAuth)
@@ -166,7 +181,7 @@ All authentication and role-based redirect improvements have been successfully i
 
 - [x] Roles endpoint returns 401 for unauthenticated users
 - [x] Route order fixed (specific route before wildcard)
-- [ ] Roles endpoint returns correct data for authenticated users *(needs manual test)*
+- [ ] Roles endpoint returns correct data for authenticated users _(needs manual test)_
 
 ### Main Login
 
@@ -187,7 +202,7 @@ All authentication and role-based redirect improvements have been successfully i
 ### Seller Login
 
 - [ ] Email/password → redirects to dashboard
-- [ ] **Google OAuth → redirects to dashboard** *(NEW)*
+- [ ] **Google OAuth → redirects to dashboard** _(NEW)_
 - [ ] Non-seller gets error message
 - [ ] Return URL preserved through OAuth
 - [ ] Email verification checked
@@ -211,7 +226,7 @@ All authentication and role-based redirect improvements have been successfully i
 
 - [ ] Google OAuth works on main login
 - [ ] Google OAuth works on admin login
-- [ ] **Google OAuth works on seller login** *(NEW)*
+- [ ] **Google OAuth works on seller login** _(NEW)_
 - [ ] Return URLs preserved through OAuth
 - [ ] Role verification after OAuth
 
@@ -222,6 +237,7 @@ All authentication and role-based redirect improvements have been successfully i
 Before deploying to production:
 
 ### 1. Environment Variables
+
 ```bash
 # Verify these are set in production:
 - VITE_SERVER_URL (frontend)
@@ -230,6 +246,7 @@ Before deploying to production:
 ```
 
 ### 2. Database
+
 ```bash
 # Verify tables exist:
 - user
@@ -239,12 +256,14 @@ Before deploying to production:
 ```
 
 ### 3. Security
+
 - [ ] CORS properly configured
 - [ ] HTTPS enabled in production
 - [ ] Session tokens secure
 - [ ] Rate limiting on auth endpoints
 
 ### 4. Monitoring
+
 - [ ] Error logs for auth failures
 - [ ] Track role API calls
 - [ ] Monitor OAuth callback failures

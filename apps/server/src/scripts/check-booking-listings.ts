@@ -1,5 +1,5 @@
 import { db, booking, listing } from '@DeshGhuri/db';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 async function checkBookingListings() {
   const bookingIds = ['DG-20260210-KLDP5', 'DG-20260210-WRQCC', 'DG-20260210-W-JGZ'];

@@ -1,17 +1,5 @@
 import { Hono } from 'hono';
-import {
-  db,
-  sellerDocument,
-  seller,
-  user,
-  eq,
-  sql,
-  like,
-  and,
-  or,
-  desc,
-  asc,
-} from '@DeshGhuri/db';
+import { db, sellerDocument, eq, sql, like, and, desc, asc } from '@DeshGhuri/db';
 import { z } from 'zod';
 import { createAuditLog, getRequestMetadata } from '../../lib/audit-log';
 import { emailService } from '../../lib/email/service';
@@ -173,10 +161,7 @@ app.patch('/:id/review', async (c) => {
 
     // Validate rejection reason is provided when rejecting
     if (status === 'rejected' && !rejectionReason) {
-      return c.json(
-        { error: 'Rejection reason is required when rejecting a document' },
-        400
-      );
+      return c.json({ error: 'Rejection reason is required when rejecting a document' }, 400);
     }
 
     // Get current document data
@@ -237,14 +222,15 @@ app.patch('/:id/review', async (c) => {
       try {
         const documentTypeLabels: Record<string, string> = {
           'trade-license': 'Trade License',
-          'nid': 'National ID',
-          'passport': 'Passport',
+          nid: 'National ID',
+          passport: 'Passport',
           'tin-certificate': 'TIN Certificate',
           'property-docs': 'Property Documents',
           'tour-license': 'Tour License',
         };
 
-        const documentTypeLabel = documentTypeLabels[currentDocument.documentType] || currentDocument.documentType;
+        const documentTypeLabel =
+          documentTypeLabels[currentDocument.documentType] || currentDocument.documentType;
 
         if (status === 'approved') {
           await emailService.sendDocumentApproved({
@@ -330,18 +316,12 @@ app.post('/:sellerId/bulk-review', async (c) => {
     const { status, rejectionReason } = bulkReviewSchema.parse(body);
 
     if (status === 'rejected' && !rejectionReason) {
-      return c.json(
-        { error: 'Rejection reason is required when rejecting documents' },
-        400
-      );
+      return c.json({ error: 'Rejection reason is required when rejecting documents' }, 400);
     }
 
     // Get all pending documents for this seller
     const documents = await db.query.sellerDocument.findMany({
-      where: and(
-        eq(sellerDocument.sellerId, sellerId),
-        eq(sellerDocument.status, 'pending')
-      ),
+      where: and(eq(sellerDocument.sellerId, sellerId), eq(sellerDocument.status, 'pending')),
     });
 
     if (documents.length === 0) {
@@ -357,12 +337,7 @@ app.post('/:sellerId/bulk-review', async (c) => {
         reviewedAt: new Date(),
         reviewedBy: adminUserId,
       })
-      .where(
-        and(
-          eq(sellerDocument.sellerId, sellerId),
-          eq(sellerDocument.status, 'pending')
-        )
-      );
+      .where(and(eq(sellerDocument.sellerId, sellerId), eq(sellerDocument.status, 'pending')));
 
     // Create audit log for bulk action
     await createAuditLog({

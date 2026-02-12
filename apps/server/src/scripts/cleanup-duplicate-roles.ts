@@ -75,7 +75,7 @@ async function cleanupDuplicateRoles() {
     // Process each user with multiple roles
     for (const userData of usersWithMultipleRoles) {
       console.log(`\n👤 User: ${userData.email}`);
-      console.log(`   Current roles: ${userData.roles.map(r => r.role).join(', ')}`);
+      console.log(`   Current roles: ${userData.roles.map((r) => r.role).join(', ')}`);
 
       // Determine which role to keep (highest priority)
       let roleToKeep = userData.roles[0];
@@ -92,7 +92,7 @@ async function cleanupDuplicateRoles() {
       console.log(`   ✅ Keeping: ${roleToKeep.role}`);
 
       // Delete all roles except the one to keep
-      const rolesToDelete = userData.roles.filter(r => r.id !== roleToKeep.id);
+      const rolesToDelete = userData.roles.filter((r) => r.id !== roleToKeep.id);
 
       for (const role of rolesToDelete) {
         await db.delete(userRole).where(eq(userRole.id, role.id));

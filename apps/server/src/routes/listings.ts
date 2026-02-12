@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { db, listing, seller, review, LISTING_CATEGORIES, LISTING_STATUSES } from '@DeshGhuri/db';
-import { eq, and, gte, lte, desc, asc, sql, or, like, inArray } from 'drizzle-orm';
+import { eq, and, gte, lte, desc, asc, sql, or } from 'drizzle-orm';
 
 const app = new Hono();
 
@@ -35,12 +35,7 @@ app.get('/featured', async (c) => {
     const featuredListings = await db
       .select()
       .from(listing)
-      .where(
-        and(
-          eq(listing.status, LISTING_STATUSES.ACTIVE),
-          eq(listing.isFeatured, true)
-        )
-      )
+      .where(and(eq(listing.status, LISTING_STATUSES.ACTIVE), eq(listing.isFeatured, true)))
       .orderBy(desc(listing.rating))
       .limit(remainingSlots);
 
@@ -109,13 +104,11 @@ app.get('/trending', async (c) => {
       .select()
       .from(listing)
       .where(eq(listing.status, LISTING_STATUSES.ACTIVE))
-      .orderBy(
-        desc(sql`${listing.viewCount} * 0.7 + ${listing.bookingCount} * 0.3`)
-      )
+      .orderBy(desc(sql`${listing.viewCount} * 0.7 + ${listing.bookingCount} * 0.3`))
       .limit(8);
 
     // Map to add isTrending flag for frontend
-    const dataWithTrendingFlag = trendingListings.map(l => ({
+    const dataWithTrendingFlag = trendingListings.map((l) => ({
       ...l,
       isTrending: true,
     }));
@@ -247,7 +240,7 @@ app.get('/', async (c) => {
     // Build where conditions
     const conditions = [eq(listing.status, LISTING_STATUSES.ACTIVE)];
 
-    if (category && Object.values(LISTING_CATEGORIES).includes(category as any)) {
+    if (category && Object.values(LISTING_CATEGORIES).includes(category as string)) {
       conditions.push(eq(listing.category, category));
     }
 
@@ -279,12 +272,7 @@ app.get('/', async (c) => {
     }
 
     if (flashDeals === 'true') {
-      conditions.push(
-        and(
-          eq(listing.isFlashDeal, true),
-          sql`${listing.flashDealEndsAt} > NOW()`
-        )!
-      );
+      conditions.push(and(eq(listing.isFlashDeal, true), sql`${listing.flashDealEndsAt} > NOW()`)!);
     }
 
     // Build order by
@@ -329,9 +317,7 @@ app.get('/', async (c) => {
     // Filter verified sellers if requested
     let filteredListings = listings;
     if (verifiedOnly === 'true') {
-      filteredListings = listings.filter(
-        (l) => l.seller?.verificationStatus === 'verified'
-      );
+      filteredListings = listings.filter((l) => l.seller?.verificationStatus === 'verified');
     }
 
     // Get total count for pagination
@@ -444,12 +430,7 @@ app.get('/:id', async (c) => {
       })
       .from(listing)
       .leftJoin(seller, eq(listing.sellerId, seller.id))
-      .where(
-        and(
-          eq(listing.id, listingId),
-          eq(listing.status, LISTING_STATUSES.ACTIVE)
-        )
-      )
+      .where(and(eq(listing.id, listingId), eq(listing.status, LISTING_STATUSES.ACTIVE)))
       .limit(1);
 
     if (!result.length) {
@@ -468,12 +449,7 @@ app.get('/:id', async (c) => {
     const recentReviews = await db
       .select()
       .from(review)
-      .where(
-        and(
-          eq(review.listingId, listingId),
-          eq(review.status, 'published')
-        )
-      )
+      .where(and(eq(review.listingId, listingId), eq(review.status, 'published')))
       .orderBy(desc(review.createdAt))
       .limit(5);
 
@@ -573,9 +549,7 @@ app.post('/search', async (c) => {
     // Amenities filter
     if (amenities.length > 0) {
       // Check if listing.amenities contains all requested amenities
-      conditions.push(
-        sql`${listing.amenities}::jsonb @> ${JSON.stringify(amenities)}::jsonb`
-      );
+      conditions.push(sql`${listing.amenities}::jsonb @> ${JSON.stringify(amenities)}::jsonb`);
     }
 
     const results = await db

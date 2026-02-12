@@ -1,19 +1,19 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
-import z from "zod";
-import { authClient } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useForm } from '@tanstack/react-form';
+import { toast } from 'sonner';
+import z from 'zod';
+import { authClient } from '@/lib/auth-client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
-export const Route = createFileRoute("/reset-password")({
+export const Route = createFileRoute('/reset-password')({
   component: ResetPasswordComponent,
   validateSearch: (search: Record<string, unknown>) => {
     return {
-      token: (search.token as string) || "",
-      error: (search.error as string) || "",
+      token: (search.token as string) || '',
+      error: (search.error as string) || '',
     };
   },
 });
@@ -24,12 +24,12 @@ function ResetPasswordComponent() {
 
   const form = useForm({
     defaultValues: {
-      password: "",
-      confirmPassword: "",
+      password: '',
+      confirmPassword: '',
     },
     onSubmit: async ({ value }) => {
       if (value.password !== value.confirmPassword) {
-        toast.error("Passwords do not match");
+        toast.error('Passwords do not match');
         return;
       }
 
@@ -39,25 +39,25 @@ function ResetPasswordComponent() {
       });
 
       if (resetError) {
-        toast.error("Failed to reset password. The link may have expired.");
+        toast.error('Failed to reset password. The link may have expired.');
         return;
       }
 
-      toast.success("Password reset successfully! You can now sign in.");
+      toast.success('Password reset successfully! You can now sign in.');
       setTimeout(() => {
-        navigate({ to: "/login" });
+        navigate({ to: '/login' });
       }, 2000);
     },
     validators: {
       onSubmit: z.object({
         password: z
           .string()
-          .min(8, "Password must be at least 8 characters")
-          .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-          .regex(/[a-z]/, "Must contain at least one lowercase letter")
-          .regex(/[0-9]/, "Must contain at least one number")
-          .regex(/[^A-Za-z0-9]/, "Must contain at least one special character"),
-        confirmPassword: z.string().min(8, "Please confirm your password"),
+          .min(8, 'Password must be at least 8 characters')
+          .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+          .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+          .regex(/[0-9]/, 'Must contain at least one number')
+          .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character'),
+        confirmPassword: z.string().min(8, 'Please confirm your password'),
       }),
     },
   });
@@ -70,13 +70,8 @@ function ResetPasswordComponent() {
             <CardTitle>Invalid Reset Link</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-red-500 mb-4">
-              This password reset link is invalid or has expired.
-            </p>
-            <Button
-              className="w-full"
-              onClick={() => navigate({ to: "/forgot-password" })}
-            >
+            <p className="text-red-500 mb-4">This password reset link is invalid or has expired.</p>
+            <Button className="w-full" onClick={() => navigate({ to: '/forgot-password' })}>
               Request New Link
             </Button>
           </CardContent>
@@ -90,9 +85,7 @@ function ResetPasswordComponent() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Reset Password</CardTitle>
-          <CardDescription>
-            Enter your new password below.
-          </CardDescription>
+          <CardDescription>Enter your new password below.</CardDescription>
         </CardHeader>
         <CardContent>
           <form
@@ -152,7 +145,7 @@ function ResetPasswordComponent() {
                   className="w-full"
                   disabled={!state.canSubmit || state.isSubmitting}
                 >
-                  {state.isSubmitting ? "Resetting..." : "Reset Password"}
+                  {state.isSubmitting ? 'Resetting...' : 'Reset Password'}
                 </Button>
               )}
             </form.Subscribe>

@@ -106,7 +106,8 @@ export function OnboardingStep3({ data, onUpdate }: OnboardingStep3Props) {
       <Alert>
         <Shield className="h-4 w-4" />
         <AlertDescription>
-          Your banking information is encrypted and securely stored. We use micro-deposit verification to confirm your account.
+          Your banking information is encrypted and securely stored. We use micro-deposit
+          verification to confirm your account.
         </AlertDescription>
       </Alert>
 

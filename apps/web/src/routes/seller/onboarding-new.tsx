@@ -84,7 +84,7 @@ function RouteComponent() {
     setPassword(storedPassword);
 
     if (storedCategory && !category) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         businessInfo: {
           ...prev.businessInfo,
@@ -99,6 +99,30 @@ function RouteComponent() {
   };
 
   const handleNext = () => {
+    // Validate Step 2 (Documents) before allowing next
+    if (currentStep === 2) {
+      const missingDocs = [];
+
+      if (!formData.documents?.tradeLicense) missingDocs.push('Trade License');
+      if (!formData.documents?.nidOrPassport) missingDocs.push('National ID or Passport');
+      if (!formData.documents?.tinCertificate) missingDocs.push('TIN Certificate');
+
+      if (formData.businessInfo.category === 'hotel' && !formData.documents?.propertyDocs) {
+        missingDocs.push('Property Documents');
+      }
+
+      if (formData.businessInfo.category === 'tour-operator' && !formData.documents?.tourLicense) {
+        missingDocs.push('Tour License');
+      }
+
+      if (missingDocs.length > 0) {
+        toast.error('Please upload all required documents: ' + missingDocs.join(', '), {
+          duration: 6000,
+        });
+        return;
+      }
+    }
+
     if (currentStep < steps.length) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -135,6 +159,19 @@ function RouteComponent() {
       missingBusinessFields.push('At least one payment method (Bkash or Nagad)');
     }
 
+    // Validate required documents
+    if (!formData.documents?.tradeLicense) missingBusinessFields.push('Trade License');
+    if (!formData.documents?.nidOrPassport) missingBusinessFields.push('National ID or Passport');
+    if (!formData.documents?.tinCertificate) missingBusinessFields.push('TIN Certificate');
+
+    if (businessInfo.category === 'hotel' && !formData.documents?.propertyDocs) {
+      missingBusinessFields.push('Property Documents');
+    }
+
+    if (businessInfo.category === 'tour-operator' && !formData.documents?.tourLicense) {
+      missingBusinessFields.push('Tour License');
+    }
+
     // If any required fields are missing, show error and return
     if (missingBusinessFields.length > 0) {
       toast.error('Please complete all required fields: ' + missingBusinessFields.join(', '), {
@@ -147,7 +184,6 @@ function RouteComponent() {
 
     try {
       // Call the seller signup API
-      // Only include bankAccount if it has required fields filled
       const requestBody: any = {
         email,
         password,
@@ -182,18 +218,66 @@ function RouteComponent() {
         return;
       }
 
+      // Now upload documents
+      toast.info('Uploading documents...');
+
+      const sellerId = result.data.sellerId;
+      const documentTypeMap: Record<string, string> = {
+        tradeLicense: 'trade-license',
+        nidOrPassport: 'nid',
+        tinCertificate: 'tin-certificate',
+        propertyDocs: 'property-docs',
+        tourLicense: 'tour-license',
+      };
+
+      const uploadPromises: Promise<void>[] = [];
+
+      // Upload each document
+      for (const [key, file] of Object.entries(formData.documents)) {
+        if (file && file instanceof File) {
+          const documentType = documentTypeMap[key] || key;
+
+          const uploadPromise = (async () => {
+            const uploadFormData = new FormData();
+            uploadFormData.append('file', file);
+            uploadFormData.append('sellerId', sellerId);
+            uploadFormData.append('documentType', documentType);
+
+            const uploadResponse = await fetch('http://localhost:3000/api/seller/documents/upload', {
+              method: 'POST',
+              credentials: 'include',
+              body: uploadFormData,
+            });
+
+            if (!uploadResponse.ok) {
+              const uploadError = await uploadResponse.json();
+              throw new Error(`Failed to upload ${key}: ${uploadError.error || 'Unknown error'}`);
+            }
+          })();
+
+          uploadPromises.push(uploadPromise);
+        }
+      }
+
+      // Wait for all uploads to complete
+      await Promise.all(uploadPromises);
+
       // Clear stored credentials
       sessionStorage.removeItem('seller_signup_email');
       sessionStorage.removeItem('seller_signup_password');
       sessionStorage.removeItem('seller_signup_category');
 
-      toast.success('Seller account created successfully! Please verify your email and sign in.');
+      toast.success(
+        'Seller account created and documents uploaded successfully! Please verify your email and sign in.'
+      );
 
       // Redirect to login
       navigate({ to: '/login' });
     } catch (error) {
       console.error('Submit error:', error);
-      toast.error('Failed to submit application. Please try again.');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to submit application. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -222,9 +306,7 @@ function RouteComponent() {
           <p className="text-muted-foreground">
             Complete your profile to start selling on DeshGhuri
           </p>
-          <p className="text-sm text-primary mt-2">
-            Registering as: {email}
-          </p>
+          <p className="text-sm text-primary mt-2">Registering as: {email}</p>
         </div>
 
         {/* Progress Steps */}
@@ -239,8 +321,8 @@ function RouteComponent() {
                       currentStep > step.id
                         ? 'bg-primary border-primary text-primary-foreground'
                         : currentStep === step.id
-                        ? 'border-primary text-primary bg-primary/10'
-                        : 'border-muted-foreground/30 text-muted-foreground bg-background'
+                          ? 'border-primary text-primary bg-primary/10'
+                          : 'border-muted-foreground/30 text-muted-foreground bg-background'
                     )}
                   >
                     {currentStep > step.id ? (
@@ -279,14 +361,18 @@ function RouteComponent() {
             {currentStep === 1 && (
               <OnboardingStep1
                 data={formData.businessInfo}
-                onUpdate={(data) => updateFormData({ businessInfo: { ...formData.businessInfo, ...data } })}
+                onUpdate={(data) =>
+                  updateFormData({ businessInfo: { ...formData.businessInfo, ...data } })
+                }
               />
             )}
             {currentStep === 2 && (
               <OnboardingStep2New
                 data={formData.documents}
                 category={formData.businessInfo.category}
-                onUpdate={(data) => updateFormData({ documents: { ...formData.documents, ...data } })}
+                onUpdate={(data) =>
+                  updateFormData({ documents: { ...formData.documents, ...data } })
+                }
               />
             )}
             {currentStep === 3 && (
@@ -301,9 +387,7 @@ function RouteComponent() {
                 }}
               />
             )}
-            {currentStep === 4 && (
-              <OnboardingStep4New data={formData} email={email} />
-            )}
+            {currentStep === 4 && <OnboardingStep4New data={formData} email={email} />}
           </CardContent>
         </Card>
 

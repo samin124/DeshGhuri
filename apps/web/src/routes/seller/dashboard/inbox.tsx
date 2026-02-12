@@ -12,9 +12,7 @@ function InboxPlaceholder() {
     <div className="space-y-6 p-6">
       <div>
         <h1 className="text-3xl font-bold">Inbox</h1>
-        <p className="text-muted-foreground">
-          Messages and inquiries from customers
-        </p>
+        <p className="text-muted-foreground">Messages and inquiries from customers</p>
       </div>
 
       <Card>
@@ -23,16 +21,15 @@ function InboxPlaceholder() {
             <Mail className="h-6 w-6" />
             Customer Messages
           </CardTitle>
-          <CardDescription>
-            Communicate with customers about bookings and inquiries
-          </CardDescription>
+          <CardDescription>Communicate with customers about bookings and inquiries</CardDescription>
         </CardHeader>
         <CardContent>
           <Alert>
             <Info className="h-4 w-4" />
             <AlertTitle>Coming Soon in Epic 12</AlertTitle>
             <AlertDescription>
-              The messaging and inbox feature is currently under development and will be available in Epic 12 (Listing Management).
+              The messaging and inbox feature is currently under development and will be available
+              in Epic 12 (Listing Management).
             </AlertDescription>
           </Alert>
         </CardContent>

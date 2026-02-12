@@ -4,9 +4,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { CATEGORIES } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select';
+import { CATEGORIES } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 interface CategorySelectProps {
   value: string;
@@ -24,7 +24,7 @@ export function CategorySelect({
   className,
 }: CategorySelectProps) {
   return (
-    <div className={cn("space-y-1", className)}>
+    <div className={cn('space-y-1', className)}>
       <label className="text-sm font-medium">Category</label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="w-full">

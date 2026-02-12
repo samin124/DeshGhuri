@@ -41,11 +41,13 @@ cd DeshGhuri
 ### 2. Install Dependencies
 
 Using Bun (recommended):
+
 ```bash
 bun install
 ```
 
 Using npm:
+
 ```bash
 npm install
 ```
@@ -68,11 +70,13 @@ CREATE DATABASE deshghuri;
 #### Set Database URL
 
 The database connection string format:
+
 ```
 postgresql://username:password@host:port/database
 ```
 
 Example:
+
 ```
 postgresql://postgres:mypassword@localhost:5432/deshghuri
 ```
@@ -84,11 +88,13 @@ postgresql://postgres:mypassword@localhost:5432/deshghuri
 The project requires environment variables in multiple locations:
 
 **Root `.env`** (for Turborepo):
+
 ```bash
 cp .env.example .env
 ```
 
 **`apps/server/.env`** (Backend configuration):
+
 ```bash
 cd apps/server
 cp .env.example .env
@@ -96,6 +102,7 @@ cd ../..
 ```
 
 **`apps/web/.env`** (Frontend configuration):
+
 ```bash
 cd apps/web
 cp .env.example .env
@@ -107,6 +114,7 @@ cd ../..
 Edit each `.env` file with your actual values:
 
 **apps/server/.env:**
+
 ```bash
 # Database
 DATABASE_URL=postgresql://postgres:password@localhost:5432/deshghuri
@@ -133,6 +141,7 @@ FRONTEND_URL=http://localhost:3001
 ```
 
 **apps/web/.env:**
+
 ```bash
 # API
 VITE_API_URL=http://localhost:3000
@@ -164,6 +173,7 @@ bun run db:migrate
 ```
 
 This will automatically create all tables:
+
 - ✅ Users and authentication (user, session, account, verification)
 - ✅ Sellers and business profiles (seller, seller_document)
 - ✅ Listings and categories (listing, category)
@@ -174,6 +184,7 @@ This will automatically create all tables:
 - ✅ Admin audit logs (user_role)
 
 **Verify tables were created:**
+
 ```bash
 # Open Drizzle Studio to view tables
 bun run db:studio
@@ -181,6 +192,7 @@ bun run db:studio
 ```
 
 **Note**: If you change the schema later, run:
+
 ```bash
 bun run db:generate  # Generate new migration file
 bun run db:migrate   # Apply the migration
@@ -193,6 +205,7 @@ bun run db:migrate   # Apply the migration
 We use **Supabase Local Development** (runs on Docker) - no cloud account needed!
 
 **Quick Setup:**
+
 1. Install Docker Desktop and start it
 2. Install Supabase CLI: `npm install -g supabase`
 3. Start Supabase: `supabase start` (from project root)
@@ -256,6 +269,7 @@ Check that everything is running:
 **Error**: `ECONNREFUSED` or `Connection refused`
 
 **Solution**:
+
 1. Verify PostgreSQL is running: `pg_isready`
 2. Check DATABASE_URL in `.env` is correct
 3. Ensure database exists: `psql -U postgres -l`
@@ -265,6 +279,7 @@ Check that everything is running:
 **Error**: `EADDRINUSE: address already in use :::3000`
 
 **Solution**:
+
 1. Find process using the port: `lsof -i :3000` (Mac/Linux) or `netstat -ano | findstr :3000` (Windows)
 2. Kill the process or change PORT in `.env`
 
@@ -273,6 +288,7 @@ Check that everything is running:
 **Error**: Migration errors during `bun run db:migrate`
 
 **Solution**:
+
 1. Check database is accessible
 2. Verify DATABASE_URL is correct
 3. Drop database and recreate if needed (development only):
@@ -287,6 +303,7 @@ Check that everything is running:
 **Error**: `Supabase: Invalid API key`
 
 **Solution**:
+
 1. Verify SUPABASE_URL and keys in `.env`
 2. Check Supabase project is active
 3. Create required storage buckets in Supabase dashboard:
@@ -299,6 +316,7 @@ Check that everything is running:
 **Error**: Verification emails not received
 
 **Solution**:
+
 1. Verify RESEND_API_KEY is correct
 2. Check Resend dashboard for delivery logs
 3. Verify FROM_EMAIL is verified in Resend
@@ -309,6 +327,7 @@ Check that everything is running:
 **Error**: `Cannot find module '@/...'`
 
 **Solution**:
+
 1. Delete `node_modules` and reinstall:
    ```bash
    rm -rf node_modules

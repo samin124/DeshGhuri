@@ -105,9 +105,7 @@ function AdminListings() {
         </TabsList>
 
         <TabsContent value="review-queue">
-          <ReviewQueueTab
-            onReview={(listing) => setReviewDialog({ open: true, listing })}
-          />
+          <ReviewQueueTab onReview={(listing) => setReviewDialog({ open: true, listing })} />
         </TabsContent>
 
         <TabsContent value="all-listings">
@@ -168,9 +166,7 @@ function ReviewQueueTab({ onReview }: { onReview: (listing: any) => void }) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Failed to load review queue. Please try again later.
-        </AlertDescription>
+        <AlertDescription>Failed to load review queue. Please try again later.</AlertDescription>
       </Alert>
     );
   }
@@ -228,8 +224,7 @@ function ReviewQueueTab({ onReview }: { onReview: (listing: any) => void }) {
       {pagination && pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Page {pagination.page} of {pagination.totalPages} ({pagination.total} total
-            listings)
+            Page {pagination.page} of {pagination.totalPages} ({pagination.total} total listings)
           </p>
           <div className="flex gap-2">
             <Button
@@ -256,7 +251,13 @@ function ReviewQueueTab({ onReview }: { onReview: (listing: any) => void }) {
 }
 
 // Review Queue Card Component
-function ReviewQueueCard({ listing, onReview }: { listing: any; onReview: (listing: any) => void }) {
+function ReviewQueueCard({
+  listing,
+  onReview,
+}: {
+  listing: any;
+  onReview: (listing: any) => void;
+}) {
   const primaryImage = listing.images?.find((img: any) => img.isPrimary) || listing.images?.[0];
   const locationText =
     typeof listing.location === 'string'
@@ -290,7 +291,10 @@ function ReviewQueueCard({ listing, onReview }: { listing: any; onReview: (listi
                 <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Building className="h-3 w-3" />
-                    {listing.category && CATEGORY_DISPLAY_NAMES[listing.category as keyof typeof CATEGORY_DISPLAY_NAMES]}
+                    {listing.category &&
+                      CATEGORY_DISPLAY_NAMES[
+                        listing.category as keyof typeof CATEGORY_DISPLAY_NAMES
+                      ]}
                   </span>
                   {locationText && (
                     <span className="flex items-center gap-1">
@@ -376,9 +380,7 @@ function AllListingsTab() {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Failed to load listings. Please try again later.
-        </AlertDescription>
+        <AlertDescription>Failed to load listings. Please try again later.</AlertDescription>
       </Alert>
     );
   }
@@ -454,18 +456,23 @@ function AllListingsTab() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {listing.category && CATEGORY_DISPLAY_NAMES[listing.category as keyof typeof CATEGORY_DISPLAY_NAMES]}
+                    {listing.category &&
+                      CATEGORY_DISPLAY_NAMES[
+                        listing.category as keyof typeof CATEGORY_DISPLAY_NAMES
+                      ]}
                   </TableCell>
                   <TableCell>{listing.seller?.businessName || 'N/A'}</TableCell>
                   <TableCell>৳{parseFloat(listing.basePrice).toLocaleString()}</TableCell>
                   <TableCell>
-                    <Badge variant={STATUS_BADGE_VARIANTS[listing.status as keyof typeof STATUS_BADGE_VARIANTS]}>
+                    <Badge
+                      variant={
+                        STATUS_BADGE_VARIANTS[listing.status as keyof typeof STATUS_BADGE_VARIANTS]
+                      }
+                    >
                       {STATUS_DISPLAY_NAMES[listing.status as keyof typeof STATUS_DISPLAY_NAMES]}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    {new Date(listing.createdAt).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{new Date(listing.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm">
                       <Eye className="h-4 w-4" />
@@ -555,7 +562,8 @@ function FeaturedListingsTab() {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {listings.map((listing: any) => {
-        const primaryImage = listing.images?.find((img: any) => img.isPrimary) || listing.images?.[0];
+        const primaryImage =
+          listing.images?.find((img: any) => img.isPrimary) || listing.images?.[0];
 
         return (
           <Card key={listing.id}>
@@ -575,8 +583,11 @@ function FeaturedListingsTab() {
             <CardContent className="p-4">
               <h3 className="font-semibold mb-1">{listing.title}</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                {listing.category && CATEGORY_DISPLAY_NAMES[listing.category as keyof typeof CATEGORY_DISPLAY_NAMES]} •{' '}
-                ৳{parseFloat(listing.basePrice).toLocaleString()}
+                {listing.category &&
+                  CATEGORY_DISPLAY_NAMES[
+                    listing.category as keyof typeof CATEGORY_DISPLAY_NAMES
+                  ]}{' '}
+                • ৳{parseFloat(listing.basePrice).toLocaleString()}
               </p>
               <Button
                 variant="outline"
@@ -714,7 +725,10 @@ function ReviewDialog({
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
                     <span className="text-muted-foreground">Category:</span>{' '}
-                    {listing.category && CATEGORY_DISPLAY_NAMES[listing.category as keyof typeof CATEGORY_DISPLAY_NAMES]}
+                    {listing.category &&
+                      CATEGORY_DISPLAY_NAMES[
+                        listing.category as keyof typeof CATEGORY_DISPLAY_NAMES
+                      ]}
                   </div>
                   <div>
                     <span className="text-muted-foreground">Price:</span> ৳
@@ -725,8 +739,8 @@ function ReviewDialog({
                     {listing.seller?.name || 'Unknown'}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Waiting:</span>{' '}
-                    {listing.daysWaiting} days
+                    <span className="text-muted-foreground">Waiting:</span> {listing.daysWaiting}{' '}
+                    days
                   </div>
                 </div>
               </CardContent>
@@ -808,16 +822,10 @@ function ReviewDialog({
                       <SelectValue placeholder="Select a reason..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Misleading information">
-                        Misleading information
-                      </SelectItem>
+                      <SelectItem value="Misleading information">Misleading information</SelectItem>
                       <SelectItem value="Poor quality images">Poor quality images</SelectItem>
-                      <SelectItem value="Inappropriate content">
-                        Inappropriate content
-                      </SelectItem>
-                      <SelectItem value="Incomplete information">
-                        Incomplete information
-                      </SelectItem>
+                      <SelectItem value="Inappropriate content">Inappropriate content</SelectItem>
+                      <SelectItem value="Incomplete information">Incomplete information</SelectItem>
                       <SelectItem value="Pricing violation">Pricing violation</SelectItem>
                       <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
@@ -855,8 +863,8 @@ function ReviewDialog({
               {reviewMutation.isPending
                 ? 'Processing...'
                 : reviewAction === 'approve'
-                ? 'Approve Listing'
-                : 'Reject Listing'}
+                  ? 'Approve Listing'
+                  : 'Reject Listing'}
             </Button>
           </DialogFooter>
         )}

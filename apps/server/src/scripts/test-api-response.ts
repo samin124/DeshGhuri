@@ -61,7 +61,6 @@ async function testAPI() {
     console.log(`   ✅ Found ${featuredData.data.length} featured listings\n`);
 
     console.log('✨ All API tests passed!');
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     throw error;

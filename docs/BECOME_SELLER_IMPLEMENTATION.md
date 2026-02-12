@@ -84,16 +84,18 @@
    - ⏳ Verify seller is approved before allowing dashboard access
 
 10. **Testing with Chrome MCP**
-   - ⏳ Test seller signup flow: `/seller/signup` → `/seller/onboarding-new`
-   - ⏳ Test seller signin flow with different statuses
-   - ⏳ Test email verification enforcement
-   - ⏳ Test payment method validation (at least one required)
-   - ⏳ Test approved seller can access dashboard
-   - ⏳ Test pending/rejected seller cannot access dashboard
+
+- ⏳ Test seller signup flow: `/seller/signup` → `/seller/onboarding-new`
+- ⏳ Test seller signin flow with different statuses
+- ⏳ Test email verification enforcement
+- ⏳ Test payment method validation (at least one required)
+- ⏳ Test approved seller can access dashboard
+- ⏳ Test pending/rejected seller cannot access dashboard
 
 11. **Documentation**
-   - ⏳ Update API documentation with new endpoints
-   - ⏳ Create user guide for independent seller auth flow
+
+- ⏳ Update API documentation with new endpoints
+- ⏳ Create user guide for independent seller auth flow
 
 ---
 
@@ -147,12 +149,14 @@ CREATE INDEX seller_payment_method_payment_type_idx ON seller_payment_method(pay
 ### API Endpoints
 
 #### Independent Seller Auth (NEW)
+
 - POST `/api/seller/auth/signup` - Create seller account with email/password
 - POST `/api/seller/auth/signin` - Sign in seller (returns session if approved)
 - GET `/api/seller/auth/status/:email` - Check seller application status
 - POST `/api/seller/auth/resend-verification` - Resend email verification
 
 #### Legacy (User-based, still available)
+
 - POST `/api/seller/register` - Create initial seller record (requires user auth)
 - POST `/api/seller/onboarding/complete` - Complete onboarding
 - GET `/api/seller/by-user/:userId` - Get seller by user ID
@@ -161,6 +165,7 @@ CREATE INDEX seller_payment_method_payment_type_idx ON seller_payment_method(pay
 ### Frontend Components
 
 #### New Independent Auth Flow
+
 - `/apps/web/src/routes/seller/signup.tsx` - Email/password collection ✅
 - `/apps/web/src/routes/seller/onboarding-new.tsx` - Complete registration flow ✅
 - `/apps/web/src/routes/seller/signin.tsx` - Independent signin (rewritten) ✅
@@ -168,6 +173,7 @@ CREATE INDEX seller_payment_method_payment_type_idx ON seller_payment_method(pay
 - `/apps/web/src/components/seller/onboarding-step-4-new.tsx` - Review page ✅
 
 #### Legacy (User-based)
+
 - `/apps/web/src/routes/seller/index.tsx` - Landing page (updated links) ✅
 - `/apps/web/src/routes/seller/register.tsx` - Redirects to landing ✅
 - `/apps/web/src/routes/seller/onboarding.tsx` - User-based multi-step form
@@ -190,6 +196,7 @@ CREATE INDEX seller_payment_method_payment_type_idx ON seller_payment_method(pay
 ## Testing Checklist
 
 ### New User Flow
+
 - [ ] Click "Become a Seller" from navbar
 - [ ] See landing page with two options
 - [ ] Click "Sign Up as Seller"
@@ -202,6 +209,7 @@ CREATE INDEX seller_payment_method_payment_type_idx ON seller_payment_method(pay
 - [ ] Redirected to verification status page
 
 ### Existing Seller Flow
+
 - [ ] Click "Become a Seller"
 - [ ] Click "Sign In to Seller Account"
 - [ ] If not logged in: Redirect to /login
@@ -212,6 +220,7 @@ CREATE INDEX seller_payment_method_payment_type_idx ON seller_payment_method(pay
 - [ ] If incomplete: See completion link
 
 ### Edge Cases
+
 - [ ] Admin user tries to become seller: Blocked with error
 - [ ] User with existing seller account tries to register again: Redirected to status
 - [ ] Email verification link expired: Can resend
@@ -222,6 +231,7 @@ CREATE INDEX seller_payment_method_payment_type_idx ON seller_payment_method(pay
 ## Environment Variables
 
 No new environment variables needed. Uses existing:
+
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASSWORD`, `EMAIL_FROM` for email verification
 - Database connection via existing config
 

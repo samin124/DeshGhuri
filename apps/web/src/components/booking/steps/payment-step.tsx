@@ -3,17 +3,16 @@ import { useBooking } from '@/contexts/booking-context';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { CreditCard, Smartphone, AlertCircle, CheckCircle2, Check } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import { useSubmitPayment, useCreateBooking } from '@/lib/api/bookings';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
+import type { Listing } from '@/types/listing';
 
 interface PaymentStepProps {
-  listing: any;
+  listing: Listing;
   onValidationChange: (isValid: boolean) => void;
   onNext: () => void;
   onClose: () => void;
@@ -25,7 +24,7 @@ const PAYMENT_NUMBERS = {
   nagad: '01812-345678',
 };
 
-export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStepProps) {
+export function PaymentStep({ listing: _listing, onValidationChange, onNext }: PaymentStepProps) {
   const { formData, updateFormData, priceBreakdown, bookingId, setBookingId } = useBooking();
   const submitPaymentMutation = useSubmitPayment();
   const createBookingMutation = useCreateBooking();
@@ -35,8 +34,12 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
   );
   const [transactionId, setTransactionId] = useState(formData.transactionId || '');
   const [accountNumber, setAccountNumber] = useState(formData.paymentDetails?.accountNumber || '');
-  const [accountHolderName, setAccountHolderName] = useState(formData.paymentDetails?.accountHolderName || '');
-  const [transactionDate, setTransactionDate] = useState(formData.paymentDetails?.transactionDate || '');
+  const [accountHolderName, setAccountHolderName] = useState(
+    formData.paymentDetails?.accountHolderName || ''
+  );
+  const [transactionDate, setTransactionDate] = useState(
+    formData.paymentDetails?.transactionDate || ''
+  );
   const [notes, setNotes] = useState(formData.paymentDetails?.notes || '');
   const [bookingCreated, setBookingCreated] = useState(!!bookingId);
 
@@ -87,7 +90,14 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
     }
 
     onValidationChange(isValid);
-  }, [paymentMethod, transactionId, accountNumber, isMobilePayment, bookingCreated, onValidationChange]);
+  }, [
+    paymentMethod,
+    transactionId,
+    accountNumber,
+    isMobilePayment,
+    bookingCreated,
+    onValidationChange,
+  ]);
 
   // Update form data
   useEffect(() => {
@@ -101,7 +111,15 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
         notes,
       },
     });
-  }, [paymentMethod, transactionId, accountNumber, accountHolderName, transactionDate, notes, updateFormData]);
+  }, [
+    paymentMethod,
+    transactionId,
+    accountNumber,
+    accountHolderName,
+    transactionDate,
+    notes,
+    updateFormData,
+  ]);
 
   // Handle payment submission success
   useEffect(() => {
@@ -144,14 +162,16 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
           <button
             onClick={() => setPaymentMethod('bkash')}
             className={cn(
-              "w-full flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors text-left",
-              paymentMethod === 'bkash' && "border-primary bg-primary/5"
+              'w-full flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors text-left',
+              paymentMethod === 'bkash' && 'border-primary bg-primary/5'
             )}
           >
-            <div className={cn(
-              "h-5 w-5 rounded-full border-2 flex items-center justify-center",
-              paymentMethod === 'bkash' ? "border-primary bg-primary" : "border-muted-foreground"
-            )}>
+            <div
+              className={cn(
+                'h-5 w-5 rounded-full border-2 flex items-center justify-center',
+                paymentMethod === 'bkash' ? 'border-primary bg-primary' : 'border-muted-foreground'
+              )}
+            >
               {paymentMethod === 'bkash' && <Check className="h-3 w-3 text-primary-foreground" />}
             </div>
             <Smartphone className="h-5 w-5 text-pink-600" />
@@ -164,14 +184,16 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
           <button
             onClick={() => setPaymentMethod('nagad')}
             className={cn(
-              "w-full flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors text-left",
-              paymentMethod === 'nagad' && "border-primary bg-primary/5"
+              'w-full flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors text-left',
+              paymentMethod === 'nagad' && 'border-primary bg-primary/5'
             )}
           >
-            <div className={cn(
-              "h-5 w-5 rounded-full border-2 flex items-center justify-center",
-              paymentMethod === 'nagad' ? "border-primary bg-primary" : "border-muted-foreground"
-            )}>
+            <div
+              className={cn(
+                'h-5 w-5 rounded-full border-2 flex items-center justify-center',
+                paymentMethod === 'nagad' ? 'border-primary bg-primary' : 'border-muted-foreground'
+              )}
+            >
               {paymentMethod === 'nagad' && <Check className="h-3 w-3 text-primary-foreground" />}
             </div>
             <Smartphone className="h-5 w-5 text-orange-600" />
@@ -191,7 +213,10 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
             <p className="font-semibold mb-2">Payment Instructions:</p>
             <ol className="list-decimal list-inside space-y-1 text-sm">
               <li>Open your {paymentMethod === 'bkash' ? 'bKash' : 'Nagad'} app</li>
-              <li>Send ৳{parseFloat(totalAmount).toLocaleString()} to: <strong>{PAYMENT_NUMBERS[paymentMethod]}</strong></li>
+              <li>
+                Send ৳{parseFloat(totalAmount).toLocaleString()} to:{' '}
+                <strong>{PAYMENT_NUMBERS[paymentMethod]}</strong>
+              </li>
               <li>Copy the transaction ID from your payment confirmation</li>
               <li>Fill in the transaction details below</li>
             </ol>
@@ -232,7 +257,9 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
           {isMobilePayment && (
             <>
               <div>
-                <Label htmlFor="accountNumber">Your {paymentMethod === 'bkash' ? 'bKash' : 'Nagad'} Number *</Label>
+                <Label htmlFor="accountNumber">
+                  Your {paymentMethod === 'bkash' ? 'bKash' : 'Nagad'} Number *
+                </Label>
                 <Input
                   id="accountNumber"
                   value={accountNumber}
@@ -288,7 +315,9 @@ export function PaymentStep({ listing, onValidationChange, onNext }: PaymentStep
           <CheckCircle2 className="h-4 w-4 text-green-600" />
           <AlertDescription>
             <p className="font-semibold text-green-900 dark:text-green-100">Booking Created</p>
-            <p className="text-sm mt-1">Your booking ID: <strong>{bookingId}</strong></p>
+            <p className="text-sm mt-1">
+              Your booking ID: <strong>{bookingId}</strong>
+            </p>
             <p className="text-sm text-muted-foreground mt-1">
               This booking will be held for 10 minutes. Please complete the payment to confirm.
             </p>

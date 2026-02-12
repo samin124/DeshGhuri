@@ -21,9 +21,7 @@ export function Step1BasicInformation() {
       <Card>
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
-          <CardDescription>
-            Provide the essential details about your listing
-          </CardDescription>
+          <CardDescription>Provide the essential details about your listing</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Title */}
@@ -96,9 +94,7 @@ export function Step1BasicInformation() {
       <Card>
         <CardHeader>
           <CardTitle>Location</CardTitle>
-          <CardDescription>
-            Where is your listing located?
-          </CardDescription>
+          <CardDescription>Where is your listing located?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -167,9 +163,7 @@ export function Step1BasicInformation() {
                 })
               }
             />
-            <p className="text-xs text-muted-foreground">
-              Help guests find your location easily
-            </p>
+            <p className="text-xs text-muted-foreground">Help guests find your location easily</p>
           </div>
         </CardContent>
       </Card>

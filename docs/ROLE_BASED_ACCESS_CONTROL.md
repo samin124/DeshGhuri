@@ -13,11 +13,11 @@ This document describes the implementation of strict role-based access control (
 
 ### Access Control Matrix
 
-| Role | Allowed Access | Restricted From |
-|------|----------------|-----------------|
-| **Customer** | Homepage, search, listings, bookings, seller profiles | Seller dashboard, admin panel |
-| **Seller** | Seller dashboard, own listings only | Homepage, customer features, admin panel |
-| **Admin** | Admin panel, system management | Homepage, customer features, seller dashboard |
+| Role         | Allowed Access                                        | Restricted From                               |
+| ------------ | ----------------------------------------------------- | --------------------------------------------- |
+| **Customer** | Homepage, search, listings, bookings, seller profiles | Seller dashboard, admin panel                 |
+| **Seller**   | Seller dashboard, own listings only                   | Homepage, customer features, admin panel      |
+| **Admin**    | Admin panel, system management                        | Homepage, customer features, seller dashboard |
 
 ### Key Principles
 
@@ -33,6 +33,7 @@ This document describes the implementation of strict role-based access control (
 ### 1. Documentation Organization
 
 **Moved to docs folder:**
+
 - `AUTHENTICATION_FIX_SUMMARY.md`
 - `AUTHENTICATION_UPDATES.md`
 - `COMPLETE_CHANGES_SUMMARY.md`
@@ -44,6 +45,7 @@ This document describes the implementation of strict role-based access control (
 - `SINGLE_ROLE_ENFORCEMENT.md`
 
 **Kept in root:**
+
 - `README.md` - Project overview
 - `CLAUDE.md` - AI assistant context
 
@@ -54,6 +56,7 @@ This document describes the implementation of strict role-based access control (
 #### New Utility: `apps/web/src/lib/auth/role-guard.ts`
 
 **Functions:**
+
 - `getUserRoles()` - Fetches user roles from backend
 - `requireCustomerAccess()` - Guards customer-only routes
 - `requireSellerAccess()` - Guards seller-only routes
@@ -61,19 +64,20 @@ This document describes the implementation of strict role-based access control (
 
 **Protected Routes:**
 
-| Route | Protection | Behavior |
-|-------|-----------|----------|
-| `/` (homepage) | `requireCustomerAccess()` | Redirects sellers to `/seller/dashboard`, admins to `/admin/dashboard` |
-| `/search` | `requireCustomerAccess()` | Same as homepage |
-| `/listing/:listingId` | `requireCustomerAccess()` | Same as homepage |
-| `/seller/:sellerId/profile` | `requireCustomerAccess()` | Same as homepage |
-| `/seller/dashboard` | `requireSellerAccess()` | Redirects to `/login` if not authenticated, to `/` if not seller |
-| `/admin/_admin` | `requireAdminAccess()` | Redirects to `/admin` if not authenticated, to `/` if not admin |
+| Route                       | Protection                | Behavior                                                               |
+| --------------------------- | ------------------------- | ---------------------------------------------------------------------- |
+| `/` (homepage)              | `requireCustomerAccess()` | Redirects sellers to `/seller/dashboard`, admins to `/admin/dashboard` |
+| `/search`                   | `requireCustomerAccess()` | Same as homepage                                                       |
+| `/listing/:listingId`       | `requireCustomerAccess()` | Same as homepage                                                       |
+| `/seller/:sellerId/profile` | `requireCustomerAccess()` | Same as homepage                                                       |
+| `/seller/dashboard`         | `requireSellerAccess()`   | Redirects to `/login` if not authenticated, to `/` if not seller       |
+| `/admin/_admin`             | `requireAdminAccess()`    | Redirects to `/admin` if not authenticated, to `/` if not admin        |
 
 **Implementation Example:**
+
 ```typescript
 // apps/web/src/routes/index.tsx
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   beforeLoad: async ({ location }) => {
     await requireCustomerAccess(location.pathname);
   },
@@ -88,9 +92,11 @@ export const Route = createFileRoute("/")({
 #### New Endpoints
 
 ##### Seller Listings CRUD
+
 **File:** `apps/server/src/routes/seller/listings.ts`
 
 **Endpoints:**
+
 - `GET /api/seller/listings` - List all seller's listings
 - `GET /api/seller/listings/:listingId` - Get specific listing (ownership check)
 - `POST /api/seller/listings` - Create new listing
@@ -99,6 +105,7 @@ export const Route = createFileRoute("/")({
 - `PATCH /api/seller/listings/:listingId/toggle-active` - Toggle active status
 
 **Security Features:**
+
 - ✅ All routes protected by `requireSeller` middleware
 - ✅ Seller ID automatically assigned from authenticated session
 - ✅ Ownership verification on all read/update/delete operations
@@ -108,15 +115,18 @@ export const Route = createFileRoute("/")({
 - ✅ Generates unique slugs automatically
 
 ##### Customer Bookings API
+
 **File:** `apps/server/src/routes/customer/bookings.ts`
 
 **Endpoints:**
+
 - `POST /api/bookings` - Create booking (customers only)
 - `GET /api/bookings` - List customer's bookings
 - `GET /api/bookings/:bookingId` - Get specific booking (ownership check)
 - `PATCH /api/bookings/:bookingId/cancel` - Cancel booking (ownership check)
 
 **Security Features:**
+
 - ✅ Custom middleware `requireCustomerOnly`
 - ✅ **Blocks sellers from making bookings** (403 Forbidden)
 - ✅ **Blocks admins from making bookings** (403 Forbidden)
@@ -126,19 +136,20 @@ export const Route = createFileRoute("/")({
 - ✅ Ownership verification on all operations
 
 **Middleware Logic:**
+
 ```typescript
 async function requireCustomerOnly(c: any, next: () => Promise<void>) {
   // Verify sellers cannot book
-  if (roles.includes("seller")) {
+  if (roles.includes('seller')) {
     throw new HTTPException(403, {
-      message: "Forbidden: Sellers cannot make bookings. Please use a customer account.",
+      message: 'Forbidden: Sellers cannot make bookings. Please use a customer account.',
     });
   }
 
   // Verify admins cannot book
-  if (roles.includes("admin") || roles.includes("super_admin")) {
+  if (roles.includes('admin') || roles.includes('super_admin')) {
     throw new HTTPException(403, {
-      message: "Forbidden: Admins cannot make bookings. Please use a customer account.",
+      message: 'Forbidden: Admins cannot make bookings. Please use a customer account.',
     });
   }
 }
@@ -152,10 +163,10 @@ async function requireCustomerOnly(c: any, next: () => Promise<void>) {
 
 ```typescript
 // Seller routes
-app.route("/api/seller/listings", sellerListings);
+app.route('/api/seller/listings', sellerListings);
 
 // Customer routes
-app.route("/api/bookings", customerBookings);
+app.route('/api/bookings', customerBookings);
 ```
 
 ---
@@ -204,9 +215,9 @@ app.route("/api/bookings", customerBookings);
 ### Example: Update Listing
 
 ```typescript
-app.patch("/:listingId", async (c) => {
-  const sellerId = c.get("sellerId") as string; // From middleware
-  const listingId = c.req.param("listingId");
+app.patch('/:listingId', async (c) => {
+  const sellerId = c.get('sellerId') as string; // From middleware
+  const listingId = c.req.param('listingId');
 
   // Step 1: Verify ownership
   const existingListing = await db.query.listing.findFirst({
@@ -262,6 +273,7 @@ app.patch("/:listingId", async (c) => {
 #### ✅ Backend API Protection
 
 4. **Seller Listing Endpoints:**
+
    ```bash
    # As Seller A (sellerId: seller-1)
    POST /api/seller/listings
@@ -276,6 +288,7 @@ app.patch("/:listingId", async (c) => {
    ```
 
 5. **Customer Booking Endpoints:**
+
    ```bash
    # As Customer
    POST /api/bookings { listingId: "..." }
@@ -327,6 +340,7 @@ curl -X POST http://localhost:3000/api/bookings \
 ## API Response Examples
 
 ### Success: Customer Books Listing
+
 ```json
 {
   "success": true,
@@ -344,6 +358,7 @@ curl -X POST http://localhost:3000/api/bookings \
 ```
 
 ### Error: Seller Tries to Book
+
 ```json
 {
   "error": "Forbidden: Sellers cannot make bookings. Please use a customer account."
@@ -351,6 +366,7 @@ curl -X POST http://localhost:3000/api/bookings \
 ```
 
 ### Error: Update Listing Not Owned
+
 ```json
 {
   "error": "Listing not found or you don't have permission to modify it"
@@ -362,11 +378,13 @@ curl -X POST http://localhost:3000/api/bookings \
 ## Migration Notes
 
 ### No Database Changes Required
+
 - Uses existing schema
 - No new migrations needed
 - Works with current `listing`, `booking`, `userRole` tables
 
 ### Backward Compatibility
+
 - Existing routes remain functional
 - New routes are additive
 - Frontend redirects are non-breaking (only add protection)
@@ -396,6 +414,7 @@ curl -X POST http://localhost:3000/api/bookings \
 ## Key Files Reference
 
 ### Frontend
+
 - `apps/web/src/lib/auth/role-guard.ts` - Route protection utilities
 - `apps/web/src/routes/index.tsx` - Protected homepage
 - `apps/web/src/routes/search.tsx` - Protected search
@@ -405,6 +424,7 @@ curl -X POST http://localhost:3000/api/bookings \
 - `apps/web/src/routes/admin/_admin.tsx` - Admin panel (updated)
 
 ### Backend
+
 - `apps/server/src/routes/seller/listings.ts` - Seller listing CRUD
 - `apps/server/src/routes/customer/bookings.ts` - Customer booking API
 - `apps/server/src/middleware/seller-auth.ts` - Existing seller middleware
@@ -430,6 +450,7 @@ curl -X POST http://localhost:3000/api/bookings \
 **Next Steps:** Testing and deployment
 
 For questions or issues, refer to:
+
 - `/docs/IMPLEMENTATION_COMPLETE.md` - Original auth implementation
 - `/docs/ARCHITECTURE.md` - System design
 - `CLAUDE.md` - Project context for AI assistance

@@ -54,7 +54,7 @@ class EmailService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.resendApiKey}`,
+            Authorization: `Bearer ${this.resendApiKey}`,
           },
           body: JSON.stringify({
             from: this.fromEmail,

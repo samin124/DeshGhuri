@@ -57,7 +57,9 @@ async function testFlashDealsFilter() {
     console.log(`   Flash deals returned: ${flashDealsData.data.length}`);
     console.log(`   All are flash deals: ${allAreFlashDeals ? '✅' : '❌'}`);
     console.log(`   All have valid expiry: ${allHaveValidExpiry ? '✅' : '❌'}`);
-    console.log(`   Filter working correctly: ${allAreFlashDeals && allHaveValidExpiry ? '✅' : '❌'}`);
+    console.log(
+      `   Filter working correctly: ${allAreFlashDeals && allHaveValidExpiry ? '✅' : '❌'}`
+    );
 
     // Test 3: Verify badges display on frontend
     console.log('\n\nTest 3: Simulating frontend badge display...');
@@ -78,7 +80,6 @@ async function testFlashDealsFilter() {
     } else {
       console.log('\n\n⚠️  Some issues detected. Check the output above.');
     }
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     throw error;

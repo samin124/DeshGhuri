@@ -1,17 +1,20 @@
-import { mockStats } from "@/lib/mock-data";
-import { Card } from "@/components/ui/card";
+import { mockStats } from '@/lib/mock-data';
 
 export default function StatsSection() {
   return (
-    <section className="bg-primary py-12 text-primary-foreground">
+    <section className="relative py-16 bg-background border-b">
       <div className="container mx-auto px-4">
-        <div className="grid gap-6 md:grid-cols-4">
-          {mockStats.map((stat) => (
-            <Card key={stat.id} className="border-primary-foreground/10 bg-primary-foreground/5 text-center p-6">
-              <div className="mb-2 text-4xl">{stat.icon}</div>
-              <div className="mb-1 text-4xl font-bold">{stat.value}{stat.suffix}</div>
-              <div className="text-sm opacity-90">{stat.label}</div>
-            </Card>
+        {/* Stats Grid - Simple and Clean */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {mockStats.map((stat, _index) => (
+            <div key={stat.id} className="text-center">
+              <div className="mb-3 text-4xl">{stat.icon}</div>
+              <div className="mb-1 text-3xl md:text-4xl font-bold text-primary">
+                {stat.value}
+                {stat.suffix}
+              </div>
+              <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
+            </div>
           ))}
         </div>
       </div>

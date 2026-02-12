@@ -1,14 +1,10 @@
-import { Heart, MapPin, Zap, Tag, Percent, Users, User } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
+import { MapPin, Star, Users, User } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
 
-import type { Listing } from "@/types/listing";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { CountdownTimer } from "./countdown-timer";
-import { PriceDisplay } from "./price-display";
-import { RatingStars } from "./rating-stars";
-import { VerifiedBadge } from "@/components/seller/verified-badge";
+import type { Listing } from '@/types/listing';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CountdownTimer } from './countdown-timer';
 
 interface ListingCardProps {
   listing: Listing;
@@ -29,10 +25,11 @@ export function ListingCard({
   const primaryImage = listing.images?.find((img) => img.isPrimary) || listing.images?.[0];
   const imageUrl = primaryImage?.url || '/placeholder-listing.jpg';
 
-  // Format location
-  const locationText = typeof listing.location === 'string'
-    ? listing.location
-    : `${listing.location.city}, ${listing.location.district}`;
+  // Format location - show only city/area name
+  const locationText =
+    typeof listing.location === 'string'
+      ? listing.location
+      : listing.location.city || listing.location.district;
 
   const handleClick = () => {
     if (onClick) {
@@ -44,179 +41,116 @@ export function ListingCard({
     }
   };
 
-  // Check if promo code is valid and available
-  const hasValidPromo = listing.promoCode &&
-    listing.promoCodeExpiresAt &&
-    new Date(listing.promoCodeExpiresAt) > new Date() &&
-    (listing.promoCodeUsedCount || 0) < (listing.promoCodeMaxUses || Infinity);
+  // Parse rating
+  const rating = listing.rating ? parseFloat(listing.rating) : 0;
 
   return (
-    <Card className={`group overflow-hidden transition-all hover:shadow-lg ${className}`}>
-      <div className="block cursor-pointer" onClick={handleClick}>
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={listing.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-          />
+    <div
+      className={`group cursor-pointer overflow-hidden rounded-xl bg-[#f8f7f4] transition-all hover:shadow-lg ${className}`}
+      onClick={handleClick}
+    >
+      {/* Image Section */}
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={listing.title}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
 
-          {/* Top Left Badges */}
-          <div className="absolute left-2 top-2 flex flex-col gap-2">
-            {/* Flash Deal Badge - Most prominent */}
-            {listing.isFlashDeal && (
-              <Badge className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white font-bold shadow-lg animate-pulse flex items-center gap-1">
-                <Zap className="h-3 w-3 fill-white" />
-                FLASH SALE
-                {listing.discountPercent && (
-                  <span className="ml-1">{listing.discountPercent}% OFF</span>
-                )}
-              </Badge>
-            )}
-
-            {/* Trending Badge */}
-            {listing.isTrending && !listing.isFlashDeal && (
-              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-md flex items-center gap-1">
-                🔥 Trending
-              </Badge>
-            )}
-
-            {/* Discount Badge (if not flash deal but has discount) */}
-            {!listing.isFlashDeal && listing.discountPercent && listing.discountPercent > 0 && (
-              <Badge className="bg-green-500 text-white font-bold shadow-md flex items-center gap-1">
-                <Percent className="h-3 w-3" />
-                {listing.discountPercent}% OFF
-              </Badge>
-            )}
+        {/* Top Left Discount Badge */}
+        {listing.discountPercent && listing.discountPercent > 0 && (
+          <div className="absolute left-3 top-3">
+            <Badge className="bg-[#e85c4c] hover:bg-[#d94c3c] text-white font-semibold shadow-md rounded-full px-3 py-1 text-sm">
+              {listing.discountPercent}% OFF
+            </Badge>
           </div>
+        )}
 
-          {/* Top Right - Promo Code Badge */}
-          {hasValidPromo && (
-            <div className="absolute right-2 top-2 flex flex-col gap-2">
-              <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-bold shadow-lg border-2 border-white/50 flex items-center gap-1 animate-bounce">
-                <Tag className="h-3 w-3" />
-                {listing.promoCode}
-              </Badge>
+        {/* Bottom Left Countdown Timer */}
+        {showCountdown && listing.isFlashDeal && listing.flashDealEndsAt && (
+          <div className="absolute left-3 bottom-3">
+            <div className="bg-black/70 text-white text-sm font-medium rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-md">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" strokeWidth={2} />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6l4 2"
+                />
+              </svg>
+              <span>Ends in </span>
+              <CountdownTimer endTime={listing.flashDealEndsAt} size="sm" />
             </div>
-          )}
+          </div>
+        )}
+      </div>
 
-          {/* Wishlist Button - Bottom Right */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 bottom-2 h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Add to wishlist logic
-            }}
-          >
-            <Heart className="h-4 w-4" />
-          </Button>
+      {/* Content Section */}
+      <div className="p-4 space-y-2">
+        {/* Location */}
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5" />
+          <span>{locationText}</span>
         </div>
 
-        <CardContent className="p-4">
-          <div className="space-y-2">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-primary">
-                {listing.title}
-              </h3>
+        {/* Title */}
+        <h3 className="font-semibold text-base text-foreground leading-snug line-clamp-1">
+          {listing.title}
+        </h3>
+
+        {/* Rating */}
+        <div className="flex items-center gap-1">
+          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+          <span className="font-semibold text-sm">{rating.toFixed(1)}</span>
+          {listing.reviewCount !== undefined && listing.reviewCount > 0 && (
+            <span className="text-sm text-muted-foreground">({listing.reviewCount})</span>
+          )}
+        </div>
+
+        {/* Booking Type Badge */}
+        {listing.groupEligible ? (
+          <Badge variant="outline" className="text-xs bg-primary/10 border-primary/30 text-primary">
+            <Users className="h-3 w-3 mr-1" />
+            Group Booking
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700">
+            <User className="h-3 w-3 mr-1" />
+            Individual Booking
+          </Badge>
+        )}
+
+        {/* Pricing */}
+        <div className="pt-1">
+          {listing.discountedPrice ? (
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-bold text-foreground">
+                ৳{Number(listing.discountedPrice).toLocaleString()}
+              </span>
+              <span className="text-sm text-muted-foreground line-through">
+                ৳{Number(listing.basePrice).toLocaleString()}
+              </span>
             </div>
-
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span>{locationText}</span>
+          ) : (
+            <div className="text-xl font-bold text-foreground">
+              ৳{Number(listing.basePrice || '0').toLocaleString()}
             </div>
+          )}
+        </div>
 
-            {listing.seller && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  by {listing.seller.name}
-                </span>
-                {listing.seller.isVerified && (
-                  <VerifiedBadge size="sm" showText={false} />
-                )}
-              </div>
-            )}
-
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="secondary" className="text-xs">
-                {listing.category}
-              </Badge>
-
-              {/* Booking Type Badge */}
-              {listing.groupEligible ? (
-                <Badge variant="outline" className="text-xs flex items-center gap-1 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
-                  <Users className="h-3 w-3" />
-                  Group Booking
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="text-xs flex items-center gap-1 bg-slate-50 dark:bg-slate-950/20 border-slate-200 dark:border-slate-800">
-                  <User className="h-3 w-3" />
-                  Individual
-                </Badge>
-              )}
-            </div>
-
-            <RatingStars
-              rating={listing.rating ? parseFloat(listing.rating) : undefined}
-              reviewCount={listing.reviewCount}
-              showNumber
-              size="sm"
-            />
-
-            {/* Flash Deal Countdown */}
-            {showCountdown && listing.isFlashDeal && listing.flashDealEndsAt && (
-              <div className="rounded-md bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 p-2 border border-orange-200 dark:border-orange-800">
-                <CountdownTimer endTime={listing.flashDealEndsAt} size="sm" />
-              </div>
-            )}
-
-            {/* Promo Code Info */}
-            {hasValidPromo && (
-              <div className="rounded-md bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20 p-2 border border-amber-200 dark:border-amber-800">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-semibold">
-                    <Tag className="h-3 w-3" />
-                    <span>Use code: <span className="font-bold">{listing.promoCode}</span></span>
-                  </div>
-                  {listing.promoCodeDiscount && (
-                    <Badge variant="secondary" className="text-xs bg-amber-100 dark:bg-amber-900 text-amber-900 dark:text-amber-100">
-                      {listing.promoCodeDiscount}% off
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between pt-2">
-              {listing.discountedPrice ? (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-primary">
-                      ৳{Number(listing.discountedPrice).toLocaleString()}
-                    </span>
-                    {listing.discountPercent && (
-                      <Badge variant="destructive" className="text-xs">
-                        -{listing.discountPercent}%
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="text-xs text-muted-foreground line-through">
-                    ৳{Number(listing.basePrice).toLocaleString()}
-                  </div>
-                </div>
-              ) : (
-                <PriceDisplay
-                  price={parseFloat(listing.basePrice || '0')}
-                  currency={listing.currency}
-                  discountPercent={listing.discountPercent}
-                  size="md"
-                />
-              )}
-            </div>
-          </div>
-        </CardContent>
+        {/* Book Now Button */}
+        <Button
+          className="w-full mt-3"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate({ to: `/listing/${listing.id}` });
+          }}
+        >
+          Book Now
+        </Button>
       </div>
-    </Card>
+    </div>
   );
 }

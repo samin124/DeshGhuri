@@ -1,48 +1,97 @@
+import { DocumentUpload } from './document-upload';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { FileText, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 interface OnboardingStep2NewProps {
-  data: any;
+  data: {
+    tradeLicense?: File;
+    nidOrPassport?: File;
+    tinCertificate?: File;
+    propertyDocs?: File;
+    tourLicense?: File;
+  };
   category?: string;
   onUpdate: (data: any) => void;
 }
 
 export function OnboardingStep2New({ data, category, onUpdate }: OnboardingStep2NewProps) {
+  const handleFileChange = (field: string, file: File | null) => {
+    onUpdate({ ...data, [field]: file });
+  };
+
+  const showPropertyDocs = category === 'hotel';
+  const showTourLicense = category === 'tour-operator';
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold mb-2">Upload Documents</h2>
         <p className="text-sm text-muted-foreground">
-          Document verification can be completed later from your seller dashboard
+          Upload the required documents for verification. All files must be clear and readable.
         </p>
       </div>
 
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          <div className="space-y-2">
-            <p className="font-medium">Required Documents (can be uploaded later):</p>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              <li>Trade License - Valid business registration</li>
-              <li>NID/Passport - Government-issued ID of owner</li>
-              <li>TIN Certificate - Tax identification number</li>
-              {category === 'hotel' && <li>Property Documents - Hotel/resort ownership proof</li>}
-              {category === 'tour-operator' && <li>Tour License - Tourism operator license</li>}
-            </ul>
-            <p className="mt-2 font-medium">
-              You can complete your application now and upload documents from your dashboard once approved.
-            </p>
-          </div>
+          Accepted formats: PDF, JPG, PNG. Maximum file size: 25MB per document. All required
+          documents must be uploaded to complete registration.
         </AlertDescription>
       </Alert>
 
-      <div className="p-6 border-2 border-dashed rounded-lg text-center">
-        <FileText className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
-        <h3 className="font-medium mb-1">Document Upload Optional</h3>
-        <p className="text-sm text-muted-foreground">
-          Skip this step and upload your documents after your account is created
-        </p>
+      <div className="space-y-6">
+        <DocumentUpload
+          label="Trade License"
+          description="Valid trade license or business registration certificate"
+          value={data.tradeLicense || null}
+          onChange={(file) => handleFileChange('tradeLicense', file)}
+          required
+        />
+
+        <DocumentUpload
+          label="National ID or Passport"
+          description="Government-issued ID of the business owner"
+          value={data.nidOrPassport || null}
+          onChange={(file) => handleFileChange('nidOrPassport', file)}
+          required
+        />
+
+        <DocumentUpload
+          label="TIN Certificate"
+          description="Tax Identification Number certificate"
+          value={data.tinCertificate || null}
+          onChange={(file) => handleFileChange('tinCertificate', file)}
+          required
+        />
+
+        {showPropertyDocs && (
+          <DocumentUpload
+            label="Property Documents"
+            description="Ownership or lease documents for your hotel/resort property"
+            value={data.propertyDocs || null}
+            onChange={(file) => handleFileChange('propertyDocs', file)}
+            required
+          />
+        )}
+
+        {showTourLicense && (
+          <DocumentUpload
+            label="Tour Operator License"
+            description="Valid tour operator license issued by tourism authority"
+            value={data.tourLicense || null}
+            onChange={(file) => handleFileChange('tourLicense', file)}
+            required
+          />
+        )}
       </div>
+
+      <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <AlertDescription className="text-blue-900 dark:text-blue-100">
+          All documents will be reviewed by our verification team within 24-48 hours. You'll
+          receive an email notification once the review is complete.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }

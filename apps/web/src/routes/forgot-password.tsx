@@ -1,14 +1,14 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
-import z from "zod";
-import { authClient } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useForm } from '@tanstack/react-form';
+import { toast } from 'sonner';
+import z from 'zod';
+import { authClient } from '@/lib/auth-client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
-export const Route = createFileRoute("/forgot-password")({
+export const Route = createFileRoute('/forgot-password')({
   component: ForgotPasswordComponent,
 });
 
@@ -17,13 +17,13 @@ function ForgotPasswordComponent() {
 
   const form = useForm({
     defaultValues: {
-      email: "",
+      email: '',
     },
     onSubmit: async ({ value }) => {
-      console.log("\n=== FORGOT PASSWORD FORM SUBMITTED ===");
-      console.log("📧 Email:", value.email);
-      console.log("🔗 Redirect To:", `${window.location.origin}/reset-password`);
-      console.log("=======================================\n");
+      console.log('\n=== FORGOT PASSWORD FORM SUBMITTED ===');
+      console.log('📧 Email:', value.email);
+      console.log('🔗 Redirect To:', `${window.location.origin}/reset-password`);
+      console.log('=======================================\n');
 
       try {
         // CORRECT METHOD NAME: requestPasswordReset (not forgetPassword!)
@@ -32,21 +32,21 @@ function ForgotPasswordComponent() {
           redirectTo: `${window.location.origin}/reset-password`,
         });
 
-        console.log("\n=== FORGOT PASSWORD API RESPONSE ===");
-        console.log("Data:", result.data);
-        console.log("Error:", result.error);
-        console.log("=====================================\n");
+        console.log('\n=== FORGOT PASSWORD API RESPONSE ===');
+        console.log('Data:', result.data);
+        console.log('Error:', result.error);
+        console.log('=====================================\n');
 
         if (result.error) {
-          console.error("❌ Password reset error:", result.error);
-          console.error("Error details:", JSON.stringify(result.error, null, 2));
+          console.error('❌ Password reset error:', result.error);
+          console.error('Error details:', JSON.stringify(result.error, null, 2));
         } else {
-          console.log("✅ Password reset request successful");
+          console.log('✅ Password reset request successful');
         }
       } catch (err) {
-        console.error("\n❌ EXCEPTION IN FORGOT PASSWORD");
-        console.error("Exception:", err);
-        console.error("=====================================\n");
+        console.error('\n❌ EXCEPTION IN FORGOT PASSWORD');
+        console.error('Exception:', err);
+        console.error('=====================================\n');
       }
 
       // Always show success message to prevent email enumeration
@@ -55,12 +55,12 @@ function ForgotPasswordComponent() {
       });
 
       setTimeout(() => {
-        navigate({ to: "/login" });
+        navigate({ to: '/login' });
       }, 3000);
     },
     validators: {
       onSubmit: z.object({
-        email: z.string().email("Invalid email address"),
+        email: z.string().email('Invalid email address'),
       }),
     },
   });
@@ -112,7 +112,7 @@ function ForgotPasswordComponent() {
                   className="w-full"
                   disabled={!state.canSubmit || state.isSubmitting}
                 >
-                  {state.isSubmitting ? "Sending..." : "Send Reset Link"}
+                  {state.isSubmitting ? 'Sending...' : 'Send Reset Link'}
                 </Button>
               )}
             </form.Subscribe>
@@ -121,7 +121,7 @@ function ForgotPasswordComponent() {
               type="button"
               variant="link"
               className="w-full"
-              onClick={() => navigate({ to: "/login" })}
+              onClick={() => navigate({ to: '/login' })}
             >
               Back to Login
             </Button>

@@ -12,8 +12,7 @@ const BUCKET_NAME = env.SUPABASE_STORAGE_BUCKET;
 
 // Check if storage is configured
 export const isStorageConfigured = Boolean(
-  env.SUPABASE_PROJECT_REF &&
-  env.SUPABASE_SERVICE_ROLE_KEY
+  env.SUPABASE_PROJECT_REF && env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 if (isStorageConfigured) {
@@ -92,7 +91,9 @@ export async function uploadFile(
 
   if (!isStorageConfigured) {
     console.error('❌ Supabase Storage not configured');
-    throw new Error('Supabase Storage is not configured. Please add SUPABASE credentials to .env file.');
+    throw new Error(
+      'Supabase Storage is not configured. Please add SUPABASE credentials to .env file.'
+    );
   }
 
   try {
@@ -124,12 +125,10 @@ export async function uploadFile(
     console.log('⬆️ Uploading to Supabase Storage...');
 
     // Upload to Supabase Storage
-    const { data, error } = await storageClient
-      .from(BUCKET_NAME)
-      .upload(storageKey, buffer, {
-        contentType: mimeType,
-        upsert: false,
-      });
+    const { error } = await storageClient.from(BUCKET_NAME).upload(storageKey, buffer, {
+      contentType: mimeType,
+      upsert: false,
+    });
 
     if (error) {
       console.error('❌ Upload error:', error);
@@ -155,7 +154,9 @@ export async function uploadFile(
       console.error('   Error message:', error.message);
       console.error('   Error stack:', error.stack);
     }
-    throw new Error(`Failed to upload file to cloud storage: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to upload file to cloud storage: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
 
@@ -172,9 +173,7 @@ export async function deleteFile(storageKey: string): Promise<void> {
   try {
     console.log(`🗑️ Deleting file from Supabase Storage: ${storageKey}`);
 
-    const { error } = await storageClient
-      .from(BUCKET_NAME)
-      .remove([storageKey]);
+    const { error } = await storageClient.from(BUCKET_NAME).remove([storageKey]);
 
     if (error) {
       console.error('Delete error:', error);

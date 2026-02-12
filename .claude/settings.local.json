@@ -112,7 +112,13 @@
       "Bash(cmd.exe /c \"E:\\\\Learn-Typescript\\\\DeshGhuri\\\\scripts\\\\diagnose-ports.bat\")",
       "Bash(if not exist docs mkdir docs)",
       "mcp__chrome-devtools__handle_dialog",
-      "Bash(cmd.exe //c taskkill //F //PID 26824)"
+      "Bash(cmd.exe //c taskkill //F //PID 26824)",
+      "Bash(git branch:*)",
+      "WebFetch(domain:wanderlust-whispers-91.lovable.app)",
+      "WebFetch(domain:www.tourradar.com)",
+      "WebFetch(domain:www.viator.com)",
+      "WebFetch(domain:www.traveloka.com)",
+      "mcp__chrome-devtools__resize_page"
     ]
   }
 }

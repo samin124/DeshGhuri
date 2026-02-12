@@ -57,9 +57,7 @@ function SellerPayouts() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Payouts</h1>
-          <p className="text-muted-foreground">
-            View your payout history and track withdrawals
-          </p>
+          <p className="text-muted-foreground">View your payout history and track withdrawals</p>
         </div>
         <Button>
           <Download className="mr-2 h-4 w-4" />
@@ -70,9 +68,7 @@ function SellerPayouts() {
       {/* Payout History */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            {data && `${data.total} Payout${data.total !== 1 ? 's' : ''}`}
-          </CardTitle>
+          <CardTitle>{data && `${data.total} Payout${data.total !== 1 ? 's' : ''}`}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -91,13 +87,8 @@ function SellerPayouts() {
                   >
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm text-muted-foreground">
-                          {payout.id}
-                        </span>
-                        <Badge
-                          variant="secondary"
-                          className={statusColors[payout.status]}
-                        >
+                        <span className="font-mono text-sm text-muted-foreground">{payout.id}</span>
+                        <Badge variant="secondary" className={statusColors[payout.status]}>
                           {statusLabels[payout.status]}
                         </Badge>
                       </div>
@@ -115,8 +106,7 @@ function SellerPayouts() {
                       <div className="text-xs text-muted-foreground">
                         {payout.status === 'completed' && payout.completedAt && (
                           <span>
-                            Completed:{' '}
-                            {format(new Date(payout.completedAt), 'MMM dd, yyyy HH:mm')}
+                            Completed: {format(new Date(payout.completedAt), 'MMM dd, yyyy HH:mm')}
                           </span>
                         )}
                         {payout.status === 'processing' && payout.processedAt && (
@@ -127,15 +117,13 @@ function SellerPayouts() {
                         )}
                         {payout.status === 'failed' && payout.failedAt && (
                           <span>
-                            Failed:{' '}
-                            {format(new Date(payout.failedAt), 'MMM dd, yyyy HH:mm')}
+                            Failed: {format(new Date(payout.failedAt), 'MMM dd, yyyy HH:mm')}
                             {payout.failureReason && ` - ${payout.failureReason}`}
                           </span>
                         )}
                         {payout.status === 'pending' && (
                           <span>
-                            Requested:{' '}
-                            {format(new Date(payout.createdAt), 'MMM dd, yyyy HH:mm')}
+                            Requested: {format(new Date(payout.createdAt), 'MMM dd, yyyy HH:mm')}
                           </span>
                         )}
                       </div>
@@ -155,9 +143,7 @@ function SellerPayouts() {
                       <div className="text-2xl font-bold">
                         ৳{parseFloat(payout.amount).toLocaleString()}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {payout.currency}
-                      </div>
+                      <div className="text-sm text-muted-foreground">{payout.currency}</div>
                     </div>
                   </div>
                 ))}
@@ -182,9 +168,7 @@ function SellerPayouts() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        setPage((p) => Math.min(data.totalPages, p + 1))
-                      }
+                      onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
                       disabled={page === data.totalPages}
                     >
                       Next
@@ -196,9 +180,7 @@ function SellerPayouts() {
             </>
           ) : (
             <div className="py-12 text-center">
-              <p className="text-muted-foreground">
-                No payout history yet.
-              </p>
+              <p className="text-muted-foreground">No payout history yet.</p>
               <Button className="mt-4" variant="outline">
                 Request Your First Payout
               </Button>
@@ -213,18 +195,10 @@ function SellerPayouts() {
           <CardTitle>Payout Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <p>
-            • Payouts are processed within 3-5 business days
-          </p>
-          <p>
-            • Minimum payout amount: ৳1,000
-          </p>
-          <p>
-            • Payouts are sent to your verified bank account
-          </p>
-          <p>
-            • You can request a payout when you have released earnings
-          </p>
+          <p>• Payouts are processed within 3-5 business days</p>
+          <p>• Minimum payout amount: ৳1,000</p>
+          <p>• Payouts are sent to your verified bank account</p>
+          <p>• You can request a payout when you have released earnings</p>
         </CardContent>
       </Card>
     </div>

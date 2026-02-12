@@ -120,7 +120,10 @@ export function OnboardingStep4({ data }: OnboardingStep4Props) {
           <div className="space-y-3">
             {uploadedDocs.length > 0 ? (
               uploadedDocs.map(([key, file]) => (
-                <div key={key} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                <div
+                  key={key}
+                  className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <Check className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                     <div className="min-w-0 flex-1">
@@ -132,7 +135,10 @@ export function OnboardingStep4({ data }: OnboardingStep4Props) {
                       </p>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="ml-2 flex-shrink-0 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                  <Badge
+                    variant="secondary"
+                    className="ml-2 flex-shrink-0 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                  >
                     Ready
                   </Badge>
                 </div>
@@ -178,14 +184,20 @@ export function OnboardingStep4({ data }: OnboardingStep4Props) {
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Account Type</p>
                 <Badge variant="secondary">
-                  {bankAccount.accountType === 'savings' ? 'Savings Account' : bankAccount.accountType === 'current' ? 'Current Account' : 'Not provided'}
+                  {bankAccount.accountType === 'savings'
+                    ? 'Savings Account'
+                    : bankAccount.accountType === 'current'
+                      ? 'Current Account'
+                      : 'Not provided'}
                 </Badge>
               </div>
 
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Account Number</p>
                 <p className="font-mono text-sm">
-                  {bankAccount.accountNumber ? `****${bankAccount.accountNumber.slice(-4)}` : 'Not provided'}
+                  {bankAccount.accountNumber
+                    ? `****${bankAccount.accountNumber.slice(-4)}`
+                    : 'Not provided'}
                 </p>
               </div>
             </div>

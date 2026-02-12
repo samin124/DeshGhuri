@@ -1,16 +1,4 @@
 import { Hono } from 'hono';
-import {
-  db,
-  eq,
-  sql,
-  like,
-  and,
-  or,
-  desc,
-  asc,
-  gte,
-  lte,
-} from '@DeshGhuri/db';
 import { z } from 'zod';
 import { createAuditLog, getRequestMetadata } from '../../lib/audit-log';
 
@@ -24,14 +12,6 @@ app.get('/', async (c) => {
   try {
     const page = parseInt(c.req.query('page') || '1');
     const limit = parseInt(c.req.query('limit') || '25');
-    const search = c.req.query('search') || '';
-    const type = c.req.query('type') || ''; // payment, refund, payout, fee
-    const status = c.req.query('status') || '';
-    const startDate = c.req.query('startDate') || '';
-    const endDate = c.req.query('endDate') || '';
-    const sortOrder = (c.req.query('sortOrder') || 'desc') as 'asc' | 'desc';
-
-    const offset = (page - 1) * limit;
 
     // Note: This requires transactions table schema
     return c.json({
@@ -285,8 +265,6 @@ app.post('/escrow/:id/hold', async (c) => {
  */
 app.get('/:id', async (c) => {
   try {
-    const transactionId = c.req.param('id');
-
     return c.json({
       message: 'Transaction details - requires implementation',
       transaction: null,

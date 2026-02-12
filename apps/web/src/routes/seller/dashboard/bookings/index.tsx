@@ -4,7 +4,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, User, CreditCard, Clock, CheckCircle2, XCircle, Eye, MapPin } from 'lucide-react';
+import {
+  Calendar,
+  User,
+  CreditCard,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Eye,
+  MapPin,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -32,7 +41,11 @@ async function getSellerBookings(statusFilter?: string) {
   return response.json();
 }
 
-async function approvePayment(bookingId: string, action: 'approve' | 'reject', rejectionReason?: string) {
+async function approvePayment(
+  bookingId: string,
+  action: 'approve' | 'reject',
+  rejectionReason?: string
+) {
   const response = await fetch(`${API_URL}/api/seller/bookings/${bookingId}/approve-payment`, {
     method: 'POST',
     headers: {
@@ -72,9 +85,7 @@ function RouteComponent() {
       approvePayment(bookingId, action, rejectionReason),
     onSuccess: (_, variables) => {
       toast.success(
-        variables.action === 'approve'
-          ? 'Booking approved successfully!'
-          : 'Booking rejected'
+        variables.action === 'approve' ? 'Booking approved successfully!' : 'Booking rejected'
       );
       queryClient.invalidateQueries({ queryKey: ['seller-bookings'] });
       setSelectedBooking(null);
@@ -90,11 +101,23 @@ function RouteComponent() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">Pending</Badge>;
+        return (
+          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
+            Pending
+          </Badge>
+        );
       case 'approved':
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">Approved</Badge>;
+        return (
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+            Approved
+          </Badge>
+        );
       case 'rejected':
-        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-300">Rejected</Badge>;
+        return (
+          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-300">
+            Rejected
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -117,9 +140,7 @@ function RouteComponent() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Booking Management</h1>
-        <p className="text-muted-foreground mt-2">
-          Review and approve customer bookings
-        </p>
+        <p className="text-muted-foreground mt-2">Review and approve customer bookings</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -146,7 +167,9 @@ function RouteComponent() {
             </div>
           ) : bookings.length === 0 ? (
             <Card className="p-12 text-center">
-              <p className="text-muted-foreground">No {activeTab !== 'all' ? activeTab : ''} bookings found</p>
+              <p className="text-muted-foreground">
+                No {activeTab !== 'all' ? activeTab : ''} bookings found
+              </p>
               <p className="text-sm text-muted-foreground mt-2">
                 When customers make bookings for your listings, they will appear here.
               </p>
@@ -212,13 +235,13 @@ function RouteComponent() {
                           Payment
                         </p>
                         <p className="font-medium mt-1">
-                          {booking.paymentMethod === 'bkash' ? 'bKash' :
-                           booking.paymentMethod === 'nagad' ? 'Nagad' :
-                           booking.paymentMethod}
+                          {booking.paymentMethod === 'bkash'
+                            ? 'bKash'
+                            : booking.paymentMethod === 'nagad'
+                              ? 'Nagad'
+                              : booking.paymentMethod}
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          {booking.transactionId}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{booking.transactionId}</p>
                       </div>
 
                       <div>

@@ -1,17 +1,4 @@
 import { Hono } from 'hono';
-import {
-  db,
-  eq,
-  sql,
-  like,
-  and,
-  or,
-  desc,
-  asc,
-  gte,
-  lte,
-} from '@DeshGhuri/db';
-import { z } from 'zod';
 import { createAuditLog, getRequestMetadata } from '../../lib/audit-log';
 
 const app = new Hono();
@@ -24,14 +11,6 @@ app.get('/', async (c) => {
   try {
     const page = parseInt(c.req.query('page') || '1');
     const limit = parseInt(c.req.query('limit') || '25');
-    const search = c.req.query('search') || '';
-    const status = c.req.query('status') || '';
-    const startDate = c.req.query('startDate') || '';
-    const endDate = c.req.query('endDate') || '';
-    const sortBy = c.req.query('sortBy') || 'createdAt';
-    const sortOrder = (c.req.query('sortOrder') || 'desc') as 'asc' | 'desc';
-
-    const offset = (page - 1) * limit;
 
     // Note: This requires bookings table schema
     // Placeholder implementation showing the structure
@@ -111,7 +90,7 @@ app.get('/stats', async (c) => {
  */
 app.get('/:id', async (c) => {
   try {
-    const bookingId = c.req.param('id');
+    const _bookingId = c.req.param('id');
 
     // Placeholder
     return c.json({

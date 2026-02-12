@@ -1,13 +1,15 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useState, useEffect } from 'react';
+import { MapPin, Shield, Users, Star, CheckCircle, Store, ArrowRight } from 'lucide-react';
 
-import SignInForm from "@/components/sign-in-form";
-import SignUpForm from "@/components/sign-up-form";
-import { authClient } from "@/lib/auth-client";
-import { getPostLoginRedirect, getReturnUrlFromSearch } from "@/lib/auth/redirect-after-login";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SignInForm from '@/components/sign-in-form';
+import SignUpForm from '@/components/sign-up-form';
+import { authClient } from '@/lib/auth-client';
+import { getPostLoginRedirect, getReturnUrlFromSearch } from '@/lib/auth/redirect-after-login';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute('/login')({
   component: RouteComponent,
   validateSearch: (search) => ({
     return: (search.return as string) || undefined,
@@ -18,21 +20,18 @@ export const Route = createFileRoute("/login")({
 function RouteComponent() {
   const navigate = useNavigate();
   const search = Route.useSearch();
-  const [activeTab, setActiveTab] = useState(search.tab || "signin");
+  const [activeTab, setActiveTab] = useState(search.tab || 'signin');
 
   // Handle OAuth callback - redirect authenticated users
   useEffect(() => {
     const handleOAuthCallback = async () => {
-      // Check if user just logged in (OAuth callback has code/state params)
       const urlParams = new URLSearchParams(window.location.search);
       const hasOAuthParams = urlParams.has('code') || urlParams.has('state');
 
       if (hasOAuthParams) {
-        // Wait for Better Auth to process the callback
         setTimeout(async () => {
           const session = await authClient.getSession();
           if (session?.data) {
-            // User is authenticated, redirect based on roles
             const redirectTo = await getPostLoginRedirect({
               preferredDestination: search.return,
             });
@@ -46,80 +45,171 @@ function RouteComponent() {
   }, [navigate, search.return]);
 
   return (
-    <div className="mx-auto w-full mt-10 max-w-2xl p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">Welcome to DeshGhuri</h1>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="signin">Sign In</TabsTrigger>
-          <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          <TabsTrigger value="seller">Become a Seller</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="signin" className="mt-6">
-          <SignInForm onSwitchToSignUp={() => setActiveTab("signup")} />
-        </TabsContent>
-
-        <TabsContent value="signup" className="mt-6">
-          <SignUpForm onSwitchToSignIn={() => setActiveTab("signin")} />
-        </TabsContent>
-
-        <TabsContent value="seller" className="mt-6">
-          <div className="space-y-4">
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold">Start Your Seller Journey</h2>
-              <p className="text-muted-foreground">
-                Join our trusted marketplace and reach thousands of travelers
+    <div className="min-h-screen bg-[#f8f7f4]">
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+          {/* Left Side - Branding & Features */}
+          <div className="hidden lg:block space-y-8">
+            {/* Logo & Tagline */}
+            <div>
+              <h1 className="text-4xl font-bold text-foreground mb-3">
+                Welcome to <span className="text-primary">DeshGhuri</span>
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Your trusted travel marketplace in Bangladesh
               </p>
             </div>
 
-            <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-              <h3 className="font-semibold text-lg">What you'll need:</h3>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="text-primary">✓</span>
-                  <span>Valid business registration documents</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary">✓</span>
-                  <span>Trade license and NID/Passport</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary">✓</span>
-                  <span>Bank account or mobile banking details</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary">✓</span>
-                  <span>Business contact information</span>
-                </li>
-              </ul>
+            {/* Features List */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-sm">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <MapPin className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Explore Bangladesh</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Discover amazing destinations from Cox's Bazar to Sundarbans
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-sm">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Shield className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Secure Payments</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Escrow-protected transactions for peace of mind
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-sm">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Group Discounts</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Save up to 40% when you book with friends
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-sm">
+                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Star className="h-6 w-6 text-amber-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Verified Sellers</h3>
+                  <p className="text-sm text-muted-foreground">
+                    All sellers are verified for quality assurance
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg p-4">
-              <p className="text-sm text-blue-900 dark:text-blue-100">
-                <strong>Note:</strong> Seller accounts require email verification and admin approval before you can start listing. The process typically takes 1-2 business days.
-              </p>
-            </div>
-
-            <button
-              onClick={() => navigate({ to: "/seller/signup" })}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md font-medium transition-colors"
-            >
-              Continue to Seller Registration
-            </button>
-
-            <div className="text-center text-sm text-muted-foreground">
-              Already have a seller account?{" "}
-              <button
-                onClick={() => setActiveTab("signin")}
-                className="text-primary hover:underline font-medium"
-              >
-                Sign in here
-              </button>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center p-4 rounded-xl bg-white shadow-sm">
+                <p className="text-2xl font-bold text-primary">10K+</p>
+                <p className="text-xs text-muted-foreground">Happy Travelers</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white shadow-sm">
+                <p className="text-2xl font-bold text-primary">500+</p>
+                <p className="text-xs text-muted-foreground">Verified Sellers</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white shadow-sm">
+                <p className="text-2xl font-bold text-primary">4.8</p>
+                <p className="text-xs text-muted-foreground">Average Rating</p>
+              </div>
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+
+          {/* Right Side - Auth Forms */}
+          <div className="w-full max-w-md mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              {/* Mobile Logo */}
+              <div className="lg:hidden text-center mb-6">
+                <h1 className="text-2xl font-bold text-foreground">
+                  Welcome to <span className="text-primary">DeshGhuri</span>
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Your trusted travel marketplace
+                </p>
+              </div>
+
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6 bg-[#f8f7f4] p-1 rounded-xl">
+                  <TabsTrigger
+                    value="signin"
+                    className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    Sign In
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="signup"
+                    className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    Sign Up
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="signin" className="mt-0">
+                  <SignInForm onSwitchToSignUp={() => setActiveTab('signup')} />
+                </TabsContent>
+
+                <TabsContent value="signup" className="mt-0">
+                  <SignUpForm onSwitchToSignIn={() => setActiveTab('signin')} />
+                </TabsContent>
+              </Tabs>
+
+              {/* Become a Seller CTA */}
+              <div className="mt-8 pt-6 border-t border-border">
+                <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                      <Store className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm">Become a Seller</h3>
+                      <p className="text-xs text-muted-foreground">
+                        Start earning by listing your services
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl bg-white hover:bg-white/80"
+                    onClick={() => navigate({ to: '/seller/signup' })}
+                  >
+                    Get Started
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="mt-6 flex items-center justify-center gap-6 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Shield className="h-4 w-4 text-green-500" />
+                <span>Secure</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>Trusted</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 text-amber-500" />
+                <span>Top Rated</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

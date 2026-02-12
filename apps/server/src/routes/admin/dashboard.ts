@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { db, user, seller, sellerDocument, userRole, eq, sql, and, desc } from '@DeshGhuri/db';
+import { db, user, seller, sellerDocument, userRole, eq, sql } from '@DeshGhuri/db';
 
 const app = new Hono();
 
@@ -9,12 +9,8 @@ const app = new Hono();
  */
 app.get('/stats', async (c) => {
   try {
-    const userId = c.get('userId') as string;
-
     // Get total users count
-    const totalUsersResult = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(user);
+    const totalUsersResult = await db.select({ count: sql<number>`count(*)::int` }).from(user);
     const totalUsers = totalUsersResult[0]?.count || 0;
 
     // Get users created today
@@ -27,9 +23,7 @@ app.get('/stats', async (c) => {
     const newUsersToday = newUsersTodayResult[0]?.count || 0;
 
     // Get total sellers count
-    const totalSellersResult = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(seller);
+    const totalSellersResult = await db.select({ count: sql<number>`count(*)::int` }).from(seller);
     const totalSellers = totalSellersResult[0]?.count || 0;
 
     // Get sellers pending verification

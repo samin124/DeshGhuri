@@ -5,12 +5,7 @@ import { DataTable, type Column } from '@/components/admin/data-table';
 import { useDocuments } from '@/hooks/use-admin-queries';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export const Route = createFileRoute('/admin/_admin/documents/')({
   component: RouteComponent,
@@ -85,8 +80,8 @@ function RouteComponent() {
   const getDocumentTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       'trade-license': 'Trade License',
-      'nid': 'National ID',
-      'passport': 'Passport',
+      nid: 'National ID',
+      passport: 'Passport',
       'tin-certificate': 'TIN Certificate',
       'property-docs': 'Property Documents',
       'tour-license': 'Tour License',
@@ -123,9 +118,7 @@ function RouteComponent() {
     {
       id: 'status',
       header: 'Status',
-      accessor: (doc) => (
-        <Badge className={getStatusColor(doc.status)}>{doc.status}</Badge>
-      ),
+      accessor: (doc) => <Badge className={getStatusColor(doc.status)}>{doc.status}</Badge>,
       sortable: true,
     },
     {
@@ -137,18 +130,13 @@ function RouteComponent() {
     {
       id: 'reviewedAt',
       header: 'Reviewed',
-      accessor: (doc) =>
-        doc.reviewedAt ? new Date(doc.reviewedAt).toLocaleDateString() : '-',
+      accessor: (doc) => (doc.reviewedAt ? new Date(doc.reviewedAt).toLocaleDateString() : '-'),
     },
   ];
 
   const renderActions = (doc: Document) => (
     <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setSelectedDocument(doc)}
-      >
+      <Button variant="ghost" size="sm" onClick={() => setSelectedDocument(doc)}>
         <Eye className="h-4 w-4 mr-2" />
         View
       </Button>
@@ -343,12 +331,13 @@ function RouteComponent() {
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-gray-100 dark:bg-gray-800 p-3 flex items-center justify-between">
                   <p className="text-sm font-medium">Document Preview</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                  >
-                    <a href={selectedDocument.fileUrl} download target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" size="sm" asChild>
+                    <a
+                      href={selectedDocument.fileUrl}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Download
                     </a>
@@ -387,5 +376,5 @@ function RouteComponent() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

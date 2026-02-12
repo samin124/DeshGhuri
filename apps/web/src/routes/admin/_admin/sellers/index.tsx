@@ -93,9 +93,7 @@ function RouteComponent() {
       accessor: (seller) => (
         <div className="flex items-center gap-2">
           <span>{seller.businessName}</span>
-          {seller.verificationStatus === 'approved' && (
-            <VerifiedBadge size="sm" showText={false} />
-          )}
+          {seller.verificationStatus === 'approved' && <VerifiedBadge size="sm" showText={false} />}
         </div>
       ),
       sortable: true,

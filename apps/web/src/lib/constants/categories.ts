@@ -7,7 +7,7 @@ export const LISTING_CATEGORIES = {
   TRANSPORT: 'transport',
 } as const;
 
-export type ListingCategory = typeof LISTING_CATEGORIES[keyof typeof LISTING_CATEGORIES];
+export type ListingCategory = (typeof LISTING_CATEGORIES)[keyof typeof LISTING_CATEGORIES];
 
 // Display names for UI
 export const CATEGORY_DISPLAY_NAMES: Record<ListingCategory, string> = {
@@ -52,7 +52,7 @@ export const LISTING_STATUSES = {
   REJECTED: 'rejected',
 } as const;
 
-export type ListingStatus = typeof LISTING_STATUSES[keyof typeof LISTING_STATUSES];
+export type ListingStatus = (typeof LISTING_STATUSES)[keyof typeof LISTING_STATUSES];
 
 // Status display names
 export const STATUS_DISPLAY_NAMES: Record<ListingStatus, string> = {
@@ -64,7 +64,10 @@ export const STATUS_DISPLAY_NAMES: Record<ListingStatus, string> = {
 };
 
 // Status badge variants (for UI)
-export const STATUS_BADGE_VARIANTS: Record<ListingStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+export const STATUS_BADGE_VARIANTS: Record<
+  ListingStatus,
+  'default' | 'secondary' | 'destructive' | 'outline'
+> = {
   [LISTING_STATUSES.DRAFT]: 'secondary',
   [LISTING_STATUSES.PENDING_REVIEW]: 'outline',
   [LISTING_STATUSES.ACTIVE]: 'default',
@@ -80,7 +83,7 @@ export const CANCELLATION_POLICIES = {
   NON_REFUNDABLE: 'non-refundable',
 } as const;
 
-export type CancellationPolicy = typeof CANCELLATION_POLICIES[keyof typeof CANCELLATION_POLICIES];
+export type CancellationPolicy = (typeof CANCELLATION_POLICIES)[keyof typeof CANCELLATION_POLICIES];
 
 export const CANCELLATION_POLICY_DISPLAY_NAMES: Record<CancellationPolicy, string> = {
   [CANCELLATION_POLICIES.FLEXIBLE]: 'Flexible - Free cancellation up to 24 hours before',
@@ -90,10 +93,14 @@ export const CANCELLATION_POLICY_DISPLAY_NAMES: Record<CancellationPolicy, strin
 };
 
 export const CANCELLATION_POLICY_DESCRIPTIONS: Record<CancellationPolicy, string> = {
-  [CANCELLATION_POLICIES.FLEXIBLE]: 'Customers can cancel up to 24 hours before check-in and get a full refund.',
-  [CANCELLATION_POLICIES.MODERATE]: 'Customers can cancel up to 5 days before check-in and get a full refund.',
-  [CANCELLATION_POLICIES.STRICT]: 'Customers can cancel up to 7 days before check-in and get a 50% refund.',
-  [CANCELLATION_POLICIES.NON_REFUNDABLE]: 'This booking is non-refundable. Customers cannot cancel and get a refund.',
+  [CANCELLATION_POLICIES.FLEXIBLE]:
+    'Customers can cancel up to 24 hours before check-in and get a full refund.',
+  [CANCELLATION_POLICIES.MODERATE]:
+    'Customers can cancel up to 5 days before check-in and get a full refund.',
+  [CANCELLATION_POLICIES.STRICT]:
+    'Customers can cancel up to 7 days before check-in and get a 50% refund.',
+  [CANCELLATION_POLICIES.NON_REFUNDABLE]:
+    'This booking is non-refundable. Customers cannot cancel and get a refund.',
 };
 
 // Price units
@@ -103,7 +110,7 @@ export const PRICE_UNITS = {
   PER_BOOKING: 'per-booking',
 } as const;
 
-export type PriceUnit = typeof PRICE_UNITS[keyof typeof PRICE_UNITS];
+export type PriceUnit = (typeof PRICE_UNITS)[keyof typeof PRICE_UNITS];
 
 export const PRICE_UNIT_DISPLAY_NAMES: Record<PriceUnit, string> = {
   [PRICE_UNITS.PER_PERSON]: 'per person',

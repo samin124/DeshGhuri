@@ -7,7 +7,6 @@ export const Route = createFileRoute('/seller/dashboard/reviews')({
   component: SellerReviews,
 });
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -83,9 +82,7 @@ function SellerReviews() {
           <Star
             key={star}
             className={`h-4 w-4 ${
-              star <= rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-300'
+              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
             }`}
           />
         ))}
@@ -98,9 +95,7 @@ function SellerReviews() {
       <div className="container mx-auto p-6">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load reviews. Please try again later.
-          </AlertDescription>
+          <AlertDescription>Failed to load reviews. Please try again later.</AlertDescription>
         </Alert>
       </div>
     );
@@ -111,9 +106,7 @@ function SellerReviews() {
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Reviews</h1>
-        <p className="text-muted-foreground">
-          View and respond to customer reviews
-        </p>
+        <p className="text-muted-foreground">View and respond to customer reviews</p>
       </div>
 
       {/* Rating Stats */}
@@ -125,14 +118,10 @@ function SellerReviews() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-4">
-                <div className="text-4xl font-bold">
-                  {data.averageRating.toFixed(1)}
-                </div>
+                <div className="text-4xl font-bold">{data.averageRating.toFixed(1)}</div>
                 <div>
                   {renderStars(Math.round(data.averageRating))}
-                  <p className="text-sm text-muted-foreground">
-                    Based on {data.total} reviews
-                  </p>
+                  <p className="text-sm text-muted-foreground">Based on {data.total} reviews</p>
                 </div>
               </div>
             </CardContent>
@@ -154,8 +143,7 @@ function SellerReviews() {
                         style={{
                           width: `${
                             data.total > 0
-                              ? (data.ratingDistribution[rating] / data.total) *
-                                100
+                              ? (data.ratingDistribution[rating] / data.total) * 100
                               : 0
                           }%`,
                         }}
@@ -222,9 +210,7 @@ function SellerReviews() {
       {/* Reviews List */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            {data && `${data.total} Review${data.total !== 1 ? 's' : ''}`}
-          </CardTitle>
+          <CardTitle>{data && `${data.total} Review${data.total !== 1 ? 's' : ''}`}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -237,10 +223,7 @@ function SellerReviews() {
             <>
               <div className="space-y-4">
                 {data.reviews.map((review) => (
-                  <div
-                    key={review.id}
-                    className="rounded-lg border p-4 space-y-3"
-                  >
+                  <div key={review.id} className="rounded-lg border p-4 space-y-3">
                     {/* Review Header */}
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
@@ -281,9 +264,7 @@ function SellerReviews() {
                     </div>
 
                     {/* Review Content */}
-                    {review.title && (
-                      <h5 className="font-medium">{review.title}</h5>
-                    )}
+                    {review.title && <h5 className="font-medium">{review.title}</h5>}
                     <p className="text-sm">{review.comment}</p>
 
                     {/* Seller Response */}
@@ -324,9 +305,7 @@ function SellerReviews() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        setPage((p) => Math.min(data.totalPages, p + 1))
-                      }
+                      onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
                       disabled={page === data.totalPages}
                     >
                       Next

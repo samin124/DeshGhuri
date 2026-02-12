@@ -15,7 +15,7 @@ for (const s of sellers) {
   if (s.userId) {
     // Check if user exists
     const userRecord = await db.query.user.findFirst({
-      where: eq(user.id, s.userId)
+      where: eq(user.id, s.userId),
     });
 
     if (userRecord) {
@@ -23,11 +23,13 @@ for (const s of sellers) {
 
       // Check if account with password exists
       const accountRecord = await db.query.account.findFirst({
-        where: eq(account.userId, s.userId)
+        where: eq(account.userId, s.userId),
       });
 
       if (accountRecord) {
-        console.log(`  account found - providerId: ${accountRecord.providerId}, hasPassword: ${!!accountRecord.password}`);
+        console.log(
+          `  account found - providerId: ${accountRecord.providerId}, hasPassword: ${!!accountRecord.password}`
+        );
       } else {
         console.log(`  no account record found`);
       }

@@ -10,7 +10,7 @@ import { sellerApi } from './rpc-client';
  */
 export async function getSellerByUserIdRpc(userId: string) {
   const response = await sellerApi['by-user'][':userId'].$get({
-    param: { userId }
+    param: { userId },
   });
 
   if (!response.ok) {
@@ -26,7 +26,7 @@ export async function getSellerByUserIdRpc(userId: string) {
  */
 export async function registerSellerRpc(userId: string) {
   const response = await sellerApi.register.$post({
-    json: { userId }
+    json: { userId },
   });
 
   if (!response.ok) {

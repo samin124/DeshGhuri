@@ -9,12 +9,14 @@ This document describes the implementation of **strict one-role-per-email enforc
 ## What Changed
 
 ### Previous System (Multi-Role)
+
 - ❌ Users could have multiple roles (e.g., admin + seller + customer)
 - ❌ Role switcher allowed switching between roles
 - ❌ Same email could be used for different account types
 - ❌ Complex role management and confusing UX
 
 ### New System (Single Role)
+
 - ✅ **One email = One role** (strict enforcement)
 - ✅ No role switching capability
 - ✅ Email cannot be reused across different account types
@@ -40,11 +42,13 @@ Each email can be assigned to ONLY ONE of these roles:
 ### 1. **UI Changes**
 
 #### Removed Components:
+
 - ❌ `RoleSwitcher` component (deleted from all layouts)
 - ❌ Role switching buttons
 - ❌ Multi-role indicators
 
 #### Updated Components:
+
 - ✅ **Navbar** (`apps/web/src/components/layout/navbar.tsx`)
   - Removed RoleSwitcher
 
@@ -59,6 +63,7 @@ Each email can be assigned to ONLY ONE of these roles:
 #### Updated Endpoints:
 
 **`/api/auth/check-email` (Enhanced)**
+
 ```typescript
 // Now checks:
 // 1. User table (customer/admin accounts)
@@ -67,9 +72,11 @@ Each email can be assigned to ONLY ONE of these roles:
 ```
 
 **Error Messages:**
+
 - "This email is already registered. Each email can only be used for one account type. Please sign in or use a different email."
 
 #### Validation Flow:
+
 ```
 User tries to register with email
   ↓
@@ -87,6 +94,7 @@ Allow registration
 **Purpose**: Remove duplicate roles from existing database
 
 **What it does**:
+
 1. Scans all users for multiple role entries
 2. Keeps only the HIGHEST priority role:
    - Priority: super_admin > admin > seller > customer
@@ -94,12 +102,14 @@ Allow registration
 4. Verifies no duplicates remain
 
 **Usage**:
+
 ```bash
 cd apps/server
 bun run scripts/cleanup-duplicate-roles.ts
 ```
 
 **Example Output**:
+
 ```
 🔍 Starting duplicate roles cleanup...
 
@@ -189,12 +199,14 @@ bun run scripts/cleanup-duplicate-roles.ts
 ```
 
 **What the script does**:
+
 - Identifies users with multiple roles
 - Keeps the highest priority role per user
 - Deletes all duplicate role entries
 - Confirms database is clean
 
 **Role Priority**:
+
 1. super_admin (highest)
 2. admin
 3. seller
@@ -370,6 +382,7 @@ bun run dev
 ### Issue: Users with multiple roles still exist
 
 **Solution**:
+
 ```bash
 # Run cleanup script again
 cd apps/server
@@ -384,6 +397,7 @@ bun run scripts/cleanup-duplicate-roles.ts
 **Symptom**: "Email already registered" for new emails
 
 **Solution**:
+
 ```sql
 -- Check if email truly exists
 SELECT * FROM "user" WHERE email = 'newuser@example.com';
@@ -397,6 +411,7 @@ SELECT * FROM "seller" WHERE email = 'newuser@example.com';
 **Symptom**: Admin account downgraded to customer
 
 **Solution**:
+
 ```sql
 -- Check current role
 SELECT u.email, ur.role

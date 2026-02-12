@@ -11,6 +11,7 @@
 ### ✅ Phase 1: Foundation & APIs (100% Complete)
 
 #### 1. Category Standardization
+
 - ✅ Added enums to `packages/db/src/schema/marketplace.ts`
   - `LISTING_CATEGORIES`, `LISTING_STATUSES`, `CANCELLATION_POLICIES`, `PRICE_UNITS`
 - ✅ Created `apps/web/src/lib/constants/categories.ts` with display mappings
@@ -18,14 +19,17 @@
 - ✅ Added `isFeatured` and `isTrending` boolean fields to listing table
 
 #### 2. Database Migration
+
 - ✅ Generated migration: `0001_sturdy_wrecker.sql`
 - ✅ Applied successfully - adds `is_featured` and `is_trending` columns
 - ✅ All 45 seeded listings have proper flags set
 
 #### 3. Public Listing APIs
+
 **File:** `apps/server/src/routes/listings.ts`
 
 ✅ **6 Endpoints Implemented:**
+
 1. `GET /api/listings` - Browse with filters, pagination, sorting
 2. `GET /api/listings/:id` - Get listing detail with seller info, reviews, similar listings
 3. `GET /api/listings/featured` - Get admin-marked featured listings (limit 12)
@@ -34,15 +38,18 @@
 6. `POST /api/listings/:id/view` - Track listing views
 
 **Features:**
+
 - Only returns `status: 'active'` listings to public
 - Includes seller verification status
 - Server-side filtering, sorting, pagination
 - Available filters metadata returned
 
 #### 4. Seed Data Generator
+
 **File:** `apps/server/src/scripts/seed-listings.ts`
 
 ✅ **Generated 45 Realistic Listings:**
+
 - 15 Hotels (13 active, 1 pending-review, 1 draft)
 - 15 Tour Packages (all active)
 - 10 Experiences (all active)
@@ -50,6 +57,7 @@
 - 5 Verified test sellers
 
 **Includes:**
+
 - Realistic titles, descriptions, pricing
 - Group pricing tiers (60% of listings)
 - Images (Unsplash placeholder URLs)
@@ -62,6 +70,7 @@
 **File:** `apps/server/src/routes/admin/listings.ts`
 
 ✅ **6 Endpoints Implemented:**
+
 1. `GET /api/admin/listings/review-queue` - Pending listings with seller info, days waiting, priority
 2. `GET /api/admin/listings` - All listings with filters, search, pagination
 3. `GET /api/admin/listings/:id` - Get listing details with full seller info
@@ -70,6 +79,7 @@
 6. `PATCH /api/admin/listings/:id/force-pause` - Admin pause for policy violations
 
 **Features:**
+
 - ✅ Review queue sorted by oldest first
 - ✅ Priority calculation (high if seller rating > 4.5)
 - ✅ Days waiting calculation
@@ -83,6 +93,7 @@
 **File:** `apps/web/src/lib/api/listings.ts`
 
 ✅ **6 Hooks Created:**
+
 1. `useListings(filters)` - Browse with filters (5-min stale time)
 2. `useListing(id)` - Get detail (10-min stale time)
 3. `useFeaturedListings()` - Featured listings (30-min stale time)
@@ -91,6 +102,7 @@
 6. `trackListingView(listingId)` - Fire-and-forget view tracking
 
 **Features:**
+
 - ✅ Proper cache keys for invalidation
 - ✅ Configurable stale/cache times
 - ✅ TypeScript types exported
@@ -170,6 +182,7 @@ curl -b cookies.txt -X PATCH http://localhost:3000/api/admin/listings/LISTING_ID
 #### Example 1: Homepage Featured Listings
 
 **Before (Mock Data):**
+
 ```typescript
 // apps/web/src/components/homepage/featured-listings.tsx
 import { mockFeaturedListings } from '@/lib/mock-data';
@@ -186,6 +199,7 @@ export default function FeaturedListings() {
 ```
 
 **After (Real API):**
+
 ```typescript
 import { useFeaturedListings } from '@/lib/api/listings';
 import { ListingCard } from '@/components/listing-card';
@@ -289,6 +303,7 @@ export default function ListingDetail() {
 ## 📊 Database State
 
 ### Listings Overview
+
 ```sql
 -- Check listing counts by status
 SELECT status, COUNT(*) FROM listing GROUP BY status;
@@ -315,6 +330,7 @@ SELECT category, COUNT(*) FROM listing WHERE status = 'active' GROUP BY category
 ```
 
 ### Sellers Created
+
 - `heritage.hotels@deshghuri.test` - Heritage Hotels Bangladesh
 - `wanderlust.tours@deshghuri.test` - Wanderlust Tours & Travels
 - `coxsbazar.resorts@deshghuri.test` - Cox's Bazar Beach Resorts
@@ -328,6 +344,7 @@ All sellers are `verified` with varying ratings (4-5 stars).
 ## 🚧 Remaining Work for Full Epic 12
 
 ### Phase 4: Frontend Integration (Not Started)
+
 - [ ] Replace homepage mock data in 8 components:
   - [ ] `flash-deals.tsx`
   - [ ] `trending-listings.tsx`
@@ -346,6 +363,7 @@ All sellers are `verified` with varying ratings (4-5 stars).
   - [ ] Display similar listings
 
 ### Phase 5: Seller Multi-Step Form (Not Started)
+
 - [ ] Create Zustand store for form state (`listing-form-store.ts`)
 - [ ] Step 1: Basic Information component
 - [ ] Step 2: Pricing & Capacity (with group tiers editor)
@@ -356,6 +374,7 @@ All sellers are `verified` with varying ratings (4-5 stars).
 - [ ] Submit for review flow
 
 ### Phase 6: Admin UI (Not Started)
+
 - [ ] Review Queue UI (`apps/web/src/routes/admin/_admin/listings/index.tsx`)
   - [ ] Tabs: Review Queue, All Listings, Featured
   - [ ] Listing detail drawer
@@ -366,6 +385,7 @@ All sellers are `verified` with varying ratings (4-5 stars).
   - [ ] Badge in sidebar navigation
 
 ### Phase 7: Analytics & Optimization (Deferred)
+
 - [ ] Daily analytics aggregation cron job
 - [ ] Trending calculation (replace simple algorithm)
 - [ ] Per-listing analytics page for sellers
@@ -376,29 +396,34 @@ All sellers are `verified` with varying ratings (4-5 stars).
 ## 💡 Quick Integration Instructions for Teammates
 
 ### 1. Pull the Latest Code
+
 ```bash
 git checkout epic-12-listing-management
 git pull origin epic-12-listing-management
 ```
 
 ### 2. Install Dependencies (if needed)
+
 ```bash
 bun install
 ```
 
 ### 3. Run Database Migration
+
 ```bash
 cd packages/db
 bun run db:migrate
 ```
 
 ### 4. Seed the Database
+
 ```bash
 cd apps/server
 bun run src/scripts/seed-listings.ts
 ```
 
 Output should show:
+
 ```
 ✅ Seed script completed successfully!
 📊 Summary:
@@ -411,6 +436,7 @@ Output should show:
 ```
 
 ### 5. Start Development Servers
+
 ```bash
 # Terminal 1: Backend
 cd E:/Learn-Typescript/DeshGhuri
@@ -422,10 +448,12 @@ bun run dev:web
 ```
 
 ### 6. Test the APIs
+
 - Visit: http://localhost:3001/search (should still show mock data - integration pending)
 - API Test: http://localhost:3000/api/listings/featured (should return real data)
 
 ### 7. Integrate Frontend (Your Turn!)
+
 - Use the hooks from `apps/web/src/lib/api/listings.ts`
 - Follow the examples in this document
 - Replace mock data imports with hooks
@@ -450,6 +478,7 @@ bun run dev:web
 ## 📚 File Reference
 
 ### New Files Created (10)
+
 1. `packages/db/src/schema/marketplace.ts` - Added enums (modified)
 2. `apps/web/src/lib/constants/categories.ts` - Display mappings (new)
 3. `apps/web/src/types/listing.ts` - TypeScript types (modified)
@@ -461,6 +490,7 @@ bun run dev:web
 9. `docs/EPIC_12_IMPLEMENTATION_STATUS.md` - This file (new)
 
 ### Modified Files (4)
+
 1. `apps/server/src/index.ts` - Registered public listing routes
 2. `apps/server/src/routes/customer/bookings.ts` - Fixed imports
 3. `apps/server/src/routes/seller/listings.ts` - Fixed imports

@@ -66,8 +66,8 @@ export function FormNavigation() {
                         state.currentStep === step.number
                           ? 'border-primary bg-primary text-primary-foreground'
                           : state.currentStep > step.number
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-muted-foreground/30 bg-background text-muted-foreground'
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-muted-foreground/30 bg-background text-muted-foreground'
                       }
                     `}
                   >
@@ -95,11 +95,7 @@ export function FormNavigation() {
                   <div
                     className={`
                       flex-1 h-0.5 mx-4
-                      ${
-                        state.currentStep > step.number
-                          ? 'bg-primary'
-                          : 'bg-muted-foreground/30'
-                      }
+                      ${state.currentStep > step.number ? 'bg-primary' : 'bg-muted-foreground/30'}
                     `}
                   />
                 )}
@@ -118,8 +114,8 @@ export function FormNavigation() {
               🎉 Listing submitted for review successfully!
             </p>
             <p className="text-sm text-green-700 mt-1">
-              Your listing will be reviewed by our admin team. You'll be notified once it's approved.
-              Redirecting to your listings...
+              Your listing will be reviewed by our admin team. You'll be notified once it's
+              approved. Redirecting to your listings...
             </p>
           </AlertDescription>
         </Alert>

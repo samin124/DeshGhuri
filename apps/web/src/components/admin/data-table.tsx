@@ -61,7 +61,7 @@ export function DataTable<T>({
   selectable = false,
   selectedIds = new Set(),
   onSelectionChange,
-  getRowId = (row: any) => row.id,
+  getRowId = (row: T) => (row as { id: string }).id,
   actions,
   bulkActions,
   emptyMessage = 'No data available',
@@ -181,13 +181,12 @@ export function DataTable<T>({
                       className="flex items-center gap-1 hover:text-gray-900 dark:hover:text-gray-100"
                     >
                       {column.header}
-                      {sortBy === column.id && (
-                        sortOrder === 'asc' ? (
+                      {sortBy === column.id &&
+                        (sortOrder === 'asc' ? (
                           <ChevronUp className="h-4 w-4" />
                         ) : (
                           <ChevronDown className="h-4 w-4" />
-                        )
-                      )}
+                        ))}
                     </button>
                   ) : (
                     column.header
@@ -202,7 +201,7 @@ export function DataTable<T>({
             </tr>
           </thead>
           <tbody className="divide-y">
-            {data.map((row, index) => {
+            {data.map((row, _index) => {
               const rowId = getRowId(row);
               const isSelected = selectedIds.has(rowId);
 
@@ -231,11 +230,7 @@ export function DataTable<T>({
                       {column.accessor(row)}
                     </td>
                   ))}
-                  {actions && (
-                    <td className="px-4 py-3 text-right">
-                      {actions(row)}
-                    </td>
-                  )}
+                  {actions && <td className="px-4 py-3 text-right">{actions(row)}</td>}
                 </tr>
               );
             })}
@@ -281,11 +276,7 @@ export function DataTable<T>({
                       </span>
                     </div>
                   ))}
-                  {actions && (
-                    <div className="mt-3 pt-3 border-t">
-                      {actions(row)}
-                    </div>
-                  )}
+                  {actions && <div className="mt-3 pt-3 border-t">{actions(row)}</div>}
                 </div>
               )}
             </div>

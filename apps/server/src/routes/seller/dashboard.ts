@@ -1,5 +1,21 @@
 import { Hono } from 'hono';
-import { db, eq, and, gte, lte, desc, sql, asc, booking, listing, review, escrowTransaction, payout, listingAnalytics, sellerAnalytics } from '@DeshGhuri/db';
+import {
+  db,
+  eq,
+  and,
+  gte,
+  lte,
+  desc,
+  sql,
+  asc,
+  booking,
+  listing,
+  review,
+  escrowTransaction,
+  payout,
+  listingAnalytics,
+  sellerAnalytics,
+} from '@DeshGhuri/db';
 import { requireSeller } from '../../middleware/seller-auth';
 
 const app = new Hono();
@@ -34,7 +50,7 @@ app.get('/stats', async (c) => {
     // Get today's revenue
     const todayRevenue = await db
       .select({
-        total: sql<string>`COALESCE(SUM(${booking.totalAmount}), 0)`
+        total: sql<string>`COALESCE(SUM(${booking.totalAmount}), 0)`,
       })
       .from(booking)
       .where(
@@ -49,37 +65,24 @@ app.get('/stats', async (c) => {
     // Get today's views (from analytics)
     const todayViews = await db
       .select({
-        total: sql<number>`COALESCE(SUM(${listingAnalytics.views}), 0)`
+        total: sql<number>`COALESCE(SUM(${listingAnalytics.views}), 0)`,
       })
       .from(listingAnalytics)
-      .where(
-        and(
-          eq(listingAnalytics.sellerId, sellerId),
-          eq(listingAnalytics.date, todayStart)
-        )
-      );
+      .where(and(eq(listingAnalytics.sellerId, sellerId), eq(listingAnalytics.date, todayStart)));
 
     // Get pending proofs
     const pendingProofs = await db
       .select({ count: sql<number>`count(*)` })
       .from(escrowTransaction)
       .where(
-        and(
-          eq(escrowTransaction.sellerId, sellerId),
-          eq(escrowTransaction.status, 'pending-proof')
-        )
+        and(eq(escrowTransaction.sellerId, sellerId), eq(escrowTransaction.status, 'pending-proof'))
       );
 
     // Get unanswered reviews
     const unansweredReviews = await db
       .select({ count: sql<number>`count(*)` })
       .from(review)
-      .where(
-        and(
-          eq(review.sellerId, sellerId),
-          sql`${review.sellerResponse} IS NULL`
-        )
-      );
+      .where(and(eq(review.sellerId, sellerId), sql`${review.sellerResponse} IS NULL`));
 
     // Get upcoming bookings (next 7 days)
     const upcomingDate = new Date();
@@ -106,12 +109,7 @@ app.get('/stats', async (c) => {
     const activeListings = await db
       .select({ count: sql<number>`count(*)` })
       .from(listing)
-      .where(
-        and(
-          eq(listing.sellerId, sellerId),
-          eq(listing.status, 'active')
-        )
-      );
+      .where(and(eq(listing.sellerId, sellerId), eq(listing.status, 'active')));
 
     // Get total bookings
     const totalBookingsCount = await db
@@ -122,21 +120,16 @@ app.get('/stats', async (c) => {
     // Get total revenue
     const totalRevenueResult = await db
       .select({
-        total: sql<string>`COALESCE(SUM(${booking.totalAmount}), 0)`
+        total: sql<string>`COALESCE(SUM(${booking.totalAmount}), 0)`,
       })
       .from(booking)
-      .where(
-        and(
-          eq(booking.sellerId, sellerId),
-          eq(booking.paymentStatus, 'completed')
-        )
-      );
+      .where(and(eq(booking.sellerId, sellerId), eq(booking.paymentStatus, 'completed')));
 
     // Get average rating and review count
     const ratingStats = await db
       .select({
         avgRating: sql<number>`COALESCE(AVG(${review.overallRating}), 0)`,
-        count: sql<number>`count(*)`
+        count: sql<number>`count(*)`,
       })
       .from(review)
       .where(eq(review.sellerId, sellerId));
@@ -144,7 +137,7 @@ app.get('/stats', async (c) => {
     // Get earnings breakdown
     const pendingEarnings = await db
       .select({
-        total: sql<string>`COALESCE(SUM(${escrowTransaction.sellerAmount}), 0)`
+        total: sql<string>`COALESCE(SUM(${escrowTransaction.sellerAmount}), 0)`,
       })
       .from(escrowTransaction)
       .where(
@@ -156,27 +149,19 @@ app.get('/stats', async (c) => {
 
     const releasedEarnings = await db
       .select({
-        total: sql<string>`COALESCE(SUM(${escrowTransaction.sellerAmount}), 0)`
+        total: sql<string>`COALESCE(SUM(${escrowTransaction.sellerAmount}), 0)`,
       })
       .from(escrowTransaction)
       .where(
-        and(
-          eq(escrowTransaction.sellerId, sellerId),
-          eq(escrowTransaction.status, 'released')
-        )
+        and(eq(escrowTransaction.sellerId, sellerId), eq(escrowTransaction.status, 'released'))
       );
 
     const withdrawnEarnings = await db
       .select({
-        total: sql<string>`COALESCE(SUM(${payout.amount}), 0)`
+        total: sql<string>`COALESCE(SUM(${payout.amount}), 0)`,
       })
       .from(payout)
-      .where(
-        and(
-          eq(payout.sellerId, sellerId),
-          eq(payout.status, 'completed')
-        )
-      );
+      .where(and(eq(payout.sellerId, sellerId), eq(payout.status, 'completed')));
 
     return c.json({
       todayBookings: Number(todayBookings[0]?.count || 0),
@@ -195,8 +180,8 @@ app.get('/stats', async (c) => {
       releasedEarnings: releasedEarnings[0]?.total || '0',
       totalEarnings: String(
         Number(pendingEarnings[0]?.total || 0) +
-        Number(releasedEarnings[0]?.total || 0) +
-        Number(withdrawnEarnings[0]?.total || 0)
+          Number(releasedEarnings[0]?.total || 0) +
+          Number(withdrawnEarnings[0]?.total || 0)
       ),
     });
   } catch (error) {
@@ -231,18 +216,18 @@ app.get('/bookings', async (c) => {
       startDate,
       endDate,
       page,
-      limit
+      limit,
     });
 
     // Build where conditions
     const conditions = [eq(booking.sellerId, sellerId)];
 
     if (status) {
-      conditions.push(eq(booking.status, status as any));
+      conditions.push(eq(booking.status, status));
     }
 
     if (approvalStatus) {
-      conditions.push(eq(booking.approvalStatus, approvalStatus as any));
+      conditions.push(eq(booking.approvalStatus, approvalStatus));
     }
 
     if (startDate) {
@@ -284,20 +269,24 @@ app.get('/bookings', async (c) => {
       },
       limit,
       offset,
-      orderBy: sortOrder === 'asc'
-        ? asc(booking[sortBy as keyof typeof booking])
-        : desc(booking[sortBy as keyof typeof booking]),
+      orderBy:
+        sortOrder === 'asc'
+          ? asc(booking[sortBy as keyof typeof booking])
+          : desc(booking[sortBy as keyof typeof booking]),
     });
 
     console.log('✅ Found bookings:', bookings.length);
-    console.log('📦 Bookings data:', bookings.slice(0, 3).map(b => ({
-      id: b.id,
-      listingId: b.listingId,
-      sellerId: b.sellerId,
-      approvalStatus: b.approvalStatus,
-      status: b.status,
-      customerId: b.customerId
-    })));
+    console.log(
+      '📦 Bookings data:',
+      bookings.slice(0, 3).map((b) => ({
+        id: b.id,
+        listingId: b.listingId,
+        sellerId: b.sellerId,
+        approvalStatus: b.approvalStatus,
+        status: b.status,
+        customerId: b.customerId,
+      }))
+    );
 
     return c.json({
       bookings,
@@ -357,38 +346,23 @@ app.get('/earnings', async (c) => {
       orderBy: desc(escrowTransaction.createdAt),
     });
 
-    const pendingAmount = pendingTransactions.reduce(
-      (sum, t) => sum + Number(t.sellerAmount),
-      0
-    );
+    const pendingAmount = pendingTransactions.reduce((sum, t) => sum + Number(t.sellerAmount), 0);
 
     // Get released transactions (ready for payout)
     const releasedTransactions = await db.query.escrowTransaction.findMany({
-      where: and(
-        ...conditions,
-        eq(escrowTransaction.status, 'released')
-      ),
+      where: and(...conditions, eq(escrowTransaction.status, 'released')),
       orderBy: desc(escrowTransaction.releasedAt),
     });
 
-    const releasedAmount = releasedTransactions.reduce(
-      (sum, t) => sum + Number(t.sellerAmount),
-      0
-    );
+    const releasedAmount = releasedTransactions.reduce((sum, t) => sum + Number(t.sellerAmount), 0);
 
     // Get withdrawn (completed payouts)
     const withdrawnPayouts = await db.query.payout.findMany({
-      where: and(
-        eq(payout.sellerId, sellerId),
-        eq(payout.status, 'completed')
-      ),
+      where: and(eq(payout.sellerId, sellerId), eq(payout.status, 'completed')),
       orderBy: desc(payout.completedAt),
     });
 
-    const withdrawnAmount = withdrawnPayouts.reduce(
-      (sum, p) => sum + Number(p.amount),
-      0
-    );
+    const withdrawnAmount = withdrawnPayouts.reduce((sum, p) => sum + Number(p.amount), 0);
 
     return c.json({
       pending: {
@@ -522,9 +496,10 @@ app.get('/reviews', async (c) => {
       },
       limit,
       offset,
-      orderBy: sortOrder === 'asc'
-        ? asc(review[sortBy as keyof typeof review])
-        : desc(review[sortBy as keyof typeof review]),
+      orderBy:
+        sortOrder === 'asc'
+          ? asc(review[sortBy as keyof typeof review])
+          : desc(review[sortBy as keyof typeof review]),
     });
 
     // Calculate average rating
@@ -579,10 +554,7 @@ app.post('/reviews/:reviewId/respond', async (c) => {
 
     // Verify review belongs to seller
     const reviewRecord = await db.query.review.findFirst({
-      where: and(
-        eq(review.id, reviewId),
-        eq(review.sellerId, sellerId)
-      ),
+      where: and(eq(review.id, reviewId), eq(review.sellerId, sellerId)),
     });
 
     if (!reviewRecord) {
@@ -667,9 +639,7 @@ app.get('/analytics', async (c) => {
       { views: 0, bookings: 0, revenue: 0 }
     );
 
-    const conversionRate = totals.views > 0
-      ? (totals.bookings / totals.views) * 100
-      : 0;
+    const conversionRate = totals.views > 0 ? (totals.bookings / totals.views) * 100 : 0;
 
     // Get top listings
     const topListingsData = await db
@@ -681,17 +651,23 @@ app.get('/analytics', async (c) => {
         revenue: sql<string>`COALESCE(SUM(${booking.totalAmount}), 0)`,
       })
       .from(listing)
-      .leftJoin(listingAnalytics, and(
-        eq(listing.id, listingAnalytics.listingId),
-        gte(listingAnalytics.date, startDate),
-        lte(listingAnalytics.date, endDate)
-      ))
-      .leftJoin(booking, and(
-        eq(listing.id, booking.listingId),
-        eq(booking.paymentStatus, 'completed'),
-        gte(booking.createdAt, startDate),
-        lte(booking.createdAt, endDate)
-      ))
+      .leftJoin(
+        listingAnalytics,
+        and(
+          eq(listing.id, listingAnalytics.listingId),
+          gte(listingAnalytics.date, startDate),
+          lte(listingAnalytics.date, endDate)
+        )
+      )
+      .leftJoin(
+        booking,
+        and(
+          eq(listing.id, booking.listingId),
+          eq(booking.paymentStatus, 'completed'),
+          gte(booking.createdAt, startDate),
+          lte(booking.createdAt, endDate)
+        )
+      )
       .where(eq(listing.sellerId, sellerId))
       .groupBy(listing.id, listing.title, listing.bookingCount)
       .orderBy(desc(sql`COALESCE(SUM(${listingAnalytics.views}), 0)`))
@@ -706,16 +682,16 @@ app.get('/analytics', async (c) => {
       totalBookings: totals.bookings,
       totalRevenue: String(totals.revenue),
       conversionRate: Number(conversionRate.toFixed(2)),
-      revenueChart: analyticsData.map(d => ({
+      revenueChart: analyticsData.map((d) => ({
         date: d.date.toISOString().split('T')[0],
         revenue: Number(d.totalRevenue),
         bookings: d.totalBookings,
       })),
-      viewsChart: analyticsData.map(d => ({
+      viewsChart: analyticsData.map((d) => ({
         date: d.date.toISOString().split('T')[0],
         views: d.totalViews,
       })),
-      topListings: topListingsData.map(l => ({
+      topListings: topListingsData.map((l) => ({
         id: l.id,
         title: l.title,
         views: Number(l.views),

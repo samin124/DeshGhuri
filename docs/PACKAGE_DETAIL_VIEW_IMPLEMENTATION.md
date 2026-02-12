@@ -18,6 +18,7 @@ Users can now view package details from **anywhere** in the application. The sys
 ### Components
 
 #### 1. ListingCard
+
 - **Location**: `apps/web/src/components/common/listing-card.tsx`
 - **Purpose**: Displays listing cards throughout the app
 - **Behavior**:
@@ -26,6 +27,7 @@ Users can now view package details from **anywhere** in the application. The sys
   - Always clickable and interactive
 
 #### 2. ListingDetailSheet
+
 - **Location**: `apps/web/src/components/common/listing-detail-sheet.tsx`
 - **Purpose**: Quick preview panel that slides in from the right
 - **Features**:
@@ -35,6 +37,7 @@ Users can now view package details from **anywhere** in the application. The sys
   - "View Full Details & Book" button → navigates to full page
 
 #### 3. Full Detail Page
+
 - **Location**: `apps/web/src/routes/listing/$listingId.tsx`
 - **Purpose**: Complete listing information and booking
 - **URL**: `/listing/{listingId}`
@@ -51,7 +54,9 @@ Users can now view package details from **anywhere** in the application. The sys
 ## Where It Works
 
 ### ✅ Homepage
+
 All homepage sections use the quick preview sheet:
+
 - Flash Deals
 - Special Offers
 - Trending Listings
@@ -61,23 +66,27 @@ All homepage sections use the quick preview sheet:
 **Implementation**: Each section passes `onListingClick` handler to ListingCard
 
 ### ✅ Search Results Page
+
 - **Location**: `apps/web/src/routes/search.tsx`
 - Uses quick preview sheet for fast browsing
 - Filters remain visible while viewing details
 - Users can quickly compare listings
 
 ### ✅ Seller Profile Page
+
 - **Location**: `apps/web/src/routes/seller/$sellerId/profile.tsx`
 - Shows seller's listings with quick preview
 - Users can browse all seller offerings quickly
 
 ### ✅ Direct URL Access
+
 - Navigate directly to `/listing/{id}` for full details
 - Shareable links
 - SEO-friendly URLs
 - Deep linking support
 
 ### ✅ Search Autocomplete
+
 - **Location**: `apps/web/src/components/search/search-autocomplete.tsx`
 - Clicking listing suggestion navigates to full detail page
 - Location suggestions go to filtered search results
@@ -87,6 +96,7 @@ All homepage sections use the quick preview sheet:
 ## User Flow Examples
 
 ### Flow 1: Homepage Browsing
+
 ```
 Homepage → Click "Flash Deal" card
 → Sheet slides in with preview
@@ -95,6 +105,7 @@ Homepage → Click "Flash Deal" card
 ```
 
 ### Flow 2: Search & Filter
+
 ```
 Search page → Apply filters
 → Click result card
@@ -104,6 +115,7 @@ Search page → Apply filters
 ```
 
 ### Flow 3: Direct Access
+
 ```
 Click link from email/social media
 → Full detail page opens directly
@@ -111,6 +123,7 @@ Click link from email/social media
 ```
 
 ### Flow 4: Seller Profile
+
 ```
 Visit seller profile
 → Browse their listings
@@ -143,11 +156,7 @@ function YourComponent() {
     <>
       {/* Your listings */}
       {listings.map((listing) => (
-        <ListingCard
-          key={listing.id}
-          listing={listing}
-          onClick={handleListingClick}
-        />
+        <ListingCard key={listing.id} listing={listing} onClick={handleListingClick} />
       ))}
 
       {/* Detail sheet */}
@@ -187,21 +196,25 @@ function YourComponent() {
 ## Benefits
 
 ### 1. **Fast Browsing**
+
 - Quick preview sheet loads instantly
 - Users can browse multiple listings quickly
 - Filters/context preserved in background
 
 ### 2. **Complete Information**
+
 - Full detail page has everything for booking decisions
 - Deep links work for sharing
 - SEO-optimized URLs
 
 ### 3. **Flexible UX**
+
 - Users choose their preferred flow
 - Quick look or deep dive
 - Mobile-friendly sheet interface
 
 ### 4. **Consistent Experience**
+
 - Same pattern works everywhere
 - Users learn once, use everywhere
 - Reduced cognitive load
@@ -211,16 +224,19 @@ function YourComponent() {
 ## Technical Details
 
 ### State Management
+
 - Local state per page (no global state needed)
 - Clean separation of concerns
 - No prop drilling
 
 ### Performance
+
 - Sheet component lazy loads listing data
 - Only fetches when opened
 - Caches recent views
 
 ### Mobile Responsive
+
 - Sheet takes full width on mobile
 - Smooth slide animation
 - Touch-friendly controls
@@ -230,6 +246,7 @@ function YourComponent() {
 ## Future Enhancements
 
 Potential improvements:
+
 - [ ] Compare multiple listings side-by-side
 - [ ] Save listings to wishlist from sheet
 - [ ] Share sheet content directly

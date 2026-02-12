@@ -47,14 +47,15 @@ function StatCard({
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
         {trend && (
           <div className="mt-2 flex items-center text-xs">
-            <TrendingUp className={`mr-1 h-3 w-3 ${trend.value >= 0 ? 'text-green-500' : 'text-red-500'}`} />
+            <TrendingUp
+              className={`mr-1 h-3 w-3 ${trend.value >= 0 ? 'text-green-500' : 'text-red-500'}`}
+            />
             <span className={trend.value >= 0 ? 'text-green-500' : 'text-red-500'}>
-              {trend.value >= 0 ? '+' : ''}{trend.value}%
+              {trend.value >= 0 ? '+' : ''}
+              {trend.value}%
             </span>
             <span className="ml-1 text-muted-foreground">{trend.label}</span>
           </div>
@@ -70,7 +71,11 @@ function StatCard({
 }
 
 function SellerDashboardOverview() {
-  const { data: stats, isLoading, error } = useQuery({
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['seller-dashboard-stats'],
     queryFn: getDashboardStats,
     refetchInterval: 60000, // Refetch every minute
@@ -94,9 +99,7 @@ function SellerDashboardOverview() {
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back! Here's an overview of your business.
-        </p>
+        <p className="text-muted-foreground">Welcome back! Here's an overview of your business.</p>
       </div>
 
       {/* Today's Stats */}

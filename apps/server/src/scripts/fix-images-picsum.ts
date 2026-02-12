@@ -50,10 +50,7 @@ async function fixImagesWithPicsum() {
         },
       ];
 
-      await db
-        .update(listing)
-        .set({ images: newImages })
-        .where(eq(listing.id, item.id));
+      await db.update(listing).set({ images: newImages }).where(eq(listing.id, item.id));
 
       updated++;
 
@@ -77,7 +74,6 @@ async function fixImagesWithPicsum() {
 
     console.log('✨ Picsum Photos provides high-quality, consistent placeholder images.');
     console.log('   Each listing will have 3 different images that load reliably.');
-
   } catch (error) {
     console.error('❌ Error fixing images:', error);
     throw error;

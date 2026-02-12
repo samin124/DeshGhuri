@@ -111,7 +111,7 @@ export function DocumentUpload({
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   return (
@@ -120,9 +120,7 @@ export function DocumentUpload({
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
-      {description && (
-        <p className="text-sm text-muted-foreground">{description}</p>
-      )}
+      {description && <p className="text-sm text-muted-foreground">{description}</p>}
 
       <input
         ref={inputRef}
@@ -155,9 +153,7 @@ export function DocumentUpload({
               <p className="text-xs text-muted-foreground">
                 Supported formats: {accept.replace(/\./g, '').toUpperCase().split(',').join(', ')}
               </p>
-              <p className="text-xs text-muted-foreground">
-                Maximum size: {maxSize}MB
-              </p>
+              <p className="text-xs text-muted-foreground">Maximum size: {maxSize}MB</p>
             </div>
           </div>
         </Card>
@@ -165,11 +161,7 @@ export function DocumentUpload({
         <Card className="p-4">
           <div className="flex items-start gap-3">
             {preview ? (
-              <img
-                src={preview}
-                alt="Preview"
-                className="h-16 w-16 rounded-md object-cover"
-              />
+              <img src={preview} alt="Preview" className="h-16 w-16 rounded-md object-cover" />
             ) : (
               <div className="flex h-16 w-16 items-center justify-center rounded-md bg-muted">
                 <FileText className="h-8 w-8 text-muted-foreground" />
@@ -179,9 +171,7 @@ export function DocumentUpload({
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{value.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatFileSize(value.size)}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{formatFileSize(value.size)}</p>
                 </div>
                 <Button
                   type="button"

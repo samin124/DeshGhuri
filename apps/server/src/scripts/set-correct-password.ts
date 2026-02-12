@@ -34,12 +34,7 @@ const hashedPassword = await hash(correctPassword, {
 await db
   .update(account)
   .set({ password: hashedPassword })
-  .where(
-    and(
-      eq(account.userId, sellerRecord.userId),
-      eq(account.providerId, 'credential')
-    )
-  );
+  .where(and(eq(account.userId, sellerRecord.userId), eq(account.providerId, 'credential')));
 
 console.log('✅ Password updated successfully!');
 console.log(`Email: ${sellerEmail}`);

@@ -12,9 +12,7 @@ function SettingsPlaceholder() {
     <div className="space-y-6 p-6">
       <div>
         <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your seller account settings
-        </p>
+        <p className="text-muted-foreground">Manage your seller account settings</p>
       </div>
 
       <Card>
@@ -23,16 +21,15 @@ function SettingsPlaceholder() {
             <SettingsIcon className="h-6 w-6" />
             Account Settings
           </CardTitle>
-          <CardDescription>
-            Update your business profile and preferences
-          </CardDescription>
+          <CardDescription>Update your business profile and preferences</CardDescription>
         </CardHeader>
         <CardContent>
           <Alert>
             <Info className="h-4 w-4" />
             <AlertTitle>Coming Soon in Epic 12</AlertTitle>
             <AlertDescription>
-              The settings page is currently under development and will be available in Epic 12 (Listing Management).
+              The settings page is currently under development and will be available in Epic 12
+              (Listing Management).
             </AlertDescription>
           </Alert>
         </CardContent>

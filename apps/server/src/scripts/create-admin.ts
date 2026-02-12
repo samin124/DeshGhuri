@@ -43,15 +43,18 @@ async function createAdmin() {
     // Hash password with Better Auth's method
     const hashedPassword = await hashPassword(ADMIN_PASSWORD);
 
-    const newUser = await db.insert(user).values({
-      id: `user_${nanoid(16)}`,
-      email: ADMIN_EMAIL,
-      name: ADMIN_NAME,
-      emailVerified: true,
-      image: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }).returning();
+    const newUser = await db
+      .insert(user)
+      .values({
+        id: `user_${nanoid(16)}`,
+        email: ADMIN_EMAIL,
+        name: ADMIN_NAME,
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
 
     userId = newUser[0].id;
 
@@ -79,7 +82,7 @@ async function createAdmin() {
       where: eq(userRole.userId, userId),
     });
 
-    const existingRoleNames = existingRoles.map(r => r.role);
+    const existingRoleNames = existingRoles.map((r) => r.role);
     console.log(`📋 Existing roles: ${existingRoleNames.join(', ') || 'none'}`);
 
     // Assign roles: super_admin, admin, and customer
@@ -108,7 +111,6 @@ async function createAdmin() {
     console.log(`   Password: ${ADMIN_PASSWORD}`);
     console.log(`\n🔗 Login at: http://localhost:3001/login`);
     console.log(`🔗 Admin Panel: http://localhost:3001/admin\n`);
-
   } catch (error) {
     console.error('❌ Error creating admin:', error);
     throw error;

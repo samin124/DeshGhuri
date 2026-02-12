@@ -39,8 +39,7 @@ export function Pagination({
           <span className="font-medium text-foreground">
             {startItem}-{endItem}
           </span>{' '}
-          of{' '}
-          <span className="font-medium text-foreground">{totalItems}</span>
+          of <span className="font-medium text-foreground">{totalItems}</span>
         </p>
 
         {onItemsPerPageChange && (
@@ -79,9 +78,7 @@ export function Pagination({
 
         <div className="flex items-center gap-1">
           <span className="text-sm text-muted-foreground">
-            Page{' '}
-            <span className="font-medium text-foreground">{currentPage}</span>{' '}
-            of{' '}
+            Page <span className="font-medium text-foreground">{currentPage}</span> of{' '}
             <span className="font-medium text-foreground">{totalPages}</span>
           </span>
         </div>

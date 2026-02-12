@@ -22,6 +22,7 @@ bun run db:studio
 ```
 
 Check that these tables exist:
+
 - `listing`, `booking`, `review`
 - `escrow_transaction`, `proof_of_completion`, `payout`
 - `listing_analytics`, `seller_analytics`
@@ -47,6 +48,7 @@ App runs on `http://localhost:5173`
 ### 4. Access the Dashboard
 
 Navigate to:
+
 ```
 http://localhost:5173/seller/dashboard
 ```
@@ -78,29 +80,34 @@ VALUES ('role-1', 'your-user-id', 'seller');
 ## Dashboard Features
 
 ### Overview (`/seller/dashboard`)
+
 - Today's bookings, revenue, views
 - Pending actions (proofs, reviews, upcoming bookings)
 - Overall statistics
 - Earnings breakdown
 
 ### Bookings (`/seller/dashboard/bookings`)
+
 - Filter by status
 - Search by ID, listing, customer
 - View detailed booking info
 - Pagination
 
 ### Earnings (`/seller/dashboard/earnings`)
+
 - Pending, released, withdrawn earnings
 - Transaction list with escrow status
 - Service dates and proof status
 
 ### Payouts (`/seller/dashboard/payouts`)
+
 - Payout history
 - Bank account info
 - Status tracking
 - Transaction references
 
 ### Analytics (`/seller/dashboard/analytics`)
+
 - Period selection (today/week/month/year)
 - Revenue & bookings trend chart
 - Views trend chart
@@ -108,6 +115,7 @@ VALUES ('role-1', 'your-user-id', 'seller');
 - Conversion rate
 
 ### Reviews (`/seller/dashboard/reviews`)
+
 - All customer reviews
 - Filter by response status and rating
 - Respond to reviews
@@ -175,6 +183,7 @@ VALUES (
 ### Without Mock Data
 
 The dashboard handles empty states gracefully:
+
 - Shows "No data yet" messages
 - Displays onboarding tips
 - Provides call-to-action buttons
@@ -182,21 +191,25 @@ The dashboard handles empty states gracefully:
 ## Troubleshooting
 
 ### "Unauthorized" Error
+
 - Ensure you're logged in
 - Check that your user has a seller account
 - Verify seller is approved (`verification_status = 'approved'`)
 
 ### "Failed to fetch" Error
+
 - Check backend server is running on port 3000
 - Check CORS settings in backend
 - Verify `VITE_API_URL` environment variable
 
 ### Empty Dashboard
+
 - Verify seller_id matches your logged-in user's seller account
 - Check database for listings/bookings associated with your seller_id
 - View browser console for API errors
 
 ### Database Schema Issues
+
 ```bash
 # Regenerate and push schema
 cd packages/db
@@ -237,12 +250,14 @@ Frontend:
 ## Support
 
 For detailed implementation information, see:
+
 - `/docs/seller-dashboard-implementation.md` - Full implementation details
 - `/docs/prd.md` - Original requirements (Epic 13)
 
 ## Success Criteria ✅
 
 From PRD Epic 13:
+
 - ✅ Dashboard overview with key metrics
 - ✅ Bookings list with filtering
 - ✅ Earnings breakdown

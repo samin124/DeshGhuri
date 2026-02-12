@@ -32,7 +32,7 @@ app.get('/', async (c) => {
   console.log('🔍 Seller Bookings Request:', {
     sellerId,
     statusFilter,
-    approvalStatusFilter
+    approvalStatusFilter,
   });
 
   try {
@@ -70,12 +70,15 @@ app.get('/', async (c) => {
       .orderBy(desc(booking.createdAt));
 
     console.log('✅ Found bookings:', bookings.length);
-    console.log('📦 Bookings data:', bookings.map(b => ({
-      id: b.booking.id,
-      listingId: b.booking.listingId,
-      sellerId: b.booking.sellerId,
-      approvalStatus: b.booking.approvalStatus
-    })));
+    console.log(
+      '📦 Bookings data:',
+      bookings.map((b) => ({
+        id: b.booking.id,
+        listingId: b.booking.listingId,
+        sellerId: b.booking.sellerId,
+        approvalStatus: b.booking.approvalStatus,
+      }))
+    );
 
     return c.json({
       success: true,
@@ -119,10 +122,7 @@ app.get('/pending-approval', async (c) => {
         and(
           eq(booking.sellerId, sellerId),
           eq(booking.approvalStatus, 'pending'),
-          or(
-            eq(booking.status, 'hold'),
-            eq(booking.paymentStatus, 'pending')
-          )
+          or(eq(booking.status, 'hold'), eq(booking.paymentStatus, 'pending'))
         )
       )
       .orderBy(desc(booking.createdAt));
@@ -156,17 +156,12 @@ app.get('/:bookingId', async (c) => {
       .from(booking)
       .leftJoin(listing, eq(booking.listingId, listing.id))
       .leftJoin(user, eq(booking.customerId, user.id))
-      .where(
-        and(
-          eq(booking.id, bookingId),
-          eq(booking.sellerId, sellerId)
-        )
-      )
+      .where(and(eq(booking.id, bookingId), eq(booking.sellerId, sellerId)))
       .limit(1);
 
     if (!bookingData) {
       throw new HTTPException(404, {
-        message: 'Booking not found or you don\'t have permission to access it',
+        message: "Booking not found or you don't have permission to access it",
       });
     }
 
@@ -185,101 +180,92 @@ app.get('/:bookingId', async (c) => {
  * POST /api/seller/bookings/:bookingId/approve-payment
  * Approve or reject a booking payment
  */
-app.post(
-  '/:bookingId/approve-payment',
-  zValidator('json', approvalSchema),
-  async (c) => {
-    const sellerId = c.get('sellerId') as string;
-    const { bookingId } = c.req.param();
-    const { action, rejectionReason } = c.req.valid('json');
+app.post('/:bookingId/approve-payment', zValidator('json', approvalSchema), async (c) => {
+  const sellerId = c.get('sellerId') as string;
+  const { bookingId } = c.req.param();
+  const { action, rejectionReason } = c.req.valid('json');
 
-    try {
-      // Get booking and verify ownership
-      const [bookingData] = await db
-        .select()
-        .from(booking)
-        .where(
-          and(
-            eq(booking.id, bookingId),
-            eq(booking.sellerId, sellerId)
-          )
-        )
-        .limit(1);
+  try {
+    // Get booking and verify ownership
+    const [bookingData] = await db
+      .select()
+      .from(booking)
+      .where(and(eq(booking.id, bookingId), eq(booking.sellerId, sellerId)))
+      .limit(1);
 
-      if (!bookingData) {
-        throw new HTTPException(404, {
-          message: 'Booking not found or you don\'t have permission to access it',
-        });
-      }
-
-      // Check if booking is pending approval
-      if (bookingData.approvalStatus !== 'pending') {
-        throw new HTTPException(400, {
-          message: 'Booking is not pending approval',
-        });
-      }
-
-      // Check if booking is still in hold status
-      if (bookingData.status !== 'hold') {
-        throw new HTTPException(400, {
-          message: 'Booking is not in hold status',
-        });
-      }
-
-      if (action === 'approve') {
-        // Approve the booking
-        const [updatedBooking] = await db
-          .update(booking)
-          .set({
-            approvalStatus: 'approved',
-            approvedAt: new Date(),
-            approvedBy: sellerId,
-            status: 'confirmed', // Move to confirmed status
-            paymentStatus: 'completed', // Mark payment as completed
-            paidAt: new Date(),
-          })
-          .where(eq(booking.id, bookingId))
-          .returning();
-
-        return c.json({
-          success: true,
-          data: updatedBooking,
-          message: 'Booking approved successfully. Customer has been notified.',
-        });
-      } else {
-        // Reject the booking
-        if (!rejectionReason) {
-          throw new HTTPException(400, {
-            message: 'Rejection reason is required',
-          });
-        }
-
-        const [updatedBooking] = await db
-          .update(booking)
-          .set({
-            approvalStatus: 'rejected',
-            rejectionReason,
-            status: 'cancelled',
-            cancelledAt: new Date(),
-            cancelledBy: sellerId,
-            cancellationReason: `Payment rejected by seller: ${rejectionReason}`,
-          })
-          .where(eq(booking.id, bookingId))
-          .returning();
-
-        return c.json({
-          success: true,
-          data: updatedBooking,
-          message: 'Booking rejected. Customer has been notified.',
-        });
-      }
-    } catch (error) {
-      if (error instanceof HTTPException) throw error;
-      console.error('Error processing booking approval:', error);
-      throw new HTTPException(500, { message: 'Failed to process approval' });
+    if (!bookingData) {
+      throw new HTTPException(404, {
+        message: "Booking not found or you don't have permission to access it",
+      });
     }
+
+    // Check if booking is pending approval
+    if (bookingData.approvalStatus !== 'pending') {
+      throw new HTTPException(400, {
+        message: 'Booking is not pending approval',
+      });
+    }
+
+    // Check if booking is still in hold status
+    if (bookingData.status !== 'hold') {
+      throw new HTTPException(400, {
+        message: 'Booking is not in hold status',
+      });
+    }
+
+    if (action === 'approve') {
+      // Approve the booking
+      const [updatedBooking] = await db
+        .update(booking)
+        .set({
+          approvalStatus: 'approved',
+          approvedAt: new Date(),
+          approvedBy: sellerId,
+          status: 'confirmed', // Move to confirmed status
+          paymentStatus: 'completed', // Mark payment as completed
+          paidAt: new Date(),
+        })
+        .where(eq(booking.id, bookingId))
+        .returning();
+
+      return c.json({
+        success: true,
+        data: updatedBooking,
+        message: 'Booking approved successfully. Customer has been notified.',
+      });
+    } else {
+      // Reject the booking
+      if (!rejectionReason) {
+        throw new HTTPException(400, {
+          message: 'Rejection reason is required',
+        });
+      }
+
+      const [updatedBooking] = await db
+        .update(booking)
+        .set({
+          approvalStatus: 'rejected',
+          rejectionReason,
+          status: 'cancelled',
+          cancelledAt: new Date(),
+          cancelledBy: sellerId,
+          cancellationReason: `Payment rejected by seller: ${rejectionReason}`,
+        })
+        .where(eq(booking.id, bookingId))
+        .returning();
+
+      return c.json({
+        success: true,
+        data: updatedBooking,
+        message: 'Booking rejected. Customer has been notified.',
+      });
+    }
+  } catch (error) {
+    if (error instanceof HTTPException) throw error;
+    console.error('Error processing booking approval:', error);
+    throw new HTTPException(500, { message: 'Failed to process approval' });
   }
-);
+});
 
 /**
  * POST /api/seller/bookings/:bookingId/cancel
@@ -303,17 +289,12 @@ app.post('/:bookingId/cancel', async (c) => {
     const [bookingData] = await db
       .select()
       .from(booking)
-      .where(
-        and(
-          eq(booking.id, bookingId),
-          eq(booking.sellerId, sellerId)
-        )
-      )
+      .where(and(eq(booking.id, bookingId), eq(booking.sellerId, sellerId)))
       .limit(1);
 
     if (!bookingData) {
       throw new HTTPException(404, {
-        message: 'Booking not found or you don\'t have permission to access it',
+        message: "Booking not found or you don't have permission to access it",
       });
     }
 

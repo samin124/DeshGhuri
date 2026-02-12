@@ -123,11 +123,7 @@ function RouteComponent() {
     {
       id: 'status',
       header: 'Status',
-      accessor: (promo) => (
-        <Badge className={getStatusColor(promo.status)}>
-          {promo.status}
-        </Badge>
-      ),
+      accessor: (promo) => <Badge className={getStatusColor(promo.status)}>{promo.status}</Badge>,
       sortable: true,
     },
   ];
@@ -138,11 +134,7 @@ function RouteComponent() {
         <Eye className="h-4 w-4 mr-1" />
         View
       </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        disabled={promo.status === 'expired'}
-      >
+      <Button variant="ghost" size="sm" disabled={promo.status === 'expired'}>
         {promo.status === 'paused' ? 'Resume' : 'Pause'}
       </Button>
     </div>
@@ -260,9 +252,7 @@ function RouteComponent() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Create New Promotion</DialogTitle>
-            <DialogDescription>
-              Create a new promotional campaign or flash deal
-            </DialogDescription>
+            <DialogDescription>Create a new promotional campaign or flash deal</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -271,11 +261,7 @@ function RouteComponent() {
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe this promotion..."
-                rows={3}
-              />
+              <Textarea id="description" placeholder="Describe this promotion..." rows={3} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -292,11 +278,7 @@ function RouteComponent() {
               </div>
               <div>
                 <Label htmlFor="discountValue">Discount Value</Label>
-                <Input
-                  id="discountValue"
-                  type="number"
-                  placeholder="10"
-                />
+                <Input id="discountValue" type="number" placeholder="10" />
               </div>
             </div>
             <div>
@@ -329,20 +311,14 @@ function RouteComponent() {
             </div>
             <div>
               <Label htmlFor="maxUses">Max Uses (Optional)</Label>
-              <Input
-                id="maxUses"
-                type="number"
-                placeholder="Leave empty for unlimited"
-              />
+              <Input id="maxUses" type="number" placeholder="Leave empty for unlimited" />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => setIsCreateDialogOpen(false)}>
-              Create Promotion
-            </Button>
+            <Button onClick={() => setIsCreateDialogOpen(false)}>Create Promotion</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

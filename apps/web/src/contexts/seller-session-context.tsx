@@ -35,7 +35,11 @@ export function SellerSessionProvider({ children }: { children: React.ReactNode 
     } catch (err) {
       // Don't log errors for unauthorized users (401/403) - this is expected for non-sellers
       // Only log unexpected errors
-      if (err instanceof Error && !err.message.includes('Unauthorized') && !err.message.includes('Forbidden')) {
+      if (
+        err instanceof Error &&
+        !err.message.includes('Unauthorized') &&
+        !err.message.includes('Forbidden')
+      ) {
         console.error('Failed to fetch seller session:', err);
       }
       setSeller(null);

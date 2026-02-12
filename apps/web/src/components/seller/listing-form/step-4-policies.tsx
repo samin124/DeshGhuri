@@ -13,7 +13,10 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { MapPin } from 'lucide-react';
 import { useListingForm } from '@/contexts/listing-form-context';
-import { CANCELLATION_POLICIES, CANCELLATION_POLICY_DESCRIPTIONS } from '@/lib/constants/categories';
+import {
+  CANCELLATION_POLICIES,
+  CANCELLATION_POLICY_DESCRIPTIONS,
+} from '@/lib/constants/categories';
 
 export function Step4Policies() {
   const { state, updateFormData } = useListingForm();
@@ -42,9 +45,7 @@ export function Step4Policies() {
             </Label>
             <Select
               value={formData.cancellationPolicy || 'flexible'}
-              onValueChange={(value) =>
-                updateFormData({ cancellationPolicy: value as any })
-              }
+              onValueChange={(value) => updateFormData({ cancellationPolicy: value as any })}
             >
               <SelectTrigger id="cancellationPolicy">
                 <SelectValue />
@@ -79,9 +80,7 @@ export function Step4Policies() {
         <Card>
           <CardHeader>
             <CardTitle>Check-in & Check-out</CardTitle>
-            <CardDescription>
-              Specify your check-in and check-out times
-            </CardDescription>
+            <CardDescription>Specify your check-in and check-out times</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
@@ -91,9 +90,7 @@ export function Step4Policies() {
                   id="checkInTime"
                   type="time"
                   value={formData.checkInTime || ''}
-                  onChange={(e) =>
-                    updateFormData({ checkInTime: e.target.value })
-                  }
+                  onChange={(e) => updateFormData({ checkInTime: e.target.value })}
                 />
               </div>
 
@@ -103,9 +100,7 @@ export function Step4Policies() {
                   id="checkOutTime"
                   type="time"
                   value={formData.checkOutTime || ''}
-                  onChange={(e) =>
-                    updateFormData({ checkOutTime: e.target.value })
-                  }
+                  onChange={(e) => updateFormData({ checkOutTime: e.target.value })}
                 />
               </div>
             </div>
@@ -117,18 +112,14 @@ export function Step4Policies() {
       <Card>
         <CardHeader>
           <CardTitle>House Rules (Optional)</CardTitle>
-          <CardDescription>
-            Additional rules or guidelines for guests
-          </CardDescription>
+          <CardDescription>Additional rules or guidelines for guests</CardDescription>
         </CardHeader>
         <CardContent>
           <Textarea
             id="houseRules"
             placeholder="e.g., No smoking, No pets, Quiet hours from 10 PM to 7 AM..."
             value={formData.houseRules || ''}
-            onChange={(e) =>
-              updateFormData({ houseRules: e.target.value })
-            }
+            onChange={(e) => updateFormData({ houseRules: e.target.value })}
             rows={6}
           />
         </CardContent>
@@ -138,9 +129,7 @@ export function Step4Policies() {
       <Card>
         <CardHeader>
           <CardTitle>Preview</CardTitle>
-          <CardDescription>
-            This is how your listing will appear to customers
-          </CardDescription>
+          <CardDescription>This is how your listing will appear to customers</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-lg border overflow-hidden">
@@ -164,12 +153,8 @@ export function Step4Policies() {
               {/* Title and Category */}
               <div>
                 <div className="flex items-start justify-between gap-4 mb-2">
-                  <h3 className="text-2xl font-bold">
-                    {formData.title || 'Untitled Listing'}
-                  </h3>
-                  {formData.category && (
-                    <Badge variant="secondary">{formData.category}</Badge>
-                  )}
+                  <h3 className="text-2xl font-bold">{formData.title || 'Untitled Listing'}</h3>
+                  {formData.category && <Badge variant="secondary">{formData.category}</Badge>}
                 </div>
 
                 {locationText && (
@@ -204,27 +189,29 @@ export function Step4Policies() {
                       {formData.priceUnit === 'per-night'
                         ? 'per night'
                         : formData.priceUnit === 'per-person'
-                        ? 'per person'
-                        : 'per booking'}
+                          ? 'per person'
+                          : 'per booking'}
                     </span>
                   </div>
 
-                  {formData.groupEligible && formData.groupPricingTiers && formData.groupPricingTiers.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-sm font-medium mb-2">Group Discounts:</p>
-                      <div className="space-y-1">
-                        {formData.groupPricingTiers.map((tier, index) => (
-                          <div key={index} className="text-sm text-muted-foreground">
-                            {tier.minParticipants}-{tier.maxParticipants} people:{' '}
-                            <span className="font-semibold text-primary">
-                              {tier.discountPercentage}% off
-                            </span>{' '}
-                            (৳{tier.pricePerPerson.toLocaleString()} per person)
-                          </div>
-                        ))}
+                  {formData.groupEligible &&
+                    formData.groupPricingTiers &&
+                    formData.groupPricingTiers.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-sm font-medium mb-2">Group Discounts:</p>
+                        <div className="space-y-1">
+                          {formData.groupPricingTiers.map((tier, index) => (
+                            <div key={index} className="text-sm text-muted-foreground">
+                              {tier.minParticipants}-{tier.maxParticipants} people:{' '}
+                              <span className="font-semibold text-primary">
+                                {tier.discountPercentage}% off
+                              </span>{' '}
+                              (৳{tier.pricePerPerson.toLocaleString()} per person)
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               )}
 
@@ -255,9 +242,7 @@ export function Step4Policies() {
                   <div className="grid md:grid-cols-2 gap-4">
                     {formData.inclusions && formData.inclusions.length > 0 && (
                       <div>
-                        <h4 className="font-semibold mb-2 text-green-600">
-                          What's Included
-                        </h4>
+                        <h4 className="font-semibold mb-2 text-green-600">What's Included</h4>
                         <ul className="space-y-1">
                           {formData.inclusions.map((item, index) => (
                             <li key={index} className="text-sm text-muted-foreground">
@@ -270,9 +255,7 @@ export function Step4Policies() {
 
                     {formData.exclusions && formData.exclusions.length > 0 && (
                       <div>
-                        <h4 className="font-semibold mb-2 text-destructive">
-                          What's Not Included
-                        </h4>
+                        <h4 className="font-semibold mb-2 text-destructive">What's Not Included</h4>
                         <ul className="space-y-1">
                           {formData.exclusions.map((item, index) => (
                             <li key={index} className="text-sm text-muted-foreground">
@@ -301,18 +284,14 @@ export function Step4Policies() {
                   {formData.checkInTime && (
                     <div>
                       <span className="font-medium">Check-in: </span>
-                      <span className="text-muted-foreground">
-                        {formData.checkInTime}
-                      </span>
+                      <span className="text-muted-foreground">{formData.checkInTime}</span>
                     </div>
                   )}
 
                   {formData.checkOutTime && (
                     <div>
                       <span className="font-medium">Check-out: </span>
-                      <span className="text-muted-foreground">
-                        {formData.checkOutTime}
-                      </span>
+                      <span className="text-muted-foreground">{formData.checkOutTime}</span>
                     </div>
                   )}
 

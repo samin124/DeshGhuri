@@ -46,7 +46,6 @@ async function verifyImages() {
     }
 
     console.log('\n✨ Verification complete!');
-
   } catch (error) {
     console.error('❌ Verification failed:', error);
     throw error;

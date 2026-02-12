@@ -9,12 +9,14 @@ This document outlines the authentication improvements implemented to consolidat
 ## What Was Changed
 
 ### 1. **Unified Login Page with Tabs**
+
 - The `/login` page now has **3 tabs**:
   - **Sign In** - For all users (customers, sellers, and admins)
   - **Sign Up** - For new customer account creation
   - **Become a Seller** - Information panel with link to seller registration
 
 ### 2. **Consolidated Sign-In Flow**
+
 - **All roles now sign in through the same Sign In page** (`/login`)
 - After successful sign-in, the system automatically redirects based on user roles:
   - **Admin/Super Admin** → `/admin/dashboard`
@@ -23,6 +25,7 @@ This document outlines the authentication improvements implemented to consolidat
 - Removed the separate `/seller/signin` route entirely
 
 ### 3. **Email Uniqueness Validation**
+
 - Created backend endpoint `/api/auth/check-email` to prevent duplicate email registration
 - Users cannot register with an email that's already used by:
   - Another customer account
@@ -31,7 +34,9 @@ This document outlines the authentication improvements implemented to consolidat
 - Email validation happens **before** database entry
 
 ### 4. **Better Auth Signup Flow**
+
 Better Auth (the authentication library used) handles email verification correctly:
+
 - User enters email and password
 - Account is created in database with `emailVerified: false`
 - Verification email is sent
@@ -39,13 +44,16 @@ Better Auth (the authentication library used) handles email verification correct
 - Once verified, they can sign in normally
 
 ### 5. **Improved Error Messages**
+
 All authentication operations now show clear, context-specific error messages:
+
 - Invalid credentials → "Invalid email or password. Please check your credentials and try again."
 - Email already exists → "This email is already registered. Please sign in instead."
 - Unverified email → "Please verify your email before signing in." (with resend button)
 - Seller verification status → Shows specific messages for pending/approved/rejected status
 
 ### 6. **Navbar Updates**
+
 - "Become a Seller" button now links to `/login?tab=seller`
 - Opens the login page with the "Become a Seller" tab pre-selected
 
@@ -114,7 +122,9 @@ All authentication operations now show clear, context-specific error messages:
 ## Setup Instructions for Your Teammate
 
 ### Prerequisites
+
 Ensure you have:
+
 - **Node.js** (v18+)
 - **Bun** (latest version)
 - **PostgreSQL** database running
@@ -123,17 +133,20 @@ Ensure you have:
 ### Installation Steps
 
 1. **Pull the latest changes from the branch:**
+
    ```bash
    git pull origin seller-dashboard-analytics
    ```
 
 2. **Install dependencies:**
+
    ```bash
    bun install
    ```
 
 3. **Verify environment variables:**
    Make sure your `.env` file in the root has:
+
    ```env
    # Database
    DATABASE_URL=postgresql://...
@@ -153,6 +166,7 @@ Ensure you have:
    ```
 
 4. **Run database migrations (if any):**
+
    ```bash
    cd packages/db
    bun run db:migrate
@@ -161,11 +175,13 @@ Ensure you have:
 5. **Start the development servers:**
 
    **Option 1: Run both servers together**
+
    ```bash
    bun run dev
    ```
 
    **Option 2: Run separately**
+
    ```bash
    # Terminal 1 - Backend
    bun run dev:server
@@ -178,6 +194,7 @@ Ensure you have:
    - Frontend runs on: `http://localhost:3001`
 
 ### No Additional Dependencies Required
+
 All necessary dependencies were already present in the project. No new packages were installed.
 
 ### Port Management Tool (BONUS!)
@@ -185,6 +202,7 @@ All necessary dependencies were already present in the project. No new packages 
 To make development easier, we've included a `pkill` utility that kills all development server ports with one command!
 
 **Quick Setup:**
+
 ```bash
 # Open PowerShell as Administrator
 cd E:\Learn-Typescript\DeshGhuri
@@ -192,6 +210,7 @@ cd E:\Learn-Typescript\DeshGhuri
 ```
 
 **After setup, simply type in PowerShell:**
+
 ```powershell
 pkill
 ```
@@ -199,6 +218,7 @@ pkill
 This will automatically kill processes on ports: 3000, 3001, 3002, 5173, 8080, 8000, 4000, 5000
 
 **Alternative (no installation):**
+
 - Double-click `scripts/pkill.bat` to kill ports instantly
 - Or run: `.\scripts\pkill.ps1` from the project directory
 
@@ -295,7 +315,9 @@ See `scripts/README.md` for detailed instructions.
 ## Troubleshooting
 
 ### Issue: "Port 3000 in use"
+
 **Solution:** Kill the process using port 3000:
+
 ```bash
 # Windows
 netstat -ano | findstr :3000
@@ -306,7 +328,9 @@ lsof -ti:3000 | xargs kill -9
 ```
 
 ### Issue: Email verification not working
+
 **Solution:**
+
 1. Check `.env` has correct email credentials
 2. Check server logs for email sending errors
 3. For testing, you can manually verify emails in the database:
@@ -315,7 +339,9 @@ lsof -ti:3000 | xargs kill -9
    ```
 
 ### Issue: Admin can't access admin dashboard
+
 **Solution:** Verify the admin has the correct role:
+
 ```sql
 -- Check roles
 SELECT u.email, ur.role
@@ -329,9 +355,12 @@ VALUES ('role_xxx', 'user_id_here', 'admin', NOW());
 ```
 
 ### Issue: Seller can't access seller dashboard
+
 **Solution:**
+
 1. Check seller has 'seller' role in user_role table
 2. Check seller verification status is 'approved':
+
    ```sql
    SELECT email, verification_status FROM seller WHERE email = 'seller@example.com';
 
@@ -355,9 +384,11 @@ VALUES ('role_xxx', 'user_id_here', 'admin', NOW());
 ## API Endpoints Added
 
 ### POST `/api/auth/check-email`
+
 Checks if an email is available for registration.
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com"
@@ -365,6 +396,7 @@ Checks if an email is available for registration.
 ```
 
 **Response (available):**
+
 ```json
 {
   "available": true,
@@ -373,6 +405,7 @@ Checks if an email is available for registration.
 ```
 
 **Response (not available):**
+
 ```json
 {
   "available": false,
@@ -386,6 +419,7 @@ Checks if an email is available for registration.
 ## Questions?
 
 If you encounter any issues:
+
 1. Check the console logs (browser DevTools and terminal)
 2. Verify database schema is up to date
 3. Ensure all environment variables are set

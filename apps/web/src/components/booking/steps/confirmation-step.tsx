@@ -6,9 +6,10 @@ import { Separator } from '@/components/ui/separator';
 import { CheckCircle2, Clock, MapPin, Calendar, Users, CreditCard, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useBooking as useBookingQuery } from '@/lib/api/bookings';
+import type { Listing } from '@/types/listing';
 
 interface ConfirmationStepProps {
-  listing: any;
+  listing: Listing;
   onValidationChange: (isValid: boolean) => void;
   onNext: () => void;
   onClose: () => void;
@@ -31,9 +32,10 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
     return () => clearInterval(interval);
   }, [bookingId, refetch]);
 
-  const locationText = typeof listing?.location === 'string'
-    ? listing.location
-    : `${listing?.location?.city}, ${listing?.location?.district}`;
+  const locationText =
+    typeof listing?.location === 'string'
+      ? listing.location
+      : `${listing?.location?.city}, ${listing?.location?.district}`;
 
   const getApprovalStatusBadge = (status: string) => {
     switch (status) {
@@ -104,11 +106,10 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
           <Alert>
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertDescription>
-              <p className="font-semibold text-green-900 dark:text-green-100">
-                Booking Confirmed!
-              </p>
+              <p className="font-semibold text-green-900 dark:text-green-100">Booking Confirmed!</p>
               <p className="text-sm mt-1">
-                Your booking has been approved. Check your email for the confirmation receipt and ticket.
+                Your booking has been approved. Check your email for the confirmation receipt and
+                ticket.
               </p>
             </AlertDescription>
           </Alert>
@@ -118,9 +119,7 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
           <Alert variant="destructive">
             <AlertDescription>
               <p className="font-semibold">Booking Rejected</p>
-              <p className="text-sm mt-1">
-                Reason: {booking.rejectionReason}
-              </p>
+              <p className="text-sm mt-1">Reason: {booking.rejectionReason}</p>
             </AlertDescription>
           </Alert>
         )}
@@ -158,12 +157,20 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
               <div>
                 {formData.checkInDate && (
                   <>
-                    <p className="font-medium">Check-in: {new Date(formData.checkInDate).toLocaleDateString()}</p>
-                    <p className="font-medium">Check-out: {formData.checkOutDate && new Date(formData.checkOutDate).toLocaleDateString()}</p>
+                    <p className="font-medium">
+                      Check-in: {new Date(formData.checkInDate).toLocaleDateString()}
+                    </p>
+                    <p className="font-medium">
+                      Check-out:{' '}
+                      {formData.checkOutDate &&
+                        new Date(formData.checkOutDate).toLocaleDateString()}
+                    </p>
                   </>
                 )}
                 {formData.serviceDate && (
-                  <p className="font-medium">Service Date: {new Date(formData.serviceDate).toLocaleDateString()}</p>
+                  <p className="font-medium">
+                    Service Date: {new Date(formData.serviceDate).toLocaleDateString()}
+                  </p>
                 )}
               </div>
             </div>
@@ -173,9 +180,7 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
           <div className="flex items-start gap-3">
             <Users className="h-5 w-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="font-medium">
-                {formData.guestDetails?.totalGuests} Guests
-              </p>
+              <p className="font-medium">{formData.guestDetails?.totalGuests} Guests</p>
               <p className="text-sm text-muted-foreground">
                 {formData.guestDetails?.adults} Adults, {formData.guestDetails?.children} Children
               </p>
@@ -186,8 +191,12 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
           <div>
             <p className="font-medium mb-2">Primary Guest</p>
             <p className="text-sm">{formData.guestDetails?.primaryGuest.name}</p>
-            <p className="text-sm text-muted-foreground">{formData.guestDetails?.primaryGuest.email}</p>
-            <p className="text-sm text-muted-foreground">{formData.guestDetails?.primaryGuest.phone}</p>
+            <p className="text-sm text-muted-foreground">
+              {formData.guestDetails?.primaryGuest.email}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {formData.guestDetails?.primaryGuest.phone}
+            </p>
           </div>
 
           {/* Payment Method */}
@@ -195,9 +204,11 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
             <CreditCard className="h-5 w-5 text-muted-foreground mt-0.5" />
             <div>
               <p className="font-medium">
-                {formData.paymentMethod === 'bkash' ? 'bKash' :
-                 formData.paymentMethod === 'nagad' ? 'Nagad' :
-                 formData.paymentMethod}
+                {formData.paymentMethod === 'bkash'
+                  ? 'bKash'
+                  : formData.paymentMethod === 'nagad'
+                    ? 'Nagad'
+                    : formData.paymentMethod}
               </p>
               <p className="text-sm text-muted-foreground">
                 Transaction ID: {formData.transactionId}
@@ -252,7 +263,10 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
           </li>
           <li className="flex gap-2">
             <span>2.</span>
-            <span>Once approved, you'll receive a confirmation email with your booking receipt and ticket</span>
+            <span>
+              Once approved, you'll receive a confirmation email with your booking receipt and
+              ticket
+            </span>
           </li>
           <li className="flex gap-2">
             <span>3.</span>
@@ -270,7 +284,11 @@ export function ConfirmationStep({ listing, onClose }: ConfirmationStepProps) {
         <Button onClick={onClose} className="flex-1">
           Close
         </Button>
-        <Button variant="outline" className="flex-1" onClick={() => window.location.href = '/bookings'}>
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={() => (window.location.href = '/bookings')}
+        >
           View All Bookings
         </Button>
       </div>

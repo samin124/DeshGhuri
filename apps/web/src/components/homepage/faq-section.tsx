@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useState } from 'react';
+import { Search } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { mockFAQs } from "@/lib/mock-data";
+} from '@/components/ui/accordion';
+import { Input } from '@/components/ui/input';
+import { mockFAQs } from '@/lib/mock-data';
 
 export default function FAQSection() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredFAQs = mockFAQs.filter((faq) =>
-    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFAQs = mockFAQs.filter(
+    (faq) =>
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

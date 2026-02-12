@@ -35,16 +35,21 @@ const submitPaymentSchema = z.object({
   bookingId: z.string(),
   paymentMethod: z.enum(['bkash', 'nagad', 'card', 'bank-transfer']),
   transactionId: z.string(),
-  paymentDetails: z.object({
-    accountNumber: z.string().optional(),
-    accountHolderName: z.string().optional(),
-    transactionDate: z.string().optional(),
-    notes: z.string().optional(),
-  }).optional(),
+  paymentDetails: z
+    .object({
+      accountNumber: z.string().optional(),
+      accountHolderName: z.string().optional(),
+      transactionDate: z.string().optional(),
+      notes: z.string().optional(),
+    })
+    .optional(),
 });
 
 // Middleware to require authentication
-async function requireAuth(c: any, next: () => Promise<void>) {
+async function requireAuth(
+  c: { req: { raw: { headers: Headers } }; set: (key: string, value: unknown) => void },
+  next: () => Promise<void>
+) {
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
   });
@@ -71,11 +76,7 @@ function generateBookingId(): string {
 }
 
 // Helper function to calculate pricing
-function calculatePricing(
-  basePrice: string,
-  guests: number,
-  promoDiscount?: string
-) {
+function calculatePricing(basePrice: string, guests: number, promoDiscount?: string) {
   const base = parseFloat(basePrice) * guests;
   const discount = promoDiscount ? parseFloat(promoDiscount) : 0;
   const tax = base * 0.05; // 5% tax
@@ -158,7 +159,7 @@ app.post('/', zValidator('json', createBookingSchema), async (c) => {
       listingId: data.listingId,
       sellerId: listingData.sellerId,
       customerId: userId,
-      listingTitle: listingData.title
+      listingTitle: listingData.title,
     });
 
     const [newBooking] = await db
@@ -193,7 +194,7 @@ app.post('/', zValidator('json', createBookingSchema), async (c) => {
     console.log('✅ Booking created successfully:', {
       bookingId: newBooking.id,
       sellerId: newBooking.sellerId,
-      approvalStatus: newBooking.approvalStatus
+      approvalStatus: newBooking.approvalStatus,
     });
 
     return c.json({
@@ -219,78 +220,66 @@ app.post('/', zValidator('json', createBookingSchema), async (c) => {
  * POST /api/customer/bookings/:bookingId/submit-payment
  * Submit payment details for seller approval
  */
-app.post(
-  '/:bookingId/submit-payment',
-  zValidator('json', submitPaymentSchema),
-  async (c) => {
-    try {
-      const userId = c.get('userId') as string;
-      const { bookingId } = c.req.param();
-      const data = c.req.valid('json');
+app.post('/:bookingId/submit-payment', zValidator('json', submitPaymentSchema), async (c) => {
+  try {
+    const userId = c.get('userId') as string;
+    const { bookingId } = c.req.param();
+    const data = c.req.valid('json');
 
-      // Verify booking ID matches
-      if (data.bookingId !== bookingId) {
-        throw new HTTPException(400, { message: 'Booking ID mismatch' });
-      }
-
-      // Get booking
-      const [bookingData] = await db
-        .select()
-        .from(booking)
-        .where(
-          and(
-            eq(booking.id, bookingId),
-            eq(booking.customerId, userId)
-          )
-        )
-        .limit(1);
-
-      if (!bookingData) {
-        throw new HTTPException(404, { message: 'Booking not found' });
-      }
-
-      // Check if booking is in hold status
-      if (bookingData.status !== 'hold') {
-        throw new HTTPException(400, { message: 'Booking is not in hold status' });
-      }
-
-      // Check if hold has expired
-      if (bookingData.holdExpiresAt && new Date(bookingData.holdExpiresAt) < new Date()) {
-        // Update booking to expired
-        await db
-          .update(booking)
-          .set({ status: 'expired' })
-          .where(eq(booking.id, bookingId));
-
-        throw new HTTPException(400, { message: 'Booking hold has expired' });
-      }
-
-      // Update booking with payment details
-      const [updatedBooking] = await db
-        .update(booking)
-        .set({
-          paymentMethod: data.paymentMethod,
-          transactionId: data.transactionId,
-          paymentDetails: data.paymentDetails || null,
-          paymentStatus: 'pending',
-          approvalStatus: 'pending',
-          status: 'hold', // Keep in hold until seller approves
-        })
-        .where(eq(booking.id, bookingId))
-        .returning();
-
-      return c.json({
-        success: true,
-        data: updatedBooking,
-        message: 'Payment details submitted. Waiting for seller approval.',
-      });
-    } catch (error) {
-      if (error instanceof HTTPException) throw error;
-      console.error('Error submitting payment:', error);
-      throw new HTTPException(500, { message: 'Failed to submit payment' });
+    // Verify booking ID matches
+    if (data.bookingId !== bookingId) {
+      throw new HTTPException(400, { message: 'Booking ID mismatch' });
     }
+
+    // Get booking
+    const [bookingData] = await db
+      .select()
+      .from(booking)
+      .where(and(eq(booking.id, bookingId), eq(booking.customerId, userId)))
+      .limit(1);
+
+    if (!bookingData) {
+      throw new HTTPException(404, { message: 'Booking not found' });
+    }
+
+    // Check if booking is in hold status
+    if (bookingData.status !== 'hold') {
+      throw new HTTPException(400, { message: 'Booking is not in hold status' });
+    }
+
+    // Check if hold has expired
+    if (bookingData.holdExpiresAt && new Date(bookingData.holdExpiresAt) < new Date()) {
+      // Update booking to expired
+      await db.update(booking).set({ status: 'expired' }).where(eq(booking.id, bookingId));
+
+      throw new HTTPException(400, { message: 'Booking hold has expired' });
+    }
+
+    // Update booking with payment details
+    const [updatedBooking] = await db
+      .update(booking)
+      .set({
+        paymentMethod: data.paymentMethod,
+        transactionId: data.transactionId,
+        paymentDetails: data.paymentDetails || null,
+        paymentStatus: 'pending',
+        approvalStatus: 'pending',
+        status: 'hold', // Keep in hold until seller approves
+      })
+      .where(eq(booking.id, bookingId))
+      .returning();
+
+    return c.json({
+      success: true,
+      data: updatedBooking,
+      message: 'Payment details submitted. Waiting for seller approval.',
+    });
+  } catch (error) {
+    if (error instanceof HTTPException) throw error;
+    console.error('Error submitting payment:', error);
+    throw new HTTPException(500, { message: 'Failed to submit payment' });
   }
-);
+});
 
 /**
  * GET /api/customer/bookings
@@ -348,12 +337,7 @@ app.get('/:bookingId', async (c) => {
       .from(booking)
       .leftJoin(listing, eq(booking.listingId, listing.id))
       .leftJoin(seller, eq(booking.sellerId, seller.id))
-      .where(
-        and(
-          eq(booking.id, bookingId),
-          eq(booking.customerId, userId)
-        )
-      )
+      .where(and(eq(booking.id, bookingId), eq(booking.customerId, userId)))
       .limit(1);
 
     if (!bookingData) {
@@ -381,12 +365,7 @@ app.post('/:bookingId/cancel', async (c) => {
     const [bookingData] = await db
       .select()
       .from(booking)
-      .where(
-        and(
-          eq(booking.id, bookingId),
-          eq(booking.customerId, userId)
-        )
-      )
+      .where(and(eq(booking.id, bookingId), eq(booking.customerId, userId)))
       .limit(1);
 
     if (!bookingData) {
@@ -396,7 +375,7 @@ app.post('/:bookingId/cancel', async (c) => {
     // Only allow cancellation for draft, hold, or pending payment bookings
     if (!['draft', 'hold'].includes(bookingData.status)) {
       throw new HTTPException(400, {
-        message: 'Booking cannot be cancelled at this stage'
+        message: 'Booking cannot be cancelled at this stage',
       });
     }
 

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
-import { Save, Image, FileText, HelpCircle, Plus } from 'lucide-react';
+import { Save, Image, HelpCircle, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,13 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 export const Route = createFileRoute('/admin/_admin/content/')({
   component: RouteComponent,
@@ -42,17 +35,15 @@ interface FAQItem {
 
 function RouteComponent() {
   const [activeTab, setActiveTab] = useState('banners');
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const [faqs, setFaqs] = useState<FAQItem[]>([]);
+  const [banners, _setBanners] = useState<Banner[]>([]);
+  const [faqs, _setFaqs] = useState<FAQItem[]>([]);
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Content Management</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Manage website content, banners, and FAQ
-        </p>
+        <p className="text-gray-600 dark:text-gray-400">Manage website content, banners, and FAQ</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -105,9 +96,7 @@ function RouteComponent() {
                         <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                           {banner.position}
                         </span>
-                        <span className="text-xs text-gray-500">
-                          Order: {banner.order}
-                        </span>
+                        <span className="text-xs text-gray-500">Order: {banner.order}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -146,10 +135,7 @@ function RouteComponent() {
               </div>
               <div>
                 <Label htmlFor="heroImage">Background Image URL</Label>
-                <Input
-                  id="heroImage"
-                  placeholder="https://..."
-                />
+                <Input id="heroImage" placeholder="https://..." />
               </div>
               <Button>
                 <Save className="h-4 w-4 mr-2" />
@@ -169,10 +155,7 @@ function RouteComponent() {
               </div>
               <div>
                 <Label htmlFor="categoriesTitle">Section Title</Label>
-                <Input
-                  id="categoriesTitle"
-                  defaultValue="Browse by Category"
-                />
+                <Input id="categoriesTitle" defaultValue="Browse by Category" />
               </div>
               <Button>
                 <Save className="h-4 w-4 mr-2" />
@@ -192,10 +175,7 @@ function RouteComponent() {
               </div>
               <div>
                 <Label htmlFor="howItWorksTitle">Section Title</Label>
-                <Input
-                  id="howItWorksTitle"
-                  defaultValue="How DeshGhuri Works"
-                />
+                <Input id="howItWorksTitle" defaultValue="How DeshGhuri Works" />
               </div>
               <div>
                 <Label htmlFor="howItWorksDesc">Description</Label>
@@ -282,16 +262,12 @@ function RouteComponent() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h4 className="font-medium mb-1">{faq.question}</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {faq.answer}
-                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{faq.answer}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                           {faq.category}
                         </span>
-                        <span className="text-xs text-gray-500">
-                          Order: {faq.order}
-                        </span>
+                        <span className="text-xs text-gray-500">Order: {faq.order}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

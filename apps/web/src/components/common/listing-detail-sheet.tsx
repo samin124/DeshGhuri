@@ -1,22 +1,16 @@
-import { useState } from "react";
-import { X, MapPin, Calendar, Users, Star, Heart, Share2, Clock } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { useState } from 'react';
+import { X, MapPin, Users, Star, Heart, Share2, Clock } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
 
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useListing } from "@/lib/api/listings";
-import { Skeleton } from "@/components/ui/skeleton";
-import { RatingStars } from "./rating-stars";
-import { PriceDisplay } from "./price-display";
-import { VerifiedBadge } from "@/components/seller/verified-badge";
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useListing } from '@/lib/api/listings';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RatingStars } from './rating-stars';
+import { VerifiedBadge } from '@/components/seller/verified-badge';
 
 interface ListingDetailSheetProps {
   listingId: string | null;
@@ -24,12 +18,8 @@ interface ListingDetailSheetProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function ListingDetailSheet({
-  listingId,
-  open,
-  onOpenChange,
-}: ListingDetailSheetProps) {
-  const { data, isLoading } = useListing(listingId || "");
+export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDetailSheetProps) {
+  const { data, isLoading } = useListing(listingId || '');
   const listing = data?.data;
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -47,7 +37,7 @@ export function ListingDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl p-0 overflow-hidden">
+      <SheetContent side="right" className="w-full sm:max-w-3xl p-0 overflow-hidden bg-background">
         <ScrollArea className="h-full">
           {isLoading ? (
             <div className="p-6 space-y-4">
@@ -61,33 +51,41 @@ export function ListingDetailSheet({
               {/* Header with close button */}
               <div className="sticky top-0 z-10 flex items-center justify-between bg-background border-b px-6 py-4">
                 <div className="flex-1 min-w-0 pr-4">
-                  <SheetTitle className="truncate">{listing.title}</SheetTitle>
+                  <SheetTitle className="truncate text-foreground text-2xl font-bold">
+                    {listing.title}
+                  </SheetTitle>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => onOpenChange(false)}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 hover:bg-muted rounded-full"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5 text-muted-foreground" />
                 </Button>
               </div>
 
               {/* Image Gallery */}
               <div className="relative">
-                <div className="aspect-[16/10] relative overflow-hidden">
+                <div className="aspect-[16/10] relative overflow-hidden bg-muted">
                   <img
                     src={selectedImage}
                     alt={listing.title}
                     className="w-full h-full object-cover"
                   />
                   {listing.isFlashDeal && (
-                    <Badge className="absolute left-4 top-4 bg-destructive">
-                      Flash Deal {listing.discountPercent && `- ${listing.discountPercent}% OFF`}
+                    <Badge
+                      variant="accent"
+                      className="absolute left-4 top-4 font-semibold shadow-lg"
+                    >
+                      ⚡ Flash Deal - {listing.discountPercent}% OFF
                     </Badge>
                   )}
-                  {listing.isTrending && (
-                    <Badge className="absolute left-4 top-4 bg-primary">
+                  {listing.isTrending && !listing.isFlashDeal && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute left-4 top-4 font-semibold shadow-lg"
+                    >
                       🔥 Trending
                     </Badge>
                   )}
@@ -95,15 +93,15 @@ export function ListingDetailSheet({
 
                 {/* Image thumbnails */}
                 {images.length > 1 && (
-                  <div className="flex gap-2 p-4 overflow-x-auto">
+                  <div className="flex gap-3 p-4 overflow-x-auto bg-muted/50">
                     {images.map((img, idx) => (
                       <button
                         key={idx}
                         onClick={() => setSelectedImageIndex(idx)}
                         className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                           idx === selectedImageIndex
-                            ? 'border-primary'
-                            : 'border-transparent hover:border-gray-300'
+                            ? 'border-primary shadow-md'
+                            : 'border-border hover:border-primary/50'
                         }`}
                       >
                         <img
@@ -118,19 +116,29 @@ export function ListingDetailSheet({
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-6 bg-background">
                 {/* Title, Category, and Actions */}
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h2 className="text-2xl font-bold mb-2">{listing.title}</h2>
-                      <Badge variant="secondary">{listing.category}</Badge>
+                      <h2 className="text-2xl font-bold mb-3 text-foreground">{listing.title}</h2>
+                      <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
+                        {listing.category}
+                      </Badge>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="icon">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="hover:border-destructive hover:text-destructive"
+                      >
                         <Heart className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="icon">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="hover:border-primary hover:text-primary"
+                      >
                         <Share2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -156,20 +164,22 @@ export function ListingDetailSheet({
                 {/* Seller Info */}
                 {listing.seller && (
                   <>
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-lg font-semibold">
+                    <div className="flex items-center gap-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
+                      <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-lg font-semibold text-primary-foreground">
                         {listing.seller.name.charAt(0)}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">Hosted by {listing.seller.name}</span>
+                          <span className="font-semibold text-foreground">
+                            Hosted by {listing.seller.name}
+                          </span>
                           {listing.seller.verificationStatus === 'verified' && (
                             <VerifiedBadge size="sm" />
                           )}
                         </div>
                         {listing.seller.rating && (
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <Star className="h-3 w-3 fill-current text-yellow-500" />
+                            <Star className="h-3 w-3 fill-current text-warning" />
                             <span>{listing.seller.rating} seller rating</span>
                           </div>
                         )}
@@ -181,8 +191,8 @@ export function ListingDetailSheet({
 
                 {/* Description */}
                 <div>
-                  <h3 className="font-semibold mb-2">About this listing</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
+                  <h3 className="font-bold text-lg mb-3 text-foreground">About this experience</h3>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                     {listing.description}
                   </p>
                 </div>
@@ -191,19 +201,19 @@ export function ListingDetailSheet({
 
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-muted-foreground" />
+                  <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                    <Users className="h-5 w-5 text-primary" />
                     <div>
                       <p className="text-sm text-muted-foreground">Capacity</p>
-                      <p className="font-medium">{listing.maxGuests} guests</p>
+                      <p className="font-semibold text-foreground">{listing.maxGuests} guests</p>
                     </div>
                   </div>
                   {listing.checkInTime && listing.checkOutTime && (
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-muted-foreground" />
+                    <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                      <Clock className="h-5 w-5 text-primary" />
                       <div>
                         <p className="text-sm text-muted-foreground">Check-in/out</p>
-                        <p className="font-medium text-sm">
+                        <p className="font-semibold text-foreground text-sm">
                           {listing.checkInTime} - {listing.checkOutTime}
                         </p>
                       </div>
@@ -216,10 +226,10 @@ export function ListingDetailSheet({
                   <>
                     <Separator />
                     <div>
-                      <h3 className="font-semibold mb-3">Amenities</h3>
+                      <h3 className="font-bold text-lg mb-3 text-foreground">Amenities</h3>
                       <div className="flex flex-wrap gap-2">
                         {listing.amenities.map((amenity, idx) => (
-                          <Badge key={idx} variant="outline">
+                          <Badge key={idx} variant="secondary">
                             {amenity}
                           </Badge>
                         ))}
@@ -233,12 +243,12 @@ export function ListingDetailSheet({
                   <>
                     <Separator />
                     <div>
-                      <h3 className="font-semibold mb-3">What's Included</h3>
-                      <ul className="space-y-2">
+                      <h3 className="font-bold text-lg mb-3 text-foreground">What's Included</h3>
+                      <ul className="space-y-2.5">
                         {listing.inclusions.map((item, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <span className="text-green-500 mt-0.5">✓</span>
-                            <span className="text-sm">{item}</span>
+                            <span className="text-success font-bold mt-0.5">✓</span>
+                            <span className="text-foreground/90">{item}</span>
                           </li>
                         ))}
                       </ul>
@@ -251,12 +261,12 @@ export function ListingDetailSheet({
                   <>
                     <Separator />
                     <div>
-                      <h3 className="font-semibold mb-3">Not Included</h3>
-                      <ul className="space-y-2">
+                      <h3 className="font-bold text-lg mb-3 text-foreground">Not Included</h3>
+                      <ul className="space-y-2.5">
                         {listing.exclusions.map((item, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <span className="text-red-500 mt-0.5">✗</span>
-                            <span className="text-sm">{item}</span>
+                            <span className="text-destructive font-bold mt-0.5">✗</span>
+                            <span className="text-foreground/90">{item}</span>
                           </li>
                         ))}
                       </ul>
@@ -267,8 +277,10 @@ export function ListingDetailSheet({
                 {/* Cancellation Policy */}
                 <Separator />
                 <div>
-                  <h3 className="font-semibold mb-2">Cancellation Policy</h3>
-                  <Badge variant="outline">{listing.cancellationPolicy}</Badge>
+                  <h3 className="font-bold text-lg mb-3 text-foreground">Cancellation Policy</h3>
+                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0">
+                    {listing.cancellationPolicy}
+                  </Badge>
                 </div>
 
                 {/* House Rules */}
@@ -276,8 +288,8 @@ export function ListingDetailSheet({
                   <>
                     <Separator />
                     <div>
-                      <h3 className="font-semibold mb-2">House Rules</h3>
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      <h3 className="font-bold text-lg mb-3 text-foreground">House Rules</h3>
+                      <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">
                         {listing.houseRules}
                       </p>
                     </div>
@@ -286,28 +298,27 @@ export function ListingDetailSheet({
               </div>
 
               {/* Sticky Footer with Price and Book Button */}
-              <div className="sticky bottom-0 border-t bg-background p-6">
+              <div className="sticky bottom-0 border-t bg-background p-6 shadow-2xl">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <PriceDisplay
-                      price={parseFloat(listing.basePrice || '0')}
-                      currency={listing.currency}
-                      discountPercent={listing.discountPercent}
-                      size="lg"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {listing.priceUnit}
-                    </p>
+                    <div className="text-3xl font-bold text-foreground">
+                      ৳
+                      {Number(listing.discountedPrice || listing.basePrice || '0').toLocaleString()}
+                    </div>
+                    {listing.discountedPrice && (
+                      <div className="text-base text-muted-foreground line-through">
+                        ৳{Number(listing.basePrice).toLocaleString()}
+                      </div>
+                    )}
+                    <p className="text-sm text-muted-foreground mt-1">{listing.priceUnit}</p>
                   </div>
-                  <Button size="lg" asChild>
-                    <Link to={`/listing/${listing.id}`}>
-                      View Full Details & Book
-                    </Link>
+                  <Button size="lg" className="rounded-xl px-8" asChild>
+                    <Link to={`/listing/${listing.id}`}>View Details & Book</Link>
                   </Button>
                 </div>
                 {listing.groupEligible && (
-                  <p className="text-xs text-center text-muted-foreground mt-2">
-                    💰 Group discounts available
+                  <p className="text-sm text-center text-primary mt-3 font-medium">
+                    💰 Group discounts up to 40% available
                   </p>
                 )}
               </div>

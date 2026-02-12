@@ -54,7 +54,8 @@ interface ReviewListingInput {
 // Query Keys
 export const adminListingKeys = {
   all: ['admin-listings'] as const,
-  reviewQueue: (filters?: ReviewQueueFilters) => [...adminListingKeys.all, 'review-queue', filters] as const,
+  reviewQueue: (filters?: ReviewQueueFilters) =>
+    [...adminListingKeys.all, 'review-queue', filters] as const,
   lists: () => [...adminListingKeys.all, 'list'] as const,
   list: (filters?: AdminListingsFilters) => [...adminListingKeys.lists(), filters] as const,
   details: () => [...adminListingKeys.all, 'detail'] as const,

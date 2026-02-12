@@ -1,26 +1,26 @@
-import { Search, CreditCard, Shield, CheckCircle } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Search, CreditCard, Shield, CheckCircle } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 const steps = [
   {
     icon: Search,
-    title: "Search & Book",
-    description: "Browse listings and select your perfect travel experience",
+    title: 'Search & Book',
+    description: 'Browse listings and select your perfect travel experience',
   },
   {
     icon: CreditCard,
-    title: "Secure Payment",
-    description: "Pay with confidence - funds held in escrow until service delivery",
+    title: 'Secure Payment',
+    description: 'Pay with confidence - funds held in escrow until service delivery',
   },
   {
     icon: Shield,
-    title: "Service Delivery",
-    description: "Enjoy your trip knowing your payment is protected",
+    title: 'Service Delivery',
+    description: 'Enjoy your trip knowing your payment is protected',
   },
   {
     icon: CheckCircle,
-    title: "Verified Completion",
-    description: "Seller submits proof, payment released after verification",
+    title: 'Verified Completion',
+    description: 'Seller submits proof, payment released after verification',
   },
 ];
 
@@ -38,7 +38,10 @@ export default function HowItWorks() {
             return (
               <Card key={index} className="relative p-6 text-center">
                 {index < steps.length - 1 && (
-                  <div className="absolute right-0 top-1/2 hidden h-0.5 w-4 bg-primary md:block" style={{ transform: "translateX(100%)" }} />
+                  <div
+                    className="absolute right-0 top-1/2 hidden h-0.5 w-4 bg-primary md:block"
+                    style={{ transform: 'translateX(100%)' }}
+                  />
                 )}
                 <div className="mb-4 flex justify-center">
                   <div className="rounded-full bg-primary/10 p-4">
