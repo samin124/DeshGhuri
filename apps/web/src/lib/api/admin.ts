@@ -2,6 +2,29 @@ import { env } from '@DeshGhuri/env/web';
 
 const API_BASE = env.VITE_SERVER_URL;
 
+export interface HomepageSectionVisibility {
+  hero: boolean;
+  flashDeals: boolean;
+  specialOffers: boolean;
+  trendingListings: boolean;
+  browseCategories: boolean;
+  featuredDestinations: boolean;
+  popularServices: boolean;
+  seasonalPackages: boolean;
+  testimonials: boolean;
+  blogPreview: boolean;
+  faq: boolean;
+  newsletter: boolean;
+}
+
+export interface HomepageConfigResponse {
+  heroTitle: string;
+  heroSubtitle: string;
+  sectionVisibility: HomepageSectionVisibility;
+  updatedAt: string;
+  updatedBy: string | null;
+}
+
 // Helper to handle API responses
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -41,6 +64,29 @@ export const adminDashboard = {
       inReviewSellers: any[];
       pendingDocuments: any[];
     }>('/api/admin/dashboard/pending-actions'),
+};
+
+// Content API
+export const adminContent = {
+  getHomepage: () =>
+    apiRequest<{
+      success: boolean;
+      data: HomepageConfigResponse;
+    }>('/api/admin/content/homepage'),
+
+  updateHomepage: (
+    data: Partial<Pick<HomepageConfigResponse, 'heroTitle' | 'heroSubtitle'>> & {
+      sectionVisibility?: Partial<HomepageSectionVisibility>;
+    }
+  ) =>
+    apiRequest<{
+      success: boolean;
+      message: string;
+      data: HomepageConfigResponse;
+    }>('/api/admin/content/homepage', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
 };
 
 // Users API

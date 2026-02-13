@@ -59,8 +59,8 @@ export default function FeaturedDestinations() {
     ) || {};
 
   return (
-    <section className="bg-background py-16 border-b">
-      <div className="container mx-auto px-4">
+    <section className="border-b border-border/40 bg-background-subtle py-16">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
             Popular Destinations

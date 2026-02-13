@@ -194,7 +194,7 @@ function SearchComponent() {
     ) || {};
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-6">
       {/* Search Summary */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">
@@ -231,7 +231,7 @@ function SearchComponent() {
 
       {/* Filters and Controls Bar */}
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
             <SlidersHorizontal className="mr-2 h-4 w-4" />
             Filters
@@ -275,13 +275,13 @@ function SearchComponent() {
           </Button>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex w-full flex-wrap gap-2 md:w-auto md:justify-end">
           {/* Sort dropdown */}
           <Select
             value={search.sort || 'relevance'}
             onValueChange={(value) => updateSearch({ sort: value })}
           >
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-full sm:w-44">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -318,7 +318,7 @@ function SearchComponent() {
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="mb-6 rounded-lg border bg-muted/30 p-6">
+        <div className="mb-6 rounded-lg border bg-muted/30 p-4 md:p-6">
           <h3 className="mb-6 text-lg font-semibold">Filters</h3>
 
           {/* Section 1: Search Criteria */}
@@ -400,7 +400,7 @@ function SearchComponent() {
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-4 border-t flex gap-2">
+          <div className="pt-4 border-t flex flex-col gap-2 sm:flex-row">
             <Button
               variant="outline"
               size="sm"

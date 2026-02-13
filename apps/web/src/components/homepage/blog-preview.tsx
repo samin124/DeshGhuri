@@ -6,8 +6,8 @@ import { Calendar, Clock } from 'lucide-react';
 
 export default function BlogPreview() {
   return (
-    <section className="bg-muted/30 py-12">
-      <div className="container mx-auto px-4">
+    <section className="bg-background-subtle py-12">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold">Travel Stories & Tips</h2>
           <p className="text-muted-foreground">Inspiration for your next adventure</p>

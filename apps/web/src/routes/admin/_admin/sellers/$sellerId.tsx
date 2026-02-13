@@ -11,8 +11,9 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Ban,
 } from 'lucide-react';
-import { useSeller, useUpdateSellerVerification } from '@/hooks/use-admin-queries';
+import { useSeller, useUpdateSellerVerification, useUpdateUser } from '@/hooks/use-admin-queries';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { DocumentReviewPanel } from '@/components/admin/document-review-panel';
 import { VerifiedBadge } from '@/components/seller/verified-badge';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin/_admin/sellers/$sellerId')({
   component: RouteComponent,
@@ -30,6 +32,7 @@ function RouteComponent() {
   const { sellerId } = Route.useParams();
   const { data, isLoading, error } = useSeller(sellerId);
   const updateVerificationMutation = useUpdateSellerVerification();
+  const updateUserMutation = useUpdateUser();
 
   const [verificationAction, setVerificationAction] = useState<
     'approved' | 'rejected' | 'in-review' | 'incomplete' | null
@@ -63,6 +66,24 @@ function RouteComponent() {
   }
 
   const seller = data.seller;
+  const isSellerSuspended = Boolean(seller.user?.banned);
+
+  const handleSellerSuspendToggle = async () => {
+    if (!seller.user?.id) {
+      toast.error('Seller user account not found.');
+      return;
+    }
+
+    await updateUserMutation.mutateAsync({
+      id: seller.user.id,
+      data: {
+        action: isSellerSuspended ? 'reactivate' : 'suspend',
+        reason: isSellerSuspended
+          ? 'Seller account reactivated by admin'
+          : 'Seller account suspended by admin',
+      },
+    });
+  };
 
   const handleVerificationUpdate = async () => {
     if (!verificationAction || !message.trim()) return;
@@ -131,10 +152,29 @@ function RouteComponent() {
             </p>
           </div>
         </div>
-        <Badge className={getStatusColor(seller.verificationStatus)}>
-          {seller.verificationStatus}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={isSellerSuspended ? 'default' : 'destructive'}
+            onClick={handleSellerSuspendToggle}
+            disabled={updateUserMutation.isPending}
+          >
+            <Ban className="h-4 w-4 mr-2" />
+            {isSellerSuspended ? 'Reactivate Seller' : 'Suspend Seller'}
+          </Button>
+          <Badge className={getStatusColor(seller.verificationStatus)}>
+            {seller.verificationStatus}
+          </Badge>
+        </div>
       </div>
+
+      {isSellerSuspended && (
+        <Card className="border-red-200 bg-red-50 dark:bg-red-900/20">
+          <div className="p-4 text-sm text-red-700 dark:text-red-300">
+            This seller account is currently suspended. They cannot use seller functionality until
+            reactivated.
+          </div>
+        </Card>
+      )}
 
       <Tabs defaultValue="details" className="w-full">
         <TabsList>

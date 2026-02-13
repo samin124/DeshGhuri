@@ -1,11 +1,31 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { getAnalytics } from '@/lib/api/seller-dashboard';
+import { format } from 'date-fns';
+import {
+  AlertCircle,
+  BarChart3,
+  DollarSign,
+  Eye,
+  RefreshCw,
+  ShoppingCart,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
-export const Route = createFileRoute('/seller/dashboard/analytics')({
-  component: SellerAnalytics,
-});
+import { getAnalytics } from '@/lib/api/seller-dashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
@@ -16,43 +36,54 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  AlertCircle,
-  TrendingUp,
-  TrendingDown,
-  Eye,
-  ShoppingCart,
-  DollarSign,
-  BarChart3,
-} from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from 'recharts';
+import { Button } from '@/components/ui/button';
+import type { AnalyticsOverview } from '@/types/dashboard';
+
+export const Route = createFileRoute('/seller/dashboard/analytics')({
+  component: SellerAnalytics,
+});
 
 type Period = 'today' | 'week' | 'month' | 'year';
+
+const formatCurrency = (value?: string | number | null) => {
+  const numeric = typeof value === 'number' ? value : Number(value || 0);
+  if (Number.isNaN(numeric)) return 'BDT 0';
+  return `BDT ${numeric.toLocaleString()}`;
+};
+
+const formatChartDate = (value: string, period: Period) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  if (period === 'year') {
+    return date.toLocaleDateString('en-US', { month: 'short' });
+  }
+
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
 
 function SellerAnalytics() {
   const [period, setPeriod] = useState<Period>('month');
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, dataUpdatedAt, refetch, isFetching } = useQuery<
+    AnalyticsOverview,
+    Error
+  >({
     queryKey: ['seller-analytics', period],
     queryFn: () => getAnalytics({ period }),
+    refetchInterval: 60_000,
   });
+
+  const hasCharts = useMemo(
+    () => !!data && data.revenueChart.length > 0 && data.viewsChart.length > 0,
+    [data]
+  );
 
   const renderTrend = (value: number | undefined) => {
     if (value === undefined || value === null || value === 0) return null;
 
     return (
-      <div className={`flex items-center text-sm ${value > 0 ? 'text-green-500' : 'text-red-500'}`}>
+      <div className={`flex items-center text-sm ${value > 0 ? 'text-green-600' : 'text-red-600'}`}>
         {value > 0 ? (
           <TrendingUp className="mr-1 h-4 w-4" />
         ) : (
@@ -68,7 +99,7 @@ function SellerAnalytics() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="p-0">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -80,27 +111,45 @@ function SellerAnalytics() {
   }
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-          <p className="text-muted-foreground">Track your performance and trends</p>
+          <p className="text-muted-foreground">Track your performance with live trend data.</p>
         </div>
-        <Select value={period} onValueChange={(value) => setPeriod(value as Period)}>
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="week">Week</SelectItem>
-            <SelectItem value="month">Month</SelectItem>
-            <SelectItem value="year">Year</SelectItem>
-          </SelectContent>
-        </Select>
+
+        <div className="flex items-center gap-2">
+          <Select
+            value={period}
+            onValueChange={(value) => {
+              if (value === 'today' || value === 'week' || value === 'month' || value === 'year') {
+                setPeriod(value);
+              }
+            }}
+          >
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="week">Week</SelectItem>
+              <SelectItem value="month">Month</SelectItem>
+              <SelectItem value="year">Year</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+            <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
 
-      {/* Key Metrics */}
+      <p className="text-xs text-muted-foreground">
+        Last updated:{' '}
+        {dataUpdatedAt ? format(new Date(dataUpdatedAt), 'MMM dd, yyyy hh:mm a') : 'Not available'}
+      </p>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {isLoading ? (
           <>
@@ -147,9 +196,7 @@ function SellerAnalytics() {
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  ৳{parseFloat(data?.totalRevenue || '0').toLocaleString()}
-                </div>
+                <div className="text-2xl font-bold">{formatCurrency(data?.totalRevenue)}</div>
                 {data && renderTrend(data.revenueChange)}
               </CardContent>
             </Card>
@@ -168,36 +215,45 @@ function SellerAnalytics() {
         )}
       </div>
 
-      {/* Revenue Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>Revenue & Bookings Trend</CardTitle>
+          <CardTitle>Revenue and Bookings Trend</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <Skeleton className="h-80 w-full" />
-          ) : data && data.revenueChart.length > 0 ? (
+          ) : hasCharts && data ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data.revenueChart}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
+                <XAxis dataKey="date" tickFormatter={(value) => formatChartDate(value, period)} />
                 <YAxis yAxisId="left" />
-                <YAxis yAxisId="right" orientation="right" />
-                <Tooltip />
+                <YAxis yAxisId="right" orientation="right" allowDecimals={false} />
+                <Tooltip
+                  formatter={(value, name) => {
+                    if (String(name).toLowerCase().includes('revenue')) {
+                      return [formatCurrency(Number(value)), name];
+                    }
+                    return [Number(value).toLocaleString(), name];
+                  }}
+                  labelFormatter={(label) => formatChartDate(label, period)}
+                />
                 <Legend />
                 <Line
                   yAxisId="left"
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#8884d8"
-                  name="Revenue (৳)"
+                  stroke="#0f766e"
+                  name="Revenue (BDT)"
+                  dot={false}
                 />
                 <Line
                   yAxisId="right"
                   type="monotone"
                   dataKey="bookings"
-                  stroke="#82ca9d"
+                  stroke="#1d4ed8"
                   name="Bookings"
+                  dot={false}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -209,7 +265,6 @@ function SellerAnalytics() {
         </CardContent>
       </Card>
 
-      {/* Views Chart */}
       <Card>
         <CardHeader>
           <CardTitle>Views Trend</CardTitle>
@@ -217,15 +272,18 @@ function SellerAnalytics() {
         <CardContent>
           {isLoading ? (
             <Skeleton className="h-80 w-full" />
-          ) : data && data.viewsChart.length > 0 ? (
+          ) : hasCharts && data ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.viewsChart}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
+                <XAxis dataKey="date" tickFormatter={(value) => formatChartDate(value, period)} />
+                <YAxis allowDecimals={false} />
+                <Tooltip
+                  formatter={(value, name) => [Number(value).toLocaleString(), name]}
+                  labelFormatter={(label) => formatChartDate(label, period)}
+                />
                 <Legend />
-                <Bar dataKey="views" fill="#8884d8" name="Views" />
+                <Bar dataKey="views" fill="#0ea5e9" name="Views" />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -236,7 +294,6 @@ function SellerAnalytics() {
         </CardContent>
       </Card>
 
-      {/* Top Listings */}
       <Card>
         <CardHeader>
           <CardTitle>Top Performing Listings</CardTitle>
@@ -262,13 +319,13 @@ function SellerAnalytics() {
                     <div>
                       <h4 className="font-medium">{listing.title}</h4>
                       <div className="mt-1 flex gap-4 text-sm text-muted-foreground">
-                        <span>{listing.views} views</span>
-                        <span>{listing.bookings} bookings</span>
+                        <span>{listing.views.toLocaleString()} views</span>
+                        <span>{listing.bookings.toLocaleString()} bookings</span>
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold">৳{parseFloat(listing.revenue).toLocaleString()}</div>
+                    <div className="font-bold">{formatCurrency(listing.revenue)}</div>
                     <div className="text-sm text-muted-foreground">Revenue</div>
                   </div>
                 </div>

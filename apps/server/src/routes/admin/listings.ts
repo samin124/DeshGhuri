@@ -103,6 +103,8 @@ app.get('/', async (c) => {
     const category = c.req.query('category') || '';
     const sellerId = c.req.query('sellerId') || '';
     const featured = c.req.query('featured');
+    const flashDeals = c.req.query('flashDeals');
+    const groupEligible = c.req.query('groupEligible');
     const sortBy = c.req.query('sortBy') || 'createdAt';
     const sortOrder = (c.req.query('sortOrder') || 'desc') as 'asc' | 'desc';
 
@@ -125,6 +127,14 @@ app.get('/', async (c) => {
 
     if (featured !== undefined) {
       conditions.push(eq(listing.isFeatured, featured === 'true'));
+    }
+
+    if (flashDeals !== undefined) {
+      conditions.push(eq(listing.isFlashDeal, flashDeals === 'true'));
+    }
+
+    if (groupEligible !== undefined) {
+      conditions.push(eq(listing.groupEligible, groupEligible === 'true'));
     }
 
     if (search) {
@@ -399,6 +409,177 @@ app.patch('/:id/featured', async (c) => {
       return c.json({ error: 'Validation error', details: error.issues }, 400);
     }
     return c.json({ error: 'Failed to toggle featured status' }, 500);
+  }
+});
+
+/**
+ * PATCH /api/admin/listings/:id/flash-deal
+ * Configure flash deal status, discount, and end time
+ */
+app.patch('/:id/flash-deal', async (c) => {
+  try {
+    const listingId = c.req.param('id');
+    const adminUserId = c.get('userId') as string;
+    const body = await c.req.json();
+
+    const schema = z.object({
+      enabled: z.boolean(),
+      discountPercent: z.number().int().min(1).max(95).optional(),
+      flashDealEndsAt: z.string().datetime().optional(),
+      reason: z.string().optional(),
+    });
+
+    const { enabled, discountPercent, flashDealEndsAt, reason } = schema.parse(body);
+
+    const existingListing = await db.query.listing.findFirst({
+      where: eq(listing.id, listingId),
+    });
+
+    if (!existingListing) {
+      return c.json({ error: 'Listing not found' }, 404);
+    }
+
+    if (enabled && existingListing.status !== LISTING_STATUSES.ACTIVE) {
+      return c.json({ error: 'Only active listings can be set as flash deals' }, 400);
+    }
+
+    if (enabled && !flashDealEndsAt) {
+      return c.json({ error: 'Flash deal end time is required when enabling flash deals' }, 400);
+    }
+
+    const parsedEndsAt = flashDealEndsAt ? new Date(flashDealEndsAt) : null;
+    if (parsedEndsAt && Number.isNaN(parsedEndsAt.getTime())) {
+      return c.json({ error: 'Invalid flash deal end time' }, 400);
+    }
+
+    if (enabled && parsedEndsAt && parsedEndsAt <= new Date()) {
+      return c.json({ error: 'Flash deal end time must be in the future' }, 400);
+    }
+
+    const finalDiscount = enabled
+      ? (discountPercent ?? existingListing.discountPercent ?? undefined)
+      : null;
+    const normalizedDiscount = typeof finalDiscount === 'number' ? finalDiscount : null;
+
+    const basePrice = Number(existingListing.basePrice);
+    const calculatedDiscountedPrice =
+      enabled && typeof normalizedDiscount === 'number'
+        ? (basePrice * (1 - normalizedDiscount / 100)).toFixed(2)
+        : null;
+
+    await db
+      .update(listing)
+      .set({
+        isFlashDeal: enabled,
+        flashDealEndsAt: enabled ? parsedEndsAt : null,
+        discountPercent: normalizedDiscount,
+        discountedPrice: calculatedDiscountedPrice,
+        updatedAt: new Date(),
+      })
+      .where(eq(listing.id, listingId));
+
+    await createAuditLog({
+      userId: adminUserId,
+      action: 'listing.flash-deal.update',
+      entityType: 'listing',
+      entityId: listingId,
+      oldValue: {
+        isFlashDeal: existingListing.isFlashDeal,
+        flashDealEndsAt: existingListing.flashDealEndsAt,
+        discountPercent: existingListing.discountPercent,
+      },
+      newValue: {
+        isFlashDeal: enabled,
+        flashDealEndsAt: enabled ? parsedEndsAt : null,
+        discountPercent: normalizedDiscount,
+      },
+      metadata: {
+        ...getRequestMetadata(c.req.raw.headers),
+        reason,
+      },
+    });
+
+    return c.json({
+      success: true,
+      message: enabled ? 'Flash deal configured successfully' : 'Flash deal removed successfully',
+      data: {
+        listingId,
+        isFlashDeal: enabled,
+        discountPercent: normalizedDiscount,
+        flashDealEndsAt: enabled ? parsedEndsAt : null,
+      },
+    });
+  } catch (error) {
+    console.error('Flash deal update error:', error);
+    if (error instanceof z.ZodError) {
+      return c.json({ error: 'Validation error', details: error.issues }, 400);
+    }
+    return c.json({ error: 'Failed to update flash deal' }, 500);
+  }
+});
+
+/**
+ * PATCH /api/admin/listings/:id/group-eligible
+ * Toggle group eligible status (used for special offers section)
+ */
+app.patch('/:id/group-eligible', async (c) => {
+  try {
+    const listingId = c.req.param('id');
+    const adminUserId = c.get('userId') as string;
+    const body = await c.req.json();
+
+    const schema = z.object({
+      enabled: z.boolean(),
+      reason: z.string().optional(),
+    });
+
+    const { enabled, reason } = schema.parse(body);
+
+    const existingListing = await db.query.listing.findFirst({
+      where: eq(listing.id, listingId),
+    });
+
+    if (!existingListing) {
+      return c.json({ error: 'Listing not found' }, 404);
+    }
+
+    await db
+      .update(listing)
+      .set({
+        groupEligible: enabled,
+        updatedAt: new Date(),
+      })
+      .where(eq(listing.id, listingId));
+
+    await createAuditLog({
+      userId: adminUserId,
+      action: 'listing.group-eligible.update',
+      entityType: 'listing',
+      entityId: listingId,
+      oldValue: { groupEligible: existingListing.groupEligible },
+      newValue: { groupEligible: enabled },
+      metadata: {
+        ...getRequestMetadata(c.req.raw.headers),
+        reason,
+      },
+    });
+
+    return c.json({
+      success: true,
+      message: enabled
+        ? 'Listing added to special offers section'
+        : 'Listing removed from special offers section',
+      data: {
+        listingId,
+        groupEligible: enabled,
+      },
+    });
+  } catch (error) {
+    console.error('Group eligibility update error:', error);
+    if (error instanceof z.ZodError) {
+      return c.json({ error: 'Validation error', details: error.issues }, 400);
+    }
+    return c.json({ error: 'Failed to update group eligibility' }, 500);
   }
 });
 

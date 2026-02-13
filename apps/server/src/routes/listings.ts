@@ -1,8 +1,45 @@
 import { Hono } from 'hono';
-import { db, listing, seller, review, LISTING_CATEGORIES, LISTING_STATUSES } from '@DeshGhuri/db';
+import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator';
+import { nanoid } from 'nanoid';
+import { auth } from '@DeshGhuri/auth';
+import {
+  db,
+  listing,
+  seller,
+  review,
+  booking,
+  user,
+  LISTING_CATEGORIES,
+  LISTING_STATUSES,
+} from '@DeshGhuri/db';
 import { eq, and, gte, lte, desc, asc, sql, or } from 'drizzle-orm';
+import { getHomepageConfig } from '../lib/homepage-config';
 
 const app = new Hono();
+
+const createListingReviewSchema = z.object({
+  overallRating: z.number().int().min(1).max(5),
+  title: z.string().max(120).optional(),
+  comment: z.string().min(5).max(1000),
+  ratings: z
+    .object({
+      cleanliness: z.number().int().min(1).max(5).optional(),
+      communication: z.number().int().min(1).max(5).optional(),
+      accuracy: z.number().int().min(1).max(5).optional(),
+      value: z.number().int().min(1).max(5).optional(),
+      location: z.number().int().min(1).max(5).optional(),
+    })
+    .optional(),
+});
+
+async function getSessionUserId(c: { req: { raw: { headers: Headers } } }) {
+  const session = await auth.api.getSession({
+    headers: c.req.raw.headers,
+  });
+
+  return session?.user?.id ?? null;
+}
 
 // ============================================================================
 // PUBLIC LISTING ENDPOINTS
@@ -404,6 +441,274 @@ app.get('/', async (c) => {
       {
         success: false,
         error: 'Failed to fetch listings',
+      },
+      500
+    );
+  }
+});
+
+/**
+ * GET /api/listings/homepage-config
+ * Public homepage configuration (hero text + section visibility)
+ */
+app.get('/homepage-config', async (c) => {
+  try {
+    const config = await getHomepageConfig();
+
+    return c.json({
+      success: true,
+      data: config,
+    });
+  } catch (error) {
+    console.error('Error fetching homepage config:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to fetch homepage config',
+      },
+      500
+    );
+  }
+});
+
+/**
+ * GET /api/listings/:id/reviews
+ * Get latest reviews, rating summary, and review eligibility for logged-in customer
+ */
+app.get('/:id/reviews', async (c) => {
+  try {
+    const listingId = c.req.param('id');
+    const limit = Math.min(Math.max(Number(c.req.query('limit') || '5'), 1), 20);
+
+    const [listingData] = await db
+      .select({
+        id: listing.id,
+        status: listing.status,
+      })
+      .from(listing)
+      .where(eq(listing.id, listingId))
+      .limit(1);
+
+    if (!listingData || listingData.status !== LISTING_STATUSES.ACTIVE) {
+      return c.json(
+        {
+          success: false,
+          error: 'Listing not found',
+        },
+        404
+      );
+    }
+
+    const latestReviews = await db
+      .select({
+        id: review.id,
+        overallRating: review.overallRating,
+        title: review.title,
+        comment: review.comment,
+        sellerResponse: review.sellerResponse,
+        respondedAt: review.respondedAt,
+        createdAt: review.createdAt,
+        customer: {
+          id: user.id,
+          name: user.name,
+          image: user.image,
+        },
+      })
+      .from(review)
+      .leftJoin(user, eq(review.customerId, user.id))
+      .where(and(eq(review.listingId, listingId), eq(review.status, 'published')))
+      .orderBy(desc(review.createdAt))
+      .limit(limit);
+
+    const [reviewStats] = await db
+      .select({
+        averageRating: sql<number>`COALESCE(AVG(${review.overallRating}), 0)`,
+        reviewCount: sql<number>`count(*)`,
+      })
+      .from(review)
+      .where(and(eq(review.listingId, listingId), eq(review.status, 'published')))
+      .limit(1);
+
+    const userId = await getSessionUserId(c);
+    let canReview = false;
+    let eligibilityMessage = 'Sign in to submit a rating and review.';
+
+    if (userId) {
+      const [eligibleBooking] = await db
+        .select({ id: booking.id })
+        .from(booking)
+        .where(
+          and(
+            eq(booking.listingId, listingId),
+            eq(booking.customerId, userId),
+            eq(booking.approvalStatus, 'approved'),
+            or(eq(booking.status, 'confirmed'), eq(booking.status, 'completed'))!,
+            sql`NOT EXISTS (SELECT 1 FROM ${review} r WHERE r.booking_id = ${booking.id})`
+          )
+        )
+        .orderBy(desc(booking.createdAt))
+        .limit(1);
+
+      if (eligibleBooking) {
+        canReview = true;
+        eligibilityMessage = 'You can submit a review for this package.';
+      } else {
+        const [approvedBookingCount] = await db
+          .select({
+            count: sql<number>`count(*)`,
+          })
+          .from(booking)
+          .where(
+            and(
+              eq(booking.listingId, listingId),
+              eq(booking.customerId, userId),
+              eq(booking.approvalStatus, 'approved'),
+              or(eq(booking.status, 'confirmed'), eq(booking.status, 'completed'))!
+            )
+          )
+          .limit(1);
+
+        if (Number(approvedBookingCount?.count || 0) === 0) {
+          eligibilityMessage = 'You can review this package after an approved booking.';
+        } else {
+          eligibilityMessage = 'You have already submitted reviews for available bookings.';
+        }
+      }
+    }
+
+    return c.json({
+      success: true,
+      data: {
+        averageRating: Number(reviewStats?.averageRating || 0),
+        reviewCount: Number(reviewStats?.reviewCount || 0),
+        reviews: latestReviews,
+        canReview,
+        eligibilityMessage,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching listing reviews:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to fetch listing reviews',
+      },
+      500
+    );
+  }
+});
+
+/**
+ * POST /api/listings/:id/reviews
+ * Submit rating and review for a listing (customer with approved booking only)
+ */
+app.post('/:id/reviews', zValidator('json', createListingReviewSchema), async (c) => {
+  try {
+    const listingId = c.req.param('id');
+    const userId = await getSessionUserId(c);
+    const data = c.req.valid('json');
+
+    if (!userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+        },
+        401
+      );
+    }
+
+    const [listingData] = await db
+      .select({
+        id: listing.id,
+        sellerId: listing.sellerId,
+        status: listing.status,
+      })
+      .from(listing)
+      .where(eq(listing.id, listingId))
+      .limit(1);
+
+    if (!listingData || listingData.status !== LISTING_STATUSES.ACTIVE) {
+      return c.json(
+        {
+          success: false,
+          error: 'Listing not found',
+        },
+        404
+      );
+    }
+
+    const [eligibleBooking] = await db
+      .select({
+        id: booking.id,
+      })
+      .from(booking)
+      .where(
+        and(
+          eq(booking.listingId, listingId),
+          eq(booking.customerId, userId),
+          eq(booking.approvalStatus, 'approved'),
+          or(eq(booking.status, 'confirmed'), eq(booking.status, 'completed'))!,
+          sql`NOT EXISTS (SELECT 1 FROM ${review} r WHERE r.booking_id = ${booking.id})`
+        )
+      )
+      .orderBy(desc(booking.createdAt))
+      .limit(1);
+
+    if (!eligibleBooking) {
+      return c.json(
+        {
+          success: false,
+          error: 'You can review this package only after an approved booking.',
+        },
+        400
+      );
+    }
+
+    const [insertedReview] = await db
+      .insert(review)
+      .values({
+        id: nanoid(16),
+        listingId,
+        bookingId: eligibleBooking.id,
+        customerId: userId,
+        sellerId: listingData.sellerId,
+        overallRating: data.overallRating,
+        title: data.title?.trim() || null,
+        comment: data.comment.trim(),
+        ratings: data.ratings || null,
+        status: 'published',
+      })
+      .returning();
+
+    const [updatedStats] = await db
+      .select({
+        averageRating: sql<number>`COALESCE(AVG(${review.overallRating}), 0)`,
+        reviewCount: sql<number>`count(*)`,
+      })
+      .from(review)
+      .where(and(eq(review.listingId, listingId), eq(review.status, 'published')))
+      .limit(1);
+
+    await db
+      .update(listing)
+      .set({
+        rating: Number(updatedStats?.averageRating || 0).toFixed(2),
+        reviewCount: Number(updatedStats?.reviewCount || 0),
+      })
+      .where(eq(listing.id, listingId));
+
+    return c.json({
+      success: true,
+      message: 'Review submitted successfully.',
+      data: insertedReview,
+    });
+  } catch (error) {
+    console.error('Error creating listing review:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to submit review',
       },
       500
     );

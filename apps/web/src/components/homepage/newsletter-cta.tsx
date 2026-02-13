@@ -16,9 +16,9 @@ export default function NewsletterCTA() {
   };
 
   return (
-    <section className="relative py-16 overflow-hidden gradient-primary">
-      <div className="container mx-auto px-4 text-center">
-        <div className="max-w-2xl mx-auto">
+    <section className="relative overflow-hidden bg-background-subtle py-16">
+      <div className="mx-auto w-full max-w-7xl px-4 text-center lg:px-6">
+        <div className="mx-auto max-w-2xl rounded-2xl px-6 py-10 shadow-lg gradient-primary md:px-8">
           <div className="mb-4 inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/20">
             <Mail className="h-7 w-7 text-white" />
           </div>

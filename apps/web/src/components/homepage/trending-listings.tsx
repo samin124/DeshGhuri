@@ -13,8 +13,8 @@ export default function TrendingListings({ onListingClick }: TrendingListingsPro
   const { data, isLoading, error } = useTrendingListings();
 
   return (
-    <section className="relative py-16 bg-background border-b">
-      <div className="container mx-auto px-4">
+    <section className="relative border-b border-border/40 bg-background-subtle py-16">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-10 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">

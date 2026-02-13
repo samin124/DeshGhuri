@@ -31,6 +31,31 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
         },
         {
           onSuccess: async () => {
+            const session = await authClient.getSession();
+
+            if (session.data?.user && !session.data.user.emailVerified) {
+              await authClient.signOut();
+              toast.error('Please verify your email before signing in.', {
+                duration: 6000,
+                action: {
+                  label: 'Resend Email',
+                  onClick: async () => {
+                    const result = await authClient.sendVerificationEmail({
+                      email: value.email,
+                      callbackURL: window.location.origin + '/login',
+                    });
+
+                    if (result.error) {
+                      toast.error('Failed to resend verification email');
+                    } else {
+                      toast.success('Verification email sent!');
+                    }
+                  },
+                },
+              });
+              return;
+            }
+
             const returnUrl = getReturnUrlFromSearch(window.location.search);
             const redirectTo = await getPostLoginRedirect({
               preferredDestination: returnUrl,

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+﻿import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { DollarSign, TrendingUp, Lock, AlertCircle } from 'lucide-react';
 import { DataTable, type Column } from '@/components/admin/data-table';
@@ -411,7 +411,7 @@ function RouteComponent() {
                   setTypeFilter(e.target.value);
                   setPage(1);
                 }}
-                className="px-3 py-2 border rounded text-sm min-w-[150px]"
+                className="w-full sm:w-auto px-3 py-2 border rounded text-sm sm:min-w-[150px]"
               >
                 <option value="">All Types</option>
                 <option value="payment">Payment</option>
@@ -429,7 +429,7 @@ function RouteComponent() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="px-3 py-2 border rounded text-sm min-w-[150px]"
+                className="w-full sm:w-auto px-3 py-2 border rounded text-sm sm:min-w-[150px]"
               >
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>

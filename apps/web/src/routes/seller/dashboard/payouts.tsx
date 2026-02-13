@@ -40,7 +40,7 @@ function SellerPayouts() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="p-0">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -52,9 +52,9 @@ function SellerPayouts() {
   }
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
+    <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Payouts</h1>
           <p className="text-muted-foreground">View your payout history and track withdrawals</p>
@@ -83,7 +83,7 @@ function SellerPayouts() {
                 {data.payouts.map((payout) => (
                   <div
                     key={payout.id}
-                    className="flex items-start justify-between rounded-lg border p-4"
+                    className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-start sm:justify-between"
                   >
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ function SellerPayouts() {
                       </div>
                     </div>
 
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <div className="text-2xl font-bold">
                         ৳{parseFloat(payout.amount).toLocaleString()}
                       </div>
@@ -151,7 +151,7 @@ function SellerPayouts() {
 
               {/* Pagination */}
               {data && data.totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="text-sm text-muted-foreground">
                     Page {data.page} of {data.totalPages}
                   </div>

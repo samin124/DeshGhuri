@@ -1,10 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { Plus, Calendar, Clock, Percent, Tag, Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
+import {
+  CalendarClock,
+  Flame,
+  Pencil,
+  PlusCircle,
+  Search,
+  TimerReset,
+  Trash2,
+  Zap,
+} from 'lucide-react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
-import { DataTable, type Column } from '@/components/admin/data-table';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +24,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -23,302 +31,507 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useAdminListings, useUpdateFlashDeal } from '@/lib/api/admin-listings';
 
 export const Route = createFileRoute('/admin/_admin/promotions/')({
   component: RouteComponent,
 });
 
-interface Promotion {
-  id: string;
-  title: string;
-  description: string;
-  discountType: 'percentage' | 'fixed';
-  discountValue: number;
-  code?: string;
-  startDate: string;
-  endDate: string;
-  targetType: 'all' | 'category' | 'seller' | 'listing';
-  targetValue?: string;
-  maxUses?: number;
-  currentUses: number;
-  status: 'active' | 'scheduled' | 'expired' | 'paused';
-  createdAt: string;
+interface DealDraftState {
+  listingId: string;
+  discountPercent: string;
+  endsAtLocal: string;
+}
+
+function toLocalDateTimeValue(isoDate?: string | null): string {
+  if (!isoDate) {
+    return '';
+  }
+
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const tzOffset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
+function fromLocalDateTimeValue(localValue: string): string | null {
+  if (!localValue) {
+    return null;
+  }
+
+  const parsed = new Date(localValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toISOString();
 }
 
 function RouteComponent() {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingListingId, setEditingListingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<DealDraftState>({
+    listingId: '',
+    discountPercent: '',
+    endsAtLocal: '',
+  });
 
-  // Mock data - replace with actual API call
-  const promotions: Promotion[] = [];
-  const isLoading = false;
+  const updateFlashDealMutation = useUpdateFlashDeal();
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
-      case 'scheduled':
-        return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200';
-      case 'expired':
-        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
-      case 'paused':
-        return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200';
-      default:
-        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
+  const { data: activeListingsResponse, isLoading: isActiveListingsLoading } = useAdminListings({
+    status: 'active',
+    limit: 200,
+    search: search || undefined,
+  });
+
+  const { data: flashDealsResponse, isLoading: isFlashDealsLoading } = useAdminListings({
+    flashDeals: true,
+    status: 'active',
+    limit: 200,
+    search: search || undefined,
+  });
+
+  const activeListings = (activeListingsResponse?.data || []) as Array<Record<string, any>>;
+  const flashDeals = (flashDealsResponse?.data || []) as Array<Record<string, any>>;
+
+  const now = Date.now();
+  const dealStats = useMemo(() => {
+    let active = 0;
+    let expired = 0;
+    let endingSoon = 0;
+
+    for (const deal of flashDeals) {
+      const endsAt = deal.flashDealEndsAt ? new Date(deal.flashDealEndsAt).getTime() : 0;
+      if (!endsAt || endsAt <= now) {
+        expired += 1;
+        continue;
+      }
+
+      active += 1;
+
+      if (endsAt - now <= 24 * 60 * 60 * 1000) {
+        endingSoon += 1;
+      }
     }
+
+    return {
+      total: flashDeals.length,
+      active,
+      expired,
+      endingSoon,
+    };
+  }, [flashDeals, now]);
+
+  const availableListings = useMemo(() => {
+    const flashDealIds = new Set(flashDeals.map((item) => item.id));
+    return activeListings.filter((item) => !flashDealIds.has(item.id));
+  }, [activeListings, flashDeals]);
+
+  const resetDraft = () => {
+    setDraft({
+      listingId: '',
+      discountPercent: '',
+      endsAtLocal: '',
+    });
   };
 
-  const columns: Column<Promotion>[] = [
-    {
-      id: 'title',
-      header: 'Promotion',
-      accessor: (promo) => (
-        <div>
-          <div className="font-medium">{promo.title}</div>
-          {promo.code && (
-            <div className="text-sm text-gray-500 flex items-center gap-1">
-              <Tag className="h-3 w-3" />
-              {promo.code}
-            </div>
-          )}
-        </div>
-      ),
-      sortable: true,
-    },
-    {
-      id: 'discount',
-      header: 'Discount',
-      accessor: (promo) => (
-        <div className="flex items-center gap-1">
-          <Percent className="h-4 w-4 text-green-600" />
-          {promo.discountType === 'percentage'
-            ? `${promo.discountValue}%`
-            : `৳${promo.discountValue}`}
-        </div>
-      ),
-    },
-    {
-      id: 'period',
-      header: 'Period',
-      accessor: (promo) => (
-        <div className="text-sm">
-          <div>{new Date(promo.startDate).toLocaleDateString()}</div>
-          <div className="text-gray-500">to {new Date(promo.endDate).toLocaleDateString()}</div>
-        </div>
-      ),
-    },
-    {
-      id: 'usage',
-      header: 'Usage',
-      accessor: (promo) => (
-        <div className="text-sm">
-          {promo.currentUses}
-          {promo.maxUses && ` / ${promo.maxUses}`}
-        </div>
-      ),
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      accessor: (promo) => <Badge className={getStatusColor(promo.status)}>{promo.status}</Badge>,
-      sortable: true,
-    },
-  ];
+  const handleCreateFlashDeal = async () => {
+    if (!draft.listingId) {
+      toast.error('Please select a package first.');
+      return;
+    }
 
-  const renderActions = (promo: Promotion) => (
-    <div className="flex items-center gap-2">
-      <Button variant="ghost" size="sm">
-        <Eye className="h-4 w-4 mr-1" />
-        View
-      </Button>
-      <Button variant="ghost" size="sm" disabled={promo.status === 'expired'}>
-        {promo.status === 'paused' ? 'Resume' : 'Pause'}
-      </Button>
-    </div>
-  );
+    const discountValue = draft.discountPercent ? Number(draft.discountPercent) : undefined;
+    if (
+      discountValue !== undefined &&
+      (Number.isNaN(discountValue) || discountValue < 1 || discountValue > 95)
+    ) {
+      toast.error('Discount must be between 1 and 95.');
+      return;
+    }
+
+    const flashDealEndsAt = fromLocalDateTimeValue(draft.endsAtLocal);
+    if (!flashDealEndsAt) {
+      toast.error('Please set a valid flash sale end time.');
+      return;
+    }
+
+    await updateFlashDealMutation.mutateAsync({
+      listingId: draft.listingId,
+      enabled: true,
+      discountPercent: discountValue,
+      flashDealEndsAt,
+      reason: 'Configured from admin promotions dashboard',
+    });
+
+    toast.success('Flash deal configured successfully.');
+    resetDraft();
+    setCreateDialogOpen(false);
+  };
+
+  const openEditDialog = (listing: Record<string, any>) => {
+    setEditingListingId(listing.id);
+    setDraft({
+      listingId: listing.id,
+      discountPercent:
+        typeof listing.discountPercent === 'number' ? String(listing.discountPercent) : '',
+      endsAtLocal: toLocalDateTimeValue(listing.flashDealEndsAt),
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdateFlashDeal = async () => {
+    if (!editingListingId) {
+      return;
+    }
+
+    const discountValue = draft.discountPercent ? Number(draft.discountPercent) : undefined;
+    if (
+      discountValue !== undefined &&
+      (Number.isNaN(discountValue) || discountValue < 1 || discountValue > 95)
+    ) {
+      toast.error('Discount must be between 1 and 95.');
+      return;
+    }
+
+    const flashDealEndsAt = fromLocalDateTimeValue(draft.endsAtLocal);
+    if (!flashDealEndsAt) {
+      toast.error('Please set a valid flash sale end time.');
+      return;
+    }
+
+    await updateFlashDealMutation.mutateAsync({
+      listingId: editingListingId,
+      enabled: true,
+      discountPercent: discountValue,
+      flashDealEndsAt,
+      reason: 'Updated from admin promotions dashboard',
+    });
+
+    toast.success('Flash deal updated successfully.');
+    setEditDialogOpen(false);
+    setEditingListingId(null);
+    resetDraft();
+  };
+
+  const handleRemoveFlashDeal = async (listingId: string) => {
+    await updateFlashDealMutation.mutateAsync({
+      listingId,
+      enabled: false,
+      reason: 'Removed from admin promotions dashboard',
+    });
+    toast.success('Flash deal removed.');
+  };
+
+  const getDealStatusBadge = (deal: Record<string, any>) => {
+    const endsAtTimestamp = deal.flashDealEndsAt ? new Date(deal.flashDealEndsAt).getTime() : 0;
+    if (!endsAtTimestamp || endsAtTimestamp <= now) {
+      return <Badge variant="destructive">Expired</Badge>;
+    }
+
+    if (endsAtTimestamp - now <= 24 * 60 * 60 * 1000) {
+      return <Badge className="bg-amber-500 text-white">Ending Soon</Badge>;
+    }
+
+    return <Badge className="bg-emerald-600 text-white">Active</Badge>;
+  };
+
+  const editingListing = flashDeals.find((item) => item.id === editingListingId) || null;
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Promotions & Deals</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Manage flash deals, coupons, and promotional campaigns
+          <h1 className="text-3xl font-bold tracking-tight">Promotions & Flash Deals</h1>
+          <p className="text-muted-foreground mt-1">
+            Control hero offers, flash sale timing, and package-level discounts.
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create Promotion
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline">
+            <Link to="/admin/content">Manage Homepage Sections</Link>
+          </Button>
+          <Button onClick={() => setCreateDialogOpen(true)}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add Flash Deal
+          </Button>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Active Promotions</p>
-              <p className="text-2xl font-bold">0</p>
-            </div>
-            <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-green-600 dark:text-green-400" />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Scheduled</p>
-              <p className="text-2xl font-bold">0</p>
-            </div>
-            <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-              <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total Uses This Month</p>
-              <p className="text-2xl font-bold">0</p>
-            </div>
-            <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-              <Tag className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Revenue Discounted</p>
-              <p className="text-2xl font-bold">৳0</p>
-            </div>
-            <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-between">
-              <Percent className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card className="p-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
+      <Card>
+        <CardContent className="pt-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search promotions..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search packages by title"
+              className="pl-10"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-[200px]">
-              <SelectValue placeholder="All Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="scheduled">Scheduled</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="expired">Expired</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        </CardContent>
       </Card>
 
-      {/* Table */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Flash Deals</p>
+                <p className="text-2xl font-bold mt-1">{dealStats.total}</p>
+              </div>
+              <Flame className="h-8 w-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Active</p>
+                <p className="text-2xl font-bold mt-1">{dealStats.active}</p>
+              </div>
+              <Zap className="h-8 w-8 text-emerald-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Ending in 24h</p>
+                <p className="text-2xl font-bold mt-1">{dealStats.endingSoon}</p>
+              </div>
+              <TimerReset className="h-8 w-8 text-amber-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Expired</p>
+                <p className="text-2xl font-bold mt-1">{dealStats.expired}</p>
+              </div>
+              <CalendarClock className="h-8 w-8 text-rose-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <Card>
-        <DataTable
-          columns={columns}
-          data={promotions}
-          isLoading={isLoading}
-          page={page}
-          pageSize={pageSize}
-          totalItems={0}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-          renderActions={renderActions}
-        />
+        <CardHeader>
+          <CardTitle>Configured Flash Deals</CardTitle>
+          <CardDescription>
+            These packages power both the flash deals section and hero offer carousel.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isFlashDealsLoading ? (
+            <p className="text-sm text-muted-foreground">Loading flash deals...</p>
+          ) : flashDeals.length === 0 ? (
+            <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+              No flash deals configured yet.
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Package</TableHead>
+                  <TableHead>Discount</TableHead>
+                  <TableHead>Sale Ends</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {flashDeals.map((deal) => (
+                  <TableRow key={deal.id}>
+                    <TableCell>
+                      <div className="font-medium">{deal.title}</div>
+                      <div className="text-xs text-muted-foreground">{deal.id}</div>
+                    </TableCell>
+                    <TableCell>
+                      {typeof deal.discountPercent === 'number' ? `${deal.discountPercent}%` : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {deal.flashDealEndsAt
+                        ? new Date(deal.flashDealEndsAt).toLocaleString()
+                        : 'Not set'}
+                    </TableCell>
+                    <TableCell>{getDealStatusBadge(deal)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEditDialog(deal)}
+                          disabled={updateFlashDealMutation.isPending}
+                        >
+                          <Pencil className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleRemoveFlashDeal(deal.id)}
+                          disabled={updateFlashDealMutation.isPending}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Remove
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
       </Card>
 
-      {/* Create Promotion Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-2xl">
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Promotion</DialogTitle>
-            <DialogDescription>Create a new promotional campaign or flash deal</DialogDescription>
+            <DialogTitle>Add Flash Deal</DialogTitle>
+            <DialogDescription>
+              Pick a package, set discount, and define flash sale end time.
+            </DialogDescription>
           </DialogHeader>
+
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Promotion Title</Label>
-              <Input id="title" placeholder="Summer Sale 2026" />
-            </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Describe this promotion..." rows={3} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="discountType">Discount Type</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="percentage">Percentage</SelectItem>
-                    <SelectItem value="fixed">Fixed Amount</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="discountValue">Discount Value</Label>
-                <Input id="discountValue" type="number" placeholder="10" />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="code">Promo Code (Optional)</Label>
-              <Input id="code" placeholder="SUMMER2026" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="startDate">Start Date</Label>
-                <Input id="startDate" type="date" />
-              </div>
-              <div>
-                <Label htmlFor="endDate">End Date</Label>
-                <Input id="endDate" type="date" />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="targetType">Target</Label>
-              <Select>
+            <div className="space-y-2">
+              <Label>Package</Label>
+              <Select
+                value={draft.listingId}
+                onValueChange={(value) => setDraft((prev) => ({ ...prev, listingId: value }))}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select target" />
+                  <SelectValue placeholder="Select a package" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Listings</SelectItem>
-                  <SelectItem value="category">Specific Category</SelectItem>
-                  <SelectItem value="seller">Specific Seller</SelectItem>
-                  <SelectItem value="listing">Specific Listing</SelectItem>
+                  {isActiveListingsLoading ? (
+                    <SelectItem value="loading" disabled>
+                      Loading packages...
+                    </SelectItem>
+                  ) : availableListings.length === 0 ? (
+                    <SelectItem value="none" disabled>
+                      No available packages
+                    </SelectItem>
+                  ) : (
+                    availableListings.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.title}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="maxUses">Max Uses (Optional)</Label>
-              <Input id="maxUses" type="number" placeholder="Leave empty for unlimited" />
+
+            <div className="space-y-2">
+              <Label>Discount Percent</Label>
+              <Input
+                type="number"
+                min={1}
+                max={95}
+                placeholder="e.g. 20"
+                value={draft.discountPercent}
+                onChange={(event) =>
+                  setDraft((prev) => ({ ...prev, discountPercent: event.target.value }))
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Flash Sale Ends At</Label>
+              <Input
+                type="datetime-local"
+                value={draft.endsAtLocal}
+                onChange={(event) =>
+                  setDraft((prev) => ({ ...prev, endsAtLocal: event.target.value }))
+                }
+              />
             </div>
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => setIsCreateDialogOpen(false)}>Create Promotion</Button>
+            <Button onClick={handleCreateFlashDeal} disabled={updateFlashDealMutation.isPending}>
+              {updateFlashDealMutation.isPending ? 'Saving...' : 'Save Deal'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Flash Deal</DialogTitle>
+            <DialogDescription>
+              Update discount and end time for {editingListing?.title || 'selected package'}.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Discount Percent</Label>
+              <Input
+                type="number"
+                min={1}
+                max={95}
+                placeholder="e.g. 20"
+                value={draft.discountPercent}
+                onChange={(event) =>
+                  setDraft((prev) => ({ ...prev, discountPercent: event.target.value }))
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Flash Sale Ends At</Label>
+              <Input
+                type="datetime-local"
+                value={draft.endsAtLocal}
+                onChange={(event) =>
+                  setDraft((prev) => ({ ...prev, endsAtLocal: event.target.value }))
+                }
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditDialogOpen(false);
+                setEditingListingId(null);
+                resetDraft();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateFlashDeal} disabled={updateFlashDealMutation.isPending}>
+              {updateFlashDealMutation.isPending ? 'Updating...' : 'Update Deal'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

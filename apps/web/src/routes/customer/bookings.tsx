@@ -77,16 +77,18 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-8 lg:px-6">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">My Bookings</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">My Bookings</h1>
           <p className="text-muted-foreground mt-2">Track and manage all your bookings</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="all">All Bookings</TabsTrigger>
-            <TabsTrigger value="pending">
+          <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1">
+            <TabsTrigger value="all" className="whitespace-nowrap">
+              All Bookings
+            </TabsTrigger>
+            <TabsTrigger value="pending" className="whitespace-nowrap">
               Pending
               {bookings.filter((item: any) => item.booking?.approvalStatus === 'pending').length >
                 0 && (
@@ -98,8 +100,12 @@ function RouteComponent() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="approved">Confirmed</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected</TabsTrigger>
+            <TabsTrigger value="approved" className="whitespace-nowrap">
+              Confirmed
+            </TabsTrigger>
+            <TabsTrigger value="rejected" className="whitespace-nowrap">
+              Rejected
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value={activeTab} className="mt-6">
@@ -127,14 +133,14 @@ function RouteComponent() {
                   const seller = item.seller;
 
                   return (
-                    <Card key={booking.id} className="p-6 hover:shadow-lg transition-shadow">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex gap-4 flex-1">
+                    <Card key={booking.id} className="p-6 transition-shadow hover:shadow-lg">
+                      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:gap-4">
                           {listing?.images?.[0] && (
                             <img
                               src={listing.images[0].url}
                               alt={listing.title}
-                              className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                              className="h-24 w-24 flex-shrink-0 rounded-lg object-cover"
                             />
                           )}
                           <div className="flex-1">
@@ -152,7 +158,7 @@ function RouteComponent() {
                             )}
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-2">
+                        <div className="flex flex-col gap-2 sm:items-end">
                           {getStatusBadge(booking.approvalStatus)}
                           <span className="text-lg font-bold">
                             ৳{parseFloat(booking.totalAmount).toLocaleString()}

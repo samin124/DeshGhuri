@@ -14,7 +14,6 @@ import {
   escrowTransaction,
   payout,
   listingAnalytics,
-  sellerAnalytics,
 } from '@DeshGhuri/db';
 import { requireSeller } from '../../middleware/seller-auth';
 
@@ -313,13 +312,16 @@ app.get('/earnings', async (c) => {
     const endDate = c.req.query('endDate');
 
     const conditions = [eq(escrowTransaction.sellerId, sellerId)];
+    const payoutConditions = [eq(payout.sellerId, sellerId), eq(payout.status, 'completed')];
 
     if (startDate) {
       conditions.push(gte(escrowTransaction.createdAt, new Date(startDate)));
+      payoutConditions.push(gte(payout.createdAt, new Date(startDate)));
     }
 
     if (endDate) {
       conditions.push(lte(escrowTransaction.createdAt, new Date(endDate)));
+      payoutConditions.push(lte(payout.createdAt, new Date(endDate)));
     }
 
     // Get pending transactions
@@ -358,7 +360,7 @@ app.get('/earnings', async (c) => {
 
     // Get withdrawn (completed payouts)
     const withdrawnPayouts = await db.query.payout.findMany({
-      where: and(eq(payout.sellerId, sellerId), eq(payout.status, 'completed')),
+      where: and(...payoutConditions),
       orderBy: desc(payout.completedAt),
     });
 
@@ -592,112 +594,255 @@ app.get('/analytics', async (c) => {
   const sellerId = c.get('sellerId') as string;
 
   try {
-    const period = c.req.query('period') || 'month'; // today, week, month, year
+    const periodParam = c.req.query('period');
+    const period: 'today' | 'week' | 'month' | 'year' =
+      periodParam === 'today' ||
+      periodParam === 'week' ||
+      periodParam === 'month' ||
+      periodParam === 'year'
+        ? periodParam
+        : 'month';
+
     const now = new Date();
+    const endDate = new Date(now);
     let startDate: Date;
-    let endDate = new Date();
 
     // Calculate date range based on period
     switch (period) {
       case 'today':
-        startDate = new Date(now.setHours(0, 0, 0, 0));
+        startDate = new Date(now);
+        startDate.setHours(0, 0, 0, 0);
         break;
       case 'week':
-        startDate = new Date();
-        startDate.setDate(startDate.getDate() - 7);
+        startDate = new Date(now);
+        startDate.setDate(startDate.getDate() - 6);
+        startDate.setHours(0, 0, 0, 0);
         break;
       case 'month':
-        startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 1);
+        startDate = new Date(now);
+        startDate.setDate(startDate.getDate() - 29);
+        startDate.setHours(0, 0, 0, 0);
         break;
       case 'year':
-        startDate = new Date();
-        startDate.setFullYear(startDate.getFullYear() - 1);
+        startDate = new Date(now);
+        startDate.setDate(startDate.getDate() - 364);
+        startDate.setHours(0, 0, 0, 0);
         break;
       default:
-        startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 1);
+        startDate = new Date(now);
+        startDate.setDate(startDate.getDate() - 29);
+        startDate.setHours(0, 0, 0, 0);
     }
 
-    // Get daily analytics data
-    const analyticsData = await db.query.sellerAnalytics.findMany({
+    const periodDurationMs = endDate.getTime() - startDate.getTime();
+    const previousEndDate = new Date(startDate.getTime() - 1);
+    const previousStartDate = new Date(previousEndDate.getTime() - periodDurationMs);
+
+    // Current period listing analytics
+    const currentListingAnalytics = await db.query.listingAnalytics.findMany({
       where: and(
-        eq(sellerAnalytics.sellerId, sellerId),
-        gte(sellerAnalytics.date, startDate),
-        lte(sellerAnalytics.date, endDate)
+        eq(listingAnalytics.sellerId, sellerId),
+        gte(listingAnalytics.date, startDate),
+        lte(listingAnalytics.date, endDate)
       ),
-      orderBy: asc(sellerAnalytics.date),
+      orderBy: asc(listingAnalytics.date),
     });
 
-    // Calculate totals
-    const totals = analyticsData.reduce(
-      (acc, day) => ({
-        views: acc.views + day.totalViews,
-        bookings: acc.bookings + day.totalBookings,
-        revenue: acc.revenue + Number(day.totalRevenue),
-      }),
-      { views: 0, bookings: 0, revenue: 0 }
+    // Previous period listing analytics
+    const previousListingAnalytics = await db.query.listingAnalytics.findMany({
+      where: and(
+        eq(listingAnalytics.sellerId, sellerId),
+        gte(listingAnalytics.date, previousStartDate),
+        lte(listingAnalytics.date, previousEndDate)
+      ),
+    });
+
+    // Current period bookings (all + revenue from completed)
+    const currentBookings = await db.query.booking.findMany({
+      where: and(
+        eq(booking.sellerId, sellerId),
+        gte(booking.createdAt, startDate),
+        lte(booking.createdAt, endDate)
+      ),
+      columns: {
+        id: true,
+        listingId: true,
+        createdAt: true,
+        totalAmount: true,
+        paymentStatus: true,
+      },
+      orderBy: asc(booking.createdAt),
+    });
+
+    // Previous period bookings
+    const previousBookings = await db.query.booking.findMany({
+      where: and(
+        eq(booking.sellerId, sellerId),
+        gte(booking.createdAt, previousStartDate),
+        lte(booking.createdAt, previousEndDate)
+      ),
+      columns: {
+        id: true,
+        listingId: true,
+        totalAmount: true,
+        paymentStatus: true,
+      },
+    });
+
+    const currentViews = currentListingAnalytics.reduce((sum, row) => sum + row.views, 0);
+    const currentUniqueViews = currentListingAnalytics.reduce(
+      (sum, row) => sum + row.uniqueViews,
+      0
+    );
+    const currentBookingsCount = currentBookings.length;
+    const currentRevenue = currentBookings.reduce(
+      (sum, row) => sum + (row.paymentStatus === 'completed' ? Number(row.totalAmount) : 0),
+      0
     );
 
-    const conversionRate = totals.views > 0 ? (totals.bookings / totals.views) * 100 : 0;
+    const previousViews = previousListingAnalytics.reduce((sum, row) => sum + row.views, 0);
+    const previousBookingsCount = previousBookings.length;
+    const previousRevenue = previousBookings.reduce(
+      (sum, row) => sum + (row.paymentStatus === 'completed' ? Number(row.totalAmount) : 0),
+      0
+    );
+
+    const currentConversionRate =
+      currentViews > 0 ? (currentBookingsCount / currentViews) * 100 : 0;
+    const previousConversionRate =
+      previousViews > 0 ? (previousBookingsCount / previousViews) * 100 : 0;
+
+    const calculateChange = (current: number, previous: number) => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return Number((((current - previous) / previous) * 100).toFixed(2));
+    };
+
+    const viewsChange = calculateChange(currentViews, previousViews);
+    const bookingsChange = calculateChange(currentBookingsCount, previousBookingsCount);
+    const revenueChange = calculateChange(currentRevenue, previousRevenue);
+    const conversionChange = calculateChange(currentConversionRate, previousConversionRate);
+
+    const toDateKey = (value: Date) => value.toISOString().split('T')[0];
+    const startOfDay = (value: Date) => {
+      const normalized = new Date(value);
+      normalized.setHours(0, 0, 0, 0);
+      return normalized;
+    };
+
+    // Build daily chart buckets for the selected period
+    const dailyViewsMap = currentListingAnalytics.reduce(
+      (acc, row) => {
+        const key = toDateKey(row.date);
+        acc[key] = (acc[key] || 0) + row.views;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const dailyRevenueAndBookingsMap = currentBookings.reduce(
+      (acc, day) => ({
+        ...acc,
+        [toDateKey(day.createdAt)]: {
+          bookings: (acc[toDateKey(day.createdAt)]?.bookings || 0) + 1,
+          revenue:
+            (acc[toDateKey(day.createdAt)]?.revenue || 0) +
+            (day.paymentStatus === 'completed' ? Number(day.totalAmount) : 0),
+        },
+      }),
+      {} as Record<string, { bookings: number; revenue: number }>
+    );
+
+    const revenueChart: Array<{ date: string; revenue: number; bookings: number }> = [];
+    const viewsChart: Array<{ date: string; views: number }> = [];
+
+    for (
+      let cursor = startOfDay(startDate);
+      cursor <= endDate;
+      cursor = new Date(cursor.getTime() + 24 * 60 * 60 * 1000)
+    ) {
+      const key = toDateKey(cursor);
+      const bookingStats = dailyRevenueAndBookingsMap[key] || { bookings: 0, revenue: 0 };
+
+      revenueChart.push({
+        date: key,
+        revenue: Number(bookingStats.revenue.toFixed(2)),
+        bookings: bookingStats.bookings,
+      });
+
+      viewsChart.push({
+        date: key,
+        views: dailyViewsMap[key] || 0,
+      });
+    }
 
     // Get top listings
-    const topListingsData = await db
-      .select({
-        id: listing.id,
-        title: listing.title,
-        views: sql<number>`COALESCE(SUM(${listingAnalytics.views}), 0)`,
-        bookings: listing.bookingCount,
-        revenue: sql<string>`COALESCE(SUM(${booking.totalAmount}), 0)`,
+    const sellerListings = await db.query.listing.findMany({
+      where: eq(listing.sellerId, sellerId),
+      columns: {
+        id: true,
+        title: true,
+      },
+    });
+
+    const listingViewsMap = currentListingAnalytics.reduce(
+      (acc, row) => {
+        acc[row.listingId] = (acc[row.listingId] || 0) + row.views;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const listingBookingsAndRevenueMap = currentBookings.reduce(
+      (acc, row) => {
+        const current = acc[row.listingId] || { bookings: 0, revenue: 0 };
+        current.bookings += 1;
+        if (row.paymentStatus === 'completed') {
+          current.revenue += Number(row.totalAmount);
+        }
+        acc[row.listingId] = current;
+        return acc;
+      },
+      {} as Record<string, { bookings: number; revenue: number }>
+    );
+
+    const topListings = sellerListings
+      .map((row) => {
+        const stats = listingBookingsAndRevenueMap[row.id] || { bookings: 0, revenue: 0 };
+        const views = listingViewsMap[row.id] || 0;
+        return {
+          id: row.id,
+          title: row.title,
+          views,
+          bookings: stats.bookings,
+          revenue: stats.revenue,
+        };
       })
-      .from(listing)
-      .leftJoin(
-        listingAnalytics,
-        and(
-          eq(listing.id, listingAnalytics.listingId),
-          gte(listingAnalytics.date, startDate),
-          lte(listingAnalytics.date, endDate)
-        )
-      )
-      .leftJoin(
-        booking,
-        and(
-          eq(listing.id, booking.listingId),
-          eq(booking.paymentStatus, 'completed'),
-          gte(booking.createdAt, startDate),
-          lte(booking.createdAt, endDate)
-        )
-      )
-      .where(eq(listing.sellerId, sellerId))
-      .groupBy(listing.id, listing.title, listing.bookingCount)
-      .orderBy(desc(sql`COALESCE(SUM(${listingAnalytics.views}), 0)`))
-      .limit(5);
+      .sort((a, b) => b.revenue - a.revenue || b.bookings - a.bookings || b.views - a.views)
+      .slice(0, 5)
+      .map((row) => ({
+        id: row.id,
+        title: row.title,
+        views: row.views,
+        bookings: row.bookings,
+        revenue: row.revenue.toFixed(2),
+      }));
 
     return c.json({
       period,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
-      totalViews: totals.views,
-      uniqueViews: totals.views, // Simplified for now
-      totalBookings: totals.bookings,
-      totalRevenue: String(totals.revenue),
-      conversionRate: Number(conversionRate.toFixed(2)),
-      revenueChart: analyticsData.map((d) => ({
-        date: d.date.toISOString().split('T')[0],
-        revenue: Number(d.totalRevenue),
-        bookings: d.totalBookings,
-      })),
-      viewsChart: analyticsData.map((d) => ({
-        date: d.date.toISOString().split('T')[0],
-        views: d.totalViews,
-      })),
-      topListings: topListingsData.map((l) => ({
-        id: l.id,
-        title: l.title,
-        views: Number(l.views),
-        bookings: l.bookings,
-        revenue: l.revenue,
-      })),
+      totalViews: currentViews,
+      uniqueViews: currentUniqueViews,
+      totalBookings: currentBookingsCount,
+      totalRevenue: currentRevenue.toFixed(2),
+      conversionRate: Number(currentConversionRate.toFixed(2)),
+      viewsChange,
+      bookingsChange,
+      revenueChange,
+      conversionChange,
+      revenueChart,
+      viewsChart,
+      topListings,
     });
   } catch (error) {
     console.error('Error fetching analytics:', error);

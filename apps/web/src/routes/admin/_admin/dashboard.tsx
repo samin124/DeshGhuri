@@ -9,11 +9,13 @@ import {
   Users,
   Store,
   FileText,
-  Shield,
   AlertCircle,
   Clock,
   CheckCircle,
   Package,
+  Layout,
+  Percent,
+  Ban,
 } from 'lucide-react';
 import { CATEGORY_DISPLAY_NAMES } from '@/lib/constants/categories';
 
@@ -61,12 +63,15 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Welcome to the DeshGhuri admin panel
-        </p>
-      </div>
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/10 via-background to-accent/10">
+        <div className="p-6 md:p-8">
+          <h1 className="text-3xl font-bold tracking-tight">Admin Command Center</h1>
+          <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
+            Monitor platform health, control homepage content, manage seller compliance, and keep
+            live offers optimized for conversion.
+          </p>
+        </div>
+      </Card>
 
       {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -147,6 +152,60 @@ function RouteComponent() {
               </Button>
             </Link>
           )}
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="p-5">
+          <h3 className="font-semibold mb-1">Homepage Control</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Edit hero, section visibility, and package placement.
+          </p>
+          <Link to="/admin/content">
+            <Button size="sm" className="w-full">
+              <Layout className="h-4 w-4 mr-2" />
+              Open Content
+            </Button>
+          </Link>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="font-semibold mb-1">Flash Deal Manager</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Set discounts, update offer timing, and retire expired deals.
+          </p>
+          <Link to="/admin/promotions">
+            <Button size="sm" className="w-full" variant="outline">
+              <Percent className="h-4 w-4 mr-2" />
+              Manage Deals
+            </Button>
+          </Link>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="font-semibold mb-1">Listing Review</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Approve, reject, and curate featured listings for homepage sections.
+          </p>
+          <Link to="/admin/listings">
+            <Button size="sm" className="w-full" variant="outline">
+              <Package className="h-4 w-4 mr-2" />
+              Open Listings
+            </Button>
+          </Link>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="font-semibold mb-1">Seller Compliance</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Review applications and suspend unsafe accounts when needed.
+          </p>
+          <Link to="/admin/sellers">
+            <Button size="sm" className="w-full" variant="outline">
+              <Ban className="h-4 w-4 mr-2" />
+              Open Sellers
+            </Button>
+          </Link>
         </Card>
       </div>
 

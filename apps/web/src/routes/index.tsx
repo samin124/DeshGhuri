@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { lazy, Suspense, useState } from 'react';
 import { requireCustomerAccess } from '@/lib/auth/role-guard';
+import { useHomepageConfig } from '@/lib/api/listings';
 
 // Eager load above-fold components for better LCP
 import HeroSection from '@/components/homepage/hero-section';
@@ -44,7 +45,7 @@ export const Route = createFileRoute('/')({
 });
 
 const SectionSkeleton = () => (
-  <div className="container mx-auto py-12 px-4">
+  <div className="mx-auto w-full max-w-7xl px-4 py-12 lg:px-6">
     <div className="animate-pulse space-y-4">
       <div className="h-8 w-64 rounded bg-muted"></div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -59,6 +60,8 @@ const SectionSkeleton = () => (
 function HomeComponent() {
   const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { data: homepageConfigResponse } = useHomepageConfig();
+  const sectionVisibility = homepageConfigResponse?.data.sectionVisibility;
 
   const handleListingClick = (listingId: string) => {
     setSelectedListingId(listingId);
@@ -66,46 +69,66 @@ function HomeComponent() {
   };
 
   return (
-    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden">
+    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-background-subtle">
       {/* Above fold - eager load for better LCP */}
-      <HeroSection />
-      <FlashDeals onListingClick={handleListingClick} />
-      <SpecialOffers onListingClick={handleListingClick} />
+      {(sectionVisibility?.hero ?? true) && <HeroSection />}
+      {(sectionVisibility?.flashDeals ?? true) && (
+        <FlashDeals onListingClick={handleListingClick} />
+      )}
+      {(sectionVisibility?.specialOffers ?? true) && (
+        <SpecialOffers onListingClick={handleListingClick} />
+      )}
 
       {/* Below fold - lazy load with Suspense boundaries */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <TrendingListings onListingClick={handleListingClick} />
-      </Suspense>
+      {(sectionVisibility?.trendingListings ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <TrendingListings onListingClick={handleListingClick} />
+        </Suspense>
+      )}
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <BrowseCategories />
-      </Suspense>
+      {(sectionVisibility?.browseCategories ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <BrowseCategories />
+        </Suspense>
+      )}
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <FeaturedDestinations />
-      </Suspense>
+      {(sectionVisibility?.featuredDestinations ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <FeaturedDestinations />
+        </Suspense>
+      )}
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <PopularServices onListingClick={handleListingClick} />
-      </Suspense>
+      {(sectionVisibility?.popularServices ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <PopularServices onListingClick={handleListingClick} />
+        </Suspense>
+      )}
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <SeasonalPackages onListingClick={handleListingClick} />
-      </Suspense>
+      {(sectionVisibility?.seasonalPackages ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <SeasonalPackages onListingClick={handleListingClick} />
+        </Suspense>
+      )}
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <TestimonialsSection />
-      </Suspense>
+      {(sectionVisibility?.testimonials ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <TestimonialsSection />
+        </Suspense>
+      )}
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <BlogPreview />
-      </Suspense>
+      {(sectionVisibility?.blogPreview ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <BlogPreview />
+        </Suspense>
+      )}
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <FAQSection />
-      </Suspense>
+      {(sectionVisibility?.faq ?? true) && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <FAQSection />
+        </Suspense>
+      )}
 
-      <NewsletterCTA />
+      {(sectionVisibility?.newsletter ?? true) && <NewsletterCTA />}
 
       {/* Listing Detail Sheet */}
       <ListingDetailSheet

@@ -22,7 +22,8 @@ export const auth = betterAuth({
   // Enhanced email & password configuration
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // Disabled for now due to email verification issues
+    requireEmailVerification: true,
+    autoSignIn: false,
     async onSignUp({ user }: { user: { id: string; email: string } }) {
       // Assign default 'customer' role to new users
       try {
@@ -65,6 +66,8 @@ export const auth = betterAuth({
 
   // Email verification configuration
   emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: false,
     sendVerificationEmail: async ({ user, url, token }) => {
       console.log('\n=== EMAIL VERIFICATION TRIGGERED ===');
       console.log('📧 User:', user.email);

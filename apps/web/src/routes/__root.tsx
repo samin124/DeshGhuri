@@ -13,10 +13,10 @@ import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/layout/theme-provider';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
-import { DashboardFooter } from '@/components/layout/dashboard-footer';
 import { initMocks } from '@/mocks';
 import appCss from '../index.css?url';
 import { SellerSessionProvider } from '@/contexts/seller-session-context';
+import { WishlistProvider } from '@/contexts/wishlist-context';
 
 export interface RouterAppContext {}
 
@@ -93,13 +93,17 @@ function RootDocument() {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
             <SellerSessionProvider>
-              {showNavAndFooter && <Navbar />}
-              <div className={`min-h-svh flex flex-col ${showNavAndFooter ? 'pt-28 md:pt-16' : ''}`}>
-                <Outlet />
-                {showNavAndFooter && <Footer />}
-              </div>
-              <Toaster richColors />
-              <TanStackRouterDevtools position="bottom-left" />
+              <WishlistProvider>
+                {showNavAndFooter && <Navbar />}
+                <div
+                  className={`min-h-svh flex flex-col ${showNavAndFooter ? 'pt-28 md:pt-16' : ''}`}
+                >
+                  <Outlet />
+                  {showNavAndFooter && <Footer />}
+                </div>
+                <Toaster richColors />
+                <TanStackRouterDevtools position="bottom-left" />
+              </WishlistProvider>
             </SellerSessionProvider>
           </ThemeProvider>
         </QueryClientProvider>

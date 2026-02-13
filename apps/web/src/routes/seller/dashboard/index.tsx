@@ -83,7 +83,7 @@ function SellerDashboardOverview() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="p-0">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -95,7 +95,7 @@ function SellerDashboardOverview() {
   }
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
+    <div className="space-y-6">
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
@@ -131,7 +131,7 @@ function SellerDashboardOverview() {
               />
               <StatCard
                 title="Today's Revenue"
-                value={`৳${parseFloat(stats?.todayRevenue || '0').toLocaleString()}`}
+                value={`BDT ${parseFloat(stats?.todayRevenue || '0').toLocaleString()}`}
                 icon={DollarSign}
                 description="Revenue generated today"
               />
@@ -149,10 +149,10 @@ function SellerDashboardOverview() {
       {/* Pending Actions */}
       <div>
         <h2 className="mb-4 text-lg font-semibold">Pending Actions</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           {isLoading ? (
             <>
-              {[1, 2, 3].map((i) => (
+              {[1, 2].map((i) => (
                 <Card key={i}>
                   <CardHeader>
                     <Skeleton className="h-4 w-24" />
@@ -165,14 +165,6 @@ function SellerDashboardOverview() {
             </>
           ) : (
             <>
-              <StatCard
-                title="Pending Proofs"
-                value={stats?.pendingProofs || 0}
-                icon={AlertCircle}
-                description="Service proofs to submit"
-                linkTo="/seller/dashboard/proof-center"
-                linkText="Submit proofs"
-              />
               <StatCard
                 title="Unanswered Reviews"
                 value={stats?.unansweredReviews || 0}
@@ -229,7 +221,7 @@ function SellerDashboardOverview() {
               />
               <StatCard
                 title="Total Revenue"
-                value={`৳${parseFloat(stats?.totalRevenue || '0').toLocaleString()}`}
+                value={`BDT ${parseFloat(stats?.totalRevenue || '0').toLocaleString()}`}
                 icon={DollarSign}
                 description="All time earnings"
                 linkTo="/seller/dashboard/earnings"
@@ -269,21 +261,19 @@ function SellerDashboardOverview() {
             <>
               <StatCard
                 title="Pending Earnings"
-                value={`৳${parseFloat(stats?.pendingEarnings || '0').toLocaleString()}`}
+                value={`BDT ${parseFloat(stats?.pendingEarnings || '0').toLocaleString()}`}
                 icon={AlertCircle}
                 description="In escrow, awaiting release"
               />
               <StatCard
-                title="Released Earnings"
-                value={`৳${parseFloat(stats?.releasedEarnings || '0').toLocaleString()}`}
+                title="Available Earnings"
+                value={`BDT ${parseFloat(stats?.releasedEarnings || '0').toLocaleString()}`}
                 icon={DollarSign}
-                description="Ready for payout"
-                linkTo="/seller/dashboard/payouts"
-                linkText="Request payout"
+                description="Available balance"
               />
               <StatCard
                 title="Total Earnings"
-                value={`৳${parseFloat(stats?.totalEarnings || '0').toLocaleString()}`}
+                value={`BDT ${parseFloat(stats?.totalEarnings || '0').toLocaleString()}`}
                 icon={TrendingUp}
                 description="Lifetime earnings"
               />
@@ -307,9 +297,6 @@ function SellerDashboardOverview() {
             </Button>
             <Button variant="outline" asChild>
               <Link to="/seller/dashboard/analytics">View Analytics</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link to="/seller/dashboard/settings">Settings</Link>
             </Button>
           </div>
         </CardContent>

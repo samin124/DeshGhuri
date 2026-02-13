@@ -36,7 +36,7 @@ export default function BrowseCategories() {
 
   return (
     <section id="categories" className="py-16 scroll-mt-20 bg-background-subtle">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
             Browse by Category

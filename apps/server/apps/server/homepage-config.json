@@ -1,0 +1,20 @@
+{
+  "heroTitle": "Shadman Yaser",
+  "heroSubtitle": "Team Rekt",
+  "sectionVisibility": {
+    "hero": true,
+    "flashDeals": true,
+    "specialOffers": true,
+    "trendingListings": true,
+    "browseCategories": true,
+    "featuredDestinations": true,
+    "popularServices": true,
+    "seasonalPackages": true,
+    "testimonials": true,
+    "blogPreview": true,
+    "faq": true,
+    "newsletter": true
+  },
+  "updatedAt": "2026-02-13T21:31:39.352Z",
+  "updatedBy": "user_uJLaNTSUeuvgJIXk"
+}

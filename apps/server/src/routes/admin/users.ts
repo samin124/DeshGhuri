@@ -15,6 +15,7 @@ app.get('/', async (c) => {
     const limit = parseInt(c.req.query('limit') || '20');
     const search = c.req.query('search') || '';
     const role = c.req.query('role') || '';
+    const status = c.req.query('status') || '';
     const sortBy = c.req.query('sortBy') || 'createdAt';
     const sortOrder = (c.req.query('sortOrder') || 'desc') as 'asc' | 'desc';
 
@@ -25,6 +26,18 @@ app.get('/', async (c) => {
 
     if (search) {
       conditions.push(or(like(user.name, `%${search}%`), like(user.email, `%${search}%`)));
+    }
+
+    if (status === 'active') {
+      conditions.push(eq(user.banned, false));
+    }
+
+    if (status === 'suspended') {
+      conditions.push(eq(user.banned, true));
+    }
+
+    if (status === 'unverified') {
+      conditions.push(eq(user.emailVerified, false));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -172,10 +185,46 @@ app.patch('/:id', async (c) => {
       return c.json({ error: 'User not found' }, 404);
     }
 
+    const targetUserRoles = await db.query.userRole.findMany({
+      where: eq(userRole.userId, userId),
+    });
+    const targetIsAdmin = targetUserRoles.some(
+      (r) => r.role === 'admin' || r.role === 'super_admin'
+    );
+    const isRequesterSuperAdmin = c.get('isSuperAdmin') as boolean;
+
+    if (
+      (action === 'suspend' || action === 'reactivate') &&
+      targetIsAdmin &&
+      !isRequesterSuperAdmin
+    ) {
+      return c.json({ error: 'Only super admins can suspend or reactivate admin accounts' }, 403);
+    }
+
     let updateData: Partial<typeof user.$inferSelect> = {};
     let auditAction = '';
 
     switch (action) {
+      case 'suspend':
+        if (currentUser.banned) {
+          return c.json({ error: 'User is already suspended' }, 400);
+        }
+        updateData.banned = true;
+        updateData.banReason = reason || 'Suspended by admin';
+        updateData.banExpires = null;
+        auditAction = 'user.suspend';
+        break;
+
+      case 'reactivate':
+        if (!currentUser.banned) {
+          return c.json({ error: 'User is already active' }, 400);
+        }
+        updateData.banned = false;
+        updateData.banReason = null;
+        updateData.banExpires = null;
+        auditAction = 'user.reactivate';
+        break;
+
       case 'verify-email':
         updateData.emailVerified = true;
         auditAction = 'user.verify-email';

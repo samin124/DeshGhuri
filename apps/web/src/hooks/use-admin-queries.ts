@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   adminDashboard,
+  adminContent,
   adminUsers,
   adminSellers,
   adminDocuments,
@@ -23,6 +24,28 @@ export function usePendingActions() {
   return useQuery({
     queryKey: ['admin', 'dashboard', 'pending-actions'],
     queryFn: adminDashboard.getPendingActions,
+  });
+}
+
+export function useAdminHomepageConfig() {
+  return useQuery({
+    queryKey: ['admin', 'content', 'homepage'],
+    queryFn: adminContent.getHomepage,
+  });
+}
+
+export function useUpdateAdminHomepageConfig() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminContent.updateHomepage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'content', 'homepage'] });
+      toast.success('Homepage content updated successfully');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to update homepage content');
+    },
   });
 }
 

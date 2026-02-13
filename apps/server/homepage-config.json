@@ -1,0 +1,20 @@
+{
+  "heroTitle": "Discover Bangladesh With Verified Travel Packages",
+  "heroSubtitle": "Compare real offers, filter instantly, and book with confidence through trusted sellers.",
+  "sectionVisibility": {
+    "hero": true,
+    "flashDeals": true,
+    "specialOffers": true,
+    "trendingListings": true,
+    "browseCategories": true,
+    "featuredDestinations": true,
+    "popularServices": true,
+    "seasonalPackages": true,
+    "testimonials": true,
+    "blogPreview": true,
+    "faq": true,
+    "newsletter": true
+  },
+  "updatedAt": "2026-02-13T00:00:00.000Z",
+  "updatedBy": null
+}

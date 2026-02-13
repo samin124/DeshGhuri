@@ -19,8 +19,8 @@ export default function FAQSection() {
   );
 
   return (
-    <section className="py-12">
-      <div className="container mx-auto px-4">
+    <section className="bg-background-subtle py-12">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold">Frequently Asked Questions</h2>
           <p className="text-muted-foreground">Find answers to common questions</p>

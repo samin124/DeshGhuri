@@ -88,8 +88,8 @@ export function OnboardingStep2New({ data, category, onUpdate }: OnboardingStep2
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
         <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
         <AlertDescription className="text-blue-900 dark:text-blue-100">
-          All documents will be reviewed by our verification team within 24-48 hours. You'll
-          receive an email notification once the review is complete.
+          All documents will be reviewed by our verification team within 24-48 hours. You'll receive
+          an email notification once the review is complete.
         </AlertDescription>
       </Alert>
     </div>

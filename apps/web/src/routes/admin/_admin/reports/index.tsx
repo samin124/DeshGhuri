@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+﻿import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Download, Calendar, TrendingUp, Users, ShoppingBag, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,7 @@ function RouteComponent() {
         </div>
         <div className="flex items-center gap-2">
           <Select value={exportFormat} onValueChange={setExportFormat}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-full sm:w-[120px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -61,7 +61,7 @@ function RouteComponent() {
           <Calendar className="h-5 w-5 text-gray-500" />
           <Label>Date Range:</Label>
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full sm:w-[200px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -91,7 +91,7 @@ function RouteComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
-                  <p className="text-3xl font-bold mt-2">৳0</p>
+                  <p className="text-3xl font-bold mt-2">à§³0</p>
                   <p className="text-sm text-green-600 mt-1">+0% from last period</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
@@ -104,7 +104,7 @@ function RouteComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Platform Fees</p>
-                  <p className="text-3xl font-bold mt-2">৳0</p>
+                  <p className="text-3xl font-bold mt-2">à§³0</p>
                   <p className="text-sm text-green-600 mt-1">+0% from last period</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
@@ -117,7 +117,7 @@ function RouteComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Avg. Booking Value</p>
-                  <p className="text-3xl font-bold mt-2">৳0</p>
+                  <p className="text-3xl font-bold mt-2">à§³0</p>
                   <p className="text-sm text-gray-600 mt-1">0% from last period</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">

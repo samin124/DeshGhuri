@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+﻿import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Download, Eye, Activity, TrendingUp } from 'lucide-react';
 import { DataTable, type Column } from '@/components/admin/data-table';
@@ -210,7 +210,7 @@ function RouteComponent() {
               setPage(1);
             }}
             placeholder="Filter by action..."
-            className="px-3 py-2 border rounded text-sm min-w-[200px]"
+            className="w-full sm:w-auto px-3 py-2 border rounded text-sm sm:min-w-[200px]"
           />
         </div>
 
@@ -222,7 +222,7 @@ function RouteComponent() {
               setEntityTypeFilter(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-2 border rounded text-sm min-w-[150px]"
+            className="w-full sm:w-auto px-3 py-2 border rounded text-sm sm:min-w-[150px]"
           >
             <option value="">All Types</option>
             <option value="user">User</option>

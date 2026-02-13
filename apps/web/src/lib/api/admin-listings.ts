@@ -39,6 +39,8 @@ interface AdminListingsFilters {
   limit?: number;
   status?: 'all' | 'draft' | 'pending-review' | 'active' | 'paused' | 'rejected';
   featured?: boolean;
+  flashDeals?: boolean;
+  groupEligible?: boolean;
   sellerId?: string;
   search?: string;
 }
@@ -49,6 +51,20 @@ interface ReviewListingInput {
   rejectionReason?: string;
   feedback?: string;
   featured?: boolean;
+}
+
+interface UpdateFlashDealInput {
+  listingId: string;
+  enabled: boolean;
+  discountPercent?: number;
+  flashDealEndsAt?: string;
+  reason?: string;
+}
+
+interface ToggleGroupEligibleInput {
+  listingId: string;
+  enabled: boolean;
+  reason?: string;
 }
 
 // Query Keys
@@ -87,6 +103,10 @@ async function fetchAdminListings(filters: AdminListingsFilters = {}) {
   if (filters.limit) query.append('limit', filters.limit.toString());
   if (filters.status && filters.status !== 'all') query.append('status', filters.status);
   if (filters.featured !== undefined) query.append('featured', filters.featured.toString());
+  if (filters.flashDeals !== undefined) query.append('flashDeals', filters.flashDeals.toString());
+  if (filters.groupEligible !== undefined) {
+    query.append('groupEligible', filters.groupEligible.toString());
+  }
   if (filters.sellerId) query.append('sellerId', filters.sellerId);
   if (filters.search) query.append('search', filters.search);
 
@@ -153,6 +173,50 @@ async function toggleFeatured(listingId: string, featured: boolean) {
   return res.json();
 }
 
+async function updateFlashDeal(input: UpdateFlashDealInput) {
+  const res = await fetch(`${API_URL}/api/admin/listings/${input.listingId}/flash-deal`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      enabled: input.enabled,
+      discountPercent: input.discountPercent,
+      flashDealEndsAt: input.flashDealEndsAt,
+      reason: input.reason,
+    }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => null);
+    throw new Error(error?.error || 'Failed to update flash deal');
+  }
+
+  return res.json();
+}
+
+async function toggleGroupEligible(input: ToggleGroupEligibleInput) {
+  const res = await fetch(`${API_URL}/api/admin/listings/${input.listingId}/group-eligible`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      enabled: input.enabled,
+      reason: input.reason,
+    }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => null);
+    throw new Error(error?.error || 'Failed to update special offers placement');
+  }
+
+  return res.json();
+}
+
 // Hooks
 export function useAdminReviewQueue(filters: ReviewQueueFilters = {}) {
   return useQuery({
@@ -200,6 +264,29 @@ export function useToggleFeatured() {
       toggleFeatured(listingId, featured),
     onSuccess: () => {
       // Invalidate all listings queries
+      queryClient.invalidateQueries({ queryKey: adminListingKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateFlashDeal() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateFlashDeal,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminListingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: adminListingKeys.reviewQueue() });
+    },
+  });
+}
+
+export function useToggleGroupEligible() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: toggleGroupEligible,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminListingKeys.lists() });
     },
   });

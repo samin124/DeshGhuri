@@ -26,8 +26,8 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-muted/30 py-12">
-      <div className="container mx-auto px-4">
+    <section className="bg-background-subtle py-12">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold">How It Works</h2>
           <p className="text-muted-foreground">Simple, secure, and transparent booking process</p>

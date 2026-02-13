@@ -92,7 +92,7 @@ function SellerReviews() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="p-0">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>Failed to load reviews. Please try again later.</AlertDescription>
@@ -102,7 +102,7 @@ function SellerReviews() {
   }
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
+    <div className="space-y-6">
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Reviews</h1>
@@ -225,7 +225,7 @@ function SellerReviews() {
                 {data.reviews.map((review) => (
                   <div key={review.id} className="rounded-lg border p-4 space-y-3">
                     {/* Review Header */}
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex items-start gap-3">
                         {review.customer?.image && (
                           <img
@@ -288,7 +288,7 @@ function SellerReviews() {
 
               {/* Pagination */}
               {data && data.totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="text-sm text-muted-foreground">
                     Page {data.page} of {data.totalPages}
                   </div>

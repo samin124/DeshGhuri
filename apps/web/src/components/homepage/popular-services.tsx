@@ -18,45 +18,41 @@ export default function PopularServices({ onListingClick }: PopularServicesProps
   });
 
   return (
-    <section className="relative py-12 bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-blue-950/20 dark:via-cyan-950/20 dark:to-teal-950/20">
+    <section className="relative border-b border-border/40 bg-background-subtle py-12">
       {/* Decorative grid pattern */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-30">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
-              'linear-gradient(0deg, transparent 24%, rgba(59, 130, 246, 0.05) 25%, rgba(59, 130, 246, 0.05) 26%, transparent 27%, transparent 74%, rgba(59, 130, 246, 0.05) 75%, rgba(59, 130, 246, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(59, 130, 246, 0.05) 25%, rgba(59, 130, 246, 0.05) 26%, transparent 27%, transparent 74%, rgba(59, 130, 246, 0.05) 75%, rgba(59, 130, 246, 0.05) 76%, transparent 77%, transparent)',
-            backgroundSize: '50px 50px',
+              'linear-gradient(0deg, transparent 24%, rgba(148, 163, 184, 0.12) 25%, rgba(148, 163, 184, 0.12) 26%, transparent 27%, transparent 74%, rgba(148, 163, 184, 0.12) 75%, rgba(148, 163, 184, 0.12) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(148, 163, 184, 0.12) 25%, rgba(148, 163, 184, 0.12) 26%, transparent 27%, transparent 74%, rgba(148, 163, 184, 0.12) 75%, rgba(148, 163, 184, 0.12) 76%, transparent 77%, transparent)',
+            backgroundSize: '56px 56px',
           }}
         />
       </div>
 
-      <div className="container mx-auto px-4 relative">
+      <div className="relative mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-8 flex items-center justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                <Award className="h-5 w-5 text-white" />
+            <div className="mb-2 flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/20 bg-primary/15">
+                <Award className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">
-                Popular Services
-              </h2>
+              <h2 className="text-3xl font-bold text-foreground">Popular Services</h2>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <p className="text-muted-foreground">
-                ⭐ Top-rated experiences from verified sellers
-              </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-muted-foreground">Top-rated experiences from verified sellers</p>
               <div className="flex gap-2">
-                <Badge variant="outline" className="border-blue-500 text-blue-700 bg-blue-50">
-                  <Star className="h-3 w-3 mr-1 fill-current" />
+                <Badge variant="outline" className="border-primary/35 bg-primary/10 text-primary">
+                  <Star className="mr-1 h-3 w-3 fill-current" />
                   Highest Rated
                 </Badge>
-                <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50">
-                  <Shield className="h-3 w-3 mr-1" />
+                <Badge variant="outline" className="border-success/35 bg-success/10 text-success">
+                  <Shield className="mr-1 h-3 w-3" />
                   Verified
                 </Badge>
-                <Badge variant="outline" className="border-purple-500 text-purple-700 bg-purple-50">
-                  <ThumbsUp className="h-3 w-3 mr-1" />
+                <Badge variant="outline" className="border-accent/35 bg-accent/10 text-accent">
+                  <ThumbsUp className="mr-1 h-3 w-3" />
                   Most Booked
                 </Badge>
               </div>
@@ -65,7 +61,7 @@ export default function PopularServices({ onListingClick }: PopularServicesProps
           <Link
             to="/search"
             search={{ sort: 'rating' }}
-            className="hidden md:flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+            className="hidden items-center gap-1 font-semibold text-primary hover:text-primary-hover hover:underline md:flex"
           >
             View All Services
             <ChevronRight className="h-4 w-4" />
@@ -89,7 +85,7 @@ export default function PopularServices({ onListingClick }: PopularServicesProps
         )}
 
         {data?.data && data.data.length > 0 && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 auto-rows-fr">
+          <div className="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {data.data.map((listing) => (
               <ListingCard
                 key={listing.id}

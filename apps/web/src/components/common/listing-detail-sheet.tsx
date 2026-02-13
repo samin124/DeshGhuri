@@ -37,10 +37,13 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-3xl p-0 overflow-hidden bg-background">
+      <SheetContent
+        side="right"
+        className="h-[100dvh] w-full overflow-hidden bg-background p-0 sm:max-w-3xl"
+      >
         <ScrollArea className="h-full">
           {isLoading ? (
-            <div className="p-6 space-y-4">
+            <div className="space-y-4 p-4 sm:p-6">
               <Skeleton className="h-8 w-3/4" />
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-4 w-1/2" />
@@ -49,9 +52,9 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
           ) : listing ? (
             <>
               {/* Header with close button */}
-              <div className="sticky top-0 z-10 flex items-center justify-between bg-background border-b px-6 py-4">
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-4 py-3 sm:px-6 sm:py-4">
                 <div className="flex-1 min-w-0 pr-4">
-                  <SheetTitle className="truncate text-foreground text-2xl font-bold">
+                  <SheetTitle className="truncate text-xl font-bold text-foreground sm:text-2xl">
                     {listing.title}
                   </SheetTitle>
                 </div>
@@ -93,12 +96,12 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
 
                 {/* Image thumbnails */}
                 {images.length > 1 && (
-                  <div className="flex gap-3 p-4 overflow-x-auto bg-muted/50">
+                  <div className="flex gap-2.5 overflow-x-auto bg-muted/50 p-3 sm:gap-3 sm:p-4">
                     {images.map((img, idx) => (
                       <button
                         key={idx}
                         onClick={() => setSelectedImageIndex(idx)}
-                        className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all sm:h-20 sm:w-20 ${
                           idx === selectedImageIndex
                             ? 'border-primary shadow-md'
                             : 'border-border hover:border-primary/50'
@@ -116,10 +119,10 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-6 bg-background">
+              <div className="space-y-5 bg-background p-4 sm:space-y-6 sm:p-6">
                 {/* Title, Category, and Actions */}
                 <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                     <div className="flex-1">
                       <h2 className="text-2xl font-bold mb-3 text-foreground">{listing.title}</h2>
                       <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
@@ -200,7 +203,7 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
                 <Separator />
 
                 {/* Details Grid */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                   <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
                     <Users className="h-5 w-5 text-primary" />
                     <div>
@@ -298,8 +301,8 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
               </div>
 
               {/* Sticky Footer with Price and Book Button */}
-              <div className="sticky bottom-0 border-t bg-background p-6 shadow-2xl">
-                <div className="flex items-center justify-between gap-4">
+              <div className="sticky bottom-0 border-t bg-background p-4 shadow-2xl sm:p-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   <div>
                     <div className="text-3xl font-bold text-foreground">
                       ৳
@@ -312,7 +315,7 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
                     )}
                     <p className="text-sm text-muted-foreground mt-1">{listing.priceUnit}</p>
                   </div>
-                  <Button size="lg" className="rounded-xl px-8" asChild>
+                  <Button size="lg" className="w-full rounded-xl px-8 sm:w-auto" asChild>
                     <Link to={`/listing/${listing.id}`}>View Details & Book</Link>
                   </Button>
                 </div>

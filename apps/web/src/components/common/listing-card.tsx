@@ -1,10 +1,12 @@
-import { MapPin, Star, Users, User } from 'lucide-react';
+import { Heart, MapPin, Star, Users, User } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 
 import type { Listing } from '@/types/listing';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CountdownTimer } from './countdown-timer';
+import { useWishlist } from '@/contexts/wishlist-context';
+import { cn } from '@/lib/utils';
 
 interface ListingCardProps {
   listing: Listing;
@@ -20,6 +22,7 @@ export function ListingCard({
   onClick,
 }: ListingCardProps) {
   const navigate = useNavigate();
+  const { isWishlisted, toggleWishlist } = useWishlist();
 
   // Get primary image or first image
   const primaryImage = listing.images?.find((img) => img.isPrimary) || listing.images?.[0];
@@ -43,10 +46,14 @@ export function ListingCard({
 
   // Parse rating
   const rating = listing.rating ? parseFloat(listing.rating) : 0;
+  const wishlisted = isWishlisted(listing.id);
 
   return (
     <div
-      className={`group cursor-pointer overflow-hidden rounded-xl bg-[#f8f7f4] transition-all hover:shadow-lg ${className}`}
+      className={cn(
+        'group cursor-pointer overflow-hidden rounded-xl border border-border/70 bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-card-hover',
+        className
+      )}
       onClick={handleClick}
     >
       {/* Image Section */}
@@ -66,6 +73,23 @@ export function ListingCard({
             </Badge>
           </div>
         )}
+
+        <button
+          type="button"
+          className="absolute top-3 right-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition hover:bg-white"
+          onClick={(event) => {
+            event.stopPropagation();
+            toggleWishlist(listing);
+          }}
+          aria-label={wishlisted ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <Heart
+            className={cn(
+              'h-4 w-4 transition-colors',
+              wishlisted ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
+            )}
+          />
+        </button>
 
         {/* Bottom Left Countdown Timer */}
         {showCountdown && listing.isFlashDeal && listing.flashDealEndsAt && (

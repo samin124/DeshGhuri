@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+﻿import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { MoreVertical, UserX, Trash2, Eye } from 'lucide-react';
 import { DataTable, type Column } from '@/components/admin/data-table';
@@ -248,7 +248,7 @@ function RouteComponent() {
               setRoleFilter(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-2 border rounded text-sm min-w-[150px]"
+            className="w-full sm:w-auto px-3 py-2 border rounded text-sm sm:min-w-[150px]"
           >
             <option value="">All Roles</option>
             <option value="customer">Customer</option>
@@ -266,7 +266,7 @@ function RouteComponent() {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-2 border rounded text-sm min-w-[150px]"
+            className="w-full sm:w-auto px-3 py-2 border rounded text-sm sm:min-w-[150px]"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>

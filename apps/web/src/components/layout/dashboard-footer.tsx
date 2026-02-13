@@ -1,40 +1,29 @@
-import { Link } from '@tanstack/react-router';
-
 export function DashboardFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t bg-background py-6 mt-auto">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
-            © {currentYear} DeshGhuri. All rights reserved.
-          </p>
+    <footer className="mt-auto border-t bg-background py-5">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-4 text-sm lg:flex-row lg:px-6">
+        <p className="text-muted-foreground">
+          Copyright {currentYear} DeshGhuri. All rights reserved.
+        </p>
 
-          {/* Links */}
-          <div className="flex items-center gap-4 text-sm">
-            <Link
-              to="/terms"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Terms
-            </Link>
-            <span className="text-muted-foreground">•</span>
-            <Link
-              to="/privacy"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Privacy
-            </Link>
-            <span className="text-muted-foreground">•</span>
-            <Link
-              to="/help"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Support
-            </Link>
-          </div>
+        <div className="flex items-center gap-4">
+          <a
+            href="/terms"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Terms
+          </a>
+          <a
+            href="/privacy"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Privacy
+          </a>
+          <a href="/help" className="text-muted-foreground transition-colors hover:text-foreground">
+            Support
+          </a>
         </div>
       </div>
     </footer>

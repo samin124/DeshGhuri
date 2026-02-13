@@ -1,12 +1,10 @@
 import { useForm } from '@tanstack/react-form';
-import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import z from 'zod';
 import { Mail, Lock, User, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
 import { authClient } from '@/lib/auth-client';
-import { getPostLoginRedirect, getReturnUrlFromSearch } from '@/lib/auth/redirect-after-login';
 
 import Loader from './loader';
 import { Button } from './ui/button';
@@ -14,7 +12,6 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) {
-  const navigate = useNavigate();
   const { isPending } = authClient.useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
@@ -49,6 +46,7 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
         email: value.email,
         password: value.password,
         name: value.name,
+        callbackURL: window.location.origin + '/login?tab=signin',
       });
 
       if (error) {
@@ -62,16 +60,31 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
         return;
       }
 
-      const returnUrl = getReturnUrlFromSearch(window.location.search);
-      const redirectTo = await getPostLoginRedirect({
-        preferredDestination: returnUrl,
+      // Safety net: even if backend config is stale/misconfigured, clear any session after signup.
+      if (data?.token) {
+        await authClient.signOut();
+      }
+
+      toast.success('Verification link sent. Check your inbox/spam and verify before signing in.', {
+        duration: 8000,
+        action: {
+          label: 'Resend Email',
+          onClick: async () => {
+            const result = await authClient.sendVerificationEmail({
+              email: value.email,
+              callbackURL: window.location.origin + '/login?tab=signin',
+            });
+
+            if (result.error) {
+              toast.error('Failed to resend verification email. Please try again.');
+            } else {
+              toast.success('Verification email sent again.');
+            }
+          },
+        },
       });
 
-      toast.success('Welcome to DeshGhuri! Account created successfully.', {
-        duration: 3000,
-      });
-
-      navigate({ to: redirectTo });
+      onSwitchToSignIn();
     },
     validators: {
       onSubmit: z.object({

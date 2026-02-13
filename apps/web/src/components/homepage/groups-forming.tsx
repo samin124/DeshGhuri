@@ -12,7 +12,7 @@ interface GroupsFormingProps {
 export default function GroupsForming({ onListingClick: _onListingClick }: GroupsFormingProps) {
   return (
     <section className="py-12">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold">Groups Forming Now</h2>
           <p className="text-muted-foreground">Join a group and save up to 40%</p>

@@ -379,12 +379,12 @@ async function main() {
         checkOutTime: category === 'hotel' ? '11:00' : null,
         images: [
           {
-            url: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000000)}`,
+            url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
             storageKey: `listing-${listingId}-1.jpg`,
             isPrimary: true,
           },
           {
-            url: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000000)}`,
+            url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
             storageKey: `listing-${listingId}-2.jpg`,
             isPrimary: false,
           },

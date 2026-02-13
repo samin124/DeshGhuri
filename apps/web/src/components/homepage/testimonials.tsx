@@ -10,8 +10,8 @@ export default function TestimonialsSection() {
   const [emblaRef] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 4000 })]);
 
   return (
-    <section className="py-20 bg-gradient-to-b from-background-subtle to-background">
-      <div className="container mx-auto px-4">
+    <section className="border-b border-border/40 bg-background-subtle py-20">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-12 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             What Travelers Say

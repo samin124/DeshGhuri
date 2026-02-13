@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   MapPin,
   Users,
@@ -16,26 +16,29 @@ import {
   ChevronRight,
   Phone,
   MessageCircle,
-  Wifi,
-  Car,
-  Utensils,
-  Tv,
-  Wind,
-  Waves,
 } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { VerifiedBadge } from '@/components/seller/verified-badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { requireCustomerAccess } from '@/lib/auth/role-guard';
-import { useListing, trackListingView } from '@/lib/api/listings';
+import {
+  useListing,
+  useListingReviews,
+  useCreateListingReview,
+  trackListingView,
+} from '@/lib/api/listings';
 import { CATEGORY_DISPLAY_NAMES } from '@/lib/constants/categories';
 import { BookingWizard } from '@/components/booking/booking-wizard';
 import { BookingProvider } from '@/contexts/booking-context';
 import { authClient } from '@/lib/auth-client';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/listing/$listingId')({
   beforeLoad: async ({ location }) => {
@@ -44,26 +47,38 @@ export const Route = createFileRoute('/listing/$listingId')({
   component: RouteComponent,
 });
 
-// Amenity icon mapping
-const amenityIcons: Record<string, React.ReactNode> = {
-  wifi: <Wifi className="h-5 w-5" />,
-  parking: <Car className="h-5 w-5" />,
-  restaurant: <Utensils className="h-5 w-5" />,
-  tv: <Tv className="h-5 w-5" />,
-  ac: <Wind className="h-5 w-5" />,
-  pool: <Waves className="h-5 w-5" />,
-};
-
 function RouteComponent() {
   const { listingId } = Route.useParams();
   const router = useRouter();
   const [wizardOpen, setWizardOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewTitle, setReviewTitle] = useState('');
+  const [reviewComment, setReviewComment] = useState('');
+  const [canScrollReviewPrev, setCanScrollReviewPrev] = useState(false);
+  const [canScrollReviewNext, setCanScrollReviewNext] = useState(false);
+  const { data: sessionData, isPending: isSessionPending } = authClient.useSession();
+  const isAuthenticated = !!sessionData?.user;
+  const [reviewsCarouselRef, reviewsCarouselApi] = useEmblaCarousel({
+    align: 'start',
+    loop: false,
+    dragFree: false,
+  });
 
   // Fetch listing from API
   const { data, isLoading, error } = useListing(listingId);
+  const { data: reviewsData, isLoading: isReviewsLoading } = useListingReviews(listingId, 5);
+  const createReviewMutation = useCreateListingReview(listingId);
   const listing = data?.data;
+  const reviewsSummary = reviewsData?.data;
+  const latestReviews = reviewsSummary?.reviews || [];
+  const averageRating =
+    reviewsSummary?.averageRating ?? (listing?.rating ? parseFloat(listing.rating) : 0);
+  const totalReviewCount = reviewsSummary?.reviewCount ?? listing?.reviewCount ?? 0;
+  const canReview = reviewsSummary?.canReview ?? false;
+  const reviewEligibilityMessage =
+    reviewsSummary?.eligibilityMessage || 'Sign in to submit a rating and review.';
 
   // Track view when component mounts
   useEffect(() => {
@@ -72,15 +87,78 @@ function RouteComponent() {
     }
   }, [listingId]);
 
+  const updateReviewCarouselButtons = useCallback(() => {
+    if (!reviewsCarouselApi) {
+      return;
+    }
+
+    setCanScrollReviewPrev(reviewsCarouselApi.canScrollPrev());
+    setCanScrollReviewNext(reviewsCarouselApi.canScrollNext());
+  }, [reviewsCarouselApi]);
+
+  useEffect(() => {
+    if (!reviewsCarouselApi) {
+      return;
+    }
+
+    updateReviewCarouselButtons();
+    reviewsCarouselApi.on('select', updateReviewCarouselButtons);
+    reviewsCarouselApi.on('reInit', updateReviewCarouselButtons);
+
+    return () => {
+      reviewsCarouselApi.off('select', updateReviewCarouselButtons);
+      reviewsCarouselApi.off('reInit', updateReviewCarouselButtons);
+    };
+  }, [reviewsCarouselApi, updateReviewCarouselButtons, latestReviews.length]);
+
+  const handleSubmitReview = () => {
+    if (!canReview) {
+      toast.error(reviewEligibilityMessage);
+      return;
+    }
+
+    if (reviewRating < 1) {
+      toast.error('Please select a rating.');
+      return;
+    }
+
+    if (reviewComment.trim().length < 5) {
+      toast.error('Please write at least 5 characters in your review.');
+      return;
+    }
+
+    createReviewMutation.mutate(
+      {
+        overallRating: reviewRating,
+        title: reviewTitle.trim() || undefined,
+        comment: reviewComment.trim(),
+      },
+      {
+        onSuccess: () => {
+          toast.success('Thanks! Your review has been submitted.');
+          setReviewRating(0);
+          setReviewTitle('');
+          setReviewComment('');
+        },
+        onError: (error: Error) => {
+          toast.error(error.message || 'Failed to submit review.');
+        },
+      }
+    );
+  };
+
   // Handle reserve button click with authentication check
   const handleReserveClick = async () => {
+    if (isSessionPending) return;
+
     try {
       const session = await authClient.getSession();
 
-      if (!session) {
+      if (!session.data?.user) {
+        toast.error('Please sign in to reserve this package.');
         router.navigate({
           to: '/login',
-          search: { return: `/listing/${listingId}` },
+          search: { return: `/listing/${listingId}`, tab: 'customer' },
         });
         return;
       }
@@ -88,9 +166,10 @@ function RouteComponent() {
       setWizardOpen(true);
     } catch (err) {
       console.error('Error checking authentication:', err);
+      toast.error('Please sign in to reserve this package.');
       router.navigate({
         to: '/login',
-        search: { return: `/listing/${listingId}` },
+        search: { return: `/listing/${listingId}`, tab: 'customer' },
       });
     }
   };
@@ -99,15 +178,15 @@ function RouteComponent() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#f8f7f4]">
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-6">
           <Skeleton className="h-[500px] rounded-2xl mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <div className="space-y-5 lg:col-span-8">
               <Skeleton className="h-40 rounded-xl" />
               <Skeleton className="h-60 rounded-xl" />
               <Skeleton className="h-40 rounded-xl" />
             </div>
-            <Skeleton className="h-[500px] rounded-xl" />
+            <Skeleton className="h-[500px] rounded-xl lg:col-span-4" />
           </div>
         </div>
       </div>
@@ -166,7 +245,7 @@ function RouteComponent() {
       ? listing.location
       : `${listing.location.city}, ${listing.location.district}`;
   const categoryDisplay = CATEGORY_DISPLAY_NAMES[listing.category] || listing.category;
-  const rating = listing.rating ? parseFloat(listing.rating) : 0;
+  const rating = averageRating;
   const basePrice = parseFloat(listing.basePrice);
   const discountedPrice = listing.discountedPrice ? parseFloat(listing.discountedPrice) : null;
   const displayPrice = discountedPrice || basePrice;
@@ -184,9 +263,9 @@ function RouteComponent() {
   return (
     <BookingProvider>
       <div className="min-h-screen bg-[#f8f7f4]">
-        <div className="container mx-auto px-4 py-6 max-w-7xl">
+        <div className="mx-auto w-full max-w-7xl px-4 py-5 lg:px-6 lg:py-6">
           {/* Hero Image Gallery */}
-          <div className="relative rounded-2xl overflow-hidden mb-8 shadow-lg">
+          <div className="relative mb-6 overflow-hidden rounded-2xl shadow-lg lg:mb-7">
             <div className="aspect-[21/9] relative">
               <img
                 src={allImages[currentImageIndex]?.url || '/placeholder-listing.jpg'}
@@ -247,7 +326,7 @@ function RouteComponent() {
               </div>
 
               {/* Bottom info overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+              <div className="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
                 <div className="flex items-end justify-between">
                   <div>
                     <h1 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">
@@ -261,8 +340,8 @@ function RouteComponent() {
                       <div className="flex items-center gap-1.5">
                         <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                         <span className="font-semibold">{rating.toFixed(1)}</span>
-                        {listing.reviewCount && listing.reviewCount > 0 && (
-                          <span className="text-white/70">({listing.reviewCount} reviews)</span>
+                        {totalReviewCount > 0 && (
+                          <span className="text-white/70">({totalReviewCount} reviews)</span>
                         )}
                       </div>
                     </div>
@@ -302,12 +381,12 @@ function RouteComponent() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-5 lg:col-span-8">
               {/* Quick Info Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card className="p-4 bg-white rounded-xl text-center">
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <Card className="rounded-xl bg-white p-3.5 text-center sm:p-4">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
                     {listing.groupEligible ? (
                       <Users className="h-5 w-5 text-primary" />
@@ -321,7 +400,7 @@ function RouteComponent() {
                   </p>
                 </Card>
 
-                <Card className="p-4 bg-white rounded-xl text-center">
+                <Card className="rounded-xl bg-white p-3.5 text-center sm:p-4">
                   <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2">
                     <Star className="h-5 w-5 text-amber-500" />
                   </div>
@@ -329,7 +408,7 @@ function RouteComponent() {
                   <p className="font-semibold text-sm">{rating.toFixed(1)} / 5.0</p>
                 </Card>
 
-                <Card className="p-4 bg-white rounded-xl text-center">
+                <Card className="rounded-xl bg-white p-3.5 text-center sm:p-4">
                   <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
                     <Shield className="h-5 w-5 text-green-600" />
                   </div>
@@ -337,7 +416,7 @@ function RouteComponent() {
                   <p className="font-semibold text-sm">Escrow Protected</p>
                 </Card>
 
-                <Card className="p-4 bg-white rounded-xl text-center">
+                <Card className="rounded-xl bg-white p-3.5 text-center sm:p-4">
                   <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                     <Clock className="h-5 w-5 text-blue-600" />
                   </div>
@@ -348,7 +427,7 @@ function RouteComponent() {
 
               {/* Seller Info Card */}
               {listing.seller && (
-                <Card className="p-6 bg-white rounded-xl">
+                <Card className="rounded-xl bg-white p-5">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-16 w-16 border-2 border-primary/20">
                       <AvatarImage src={listing.seller.avatar} />
@@ -394,7 +473,7 @@ function RouteComponent() {
               )}
 
               {/* Description */}
-              <Card className="p-6 bg-white rounded-xl">
+              <Card className="rounded-xl bg-white p-5">
                 <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <div className="w-1 h-6 bg-primary rounded-full"></div>
                   About This Experience
@@ -406,16 +485,16 @@ function RouteComponent() {
 
               {/* Amenities */}
               {listing.amenities && listing.amenities.length > 0 && (
-                <Card className="p-6 bg-white rounded-xl">
+                <Card className="rounded-xl bg-white p-5">
                   <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <div className="w-1 h-6 bg-primary rounded-full"></div>
                     What's Included
                   </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                     {listing.amenities.map((amenity, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-[#f8f7f4]"
+                        className="flex items-center gap-3 rounded-xl bg-[#f8f7f4] p-2.5"
                       >
                         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
                           <CheckCircle className="h-5 w-5 text-green-500" />
@@ -428,14 +507,14 @@ function RouteComponent() {
               )}
 
               {/* Policies */}
-              <Card className="p-6 bg-white rounded-xl">
+              <Card className="rounded-xl bg-white p-5">
                 <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <div className="w-1 h-6 bg-primary rounded-full"></div>
                   Important Information
                 </h2>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid gap-3 md:grid-cols-2">
                   {(listing.checkInTime || listing.checkOutTime) && (
-                    <div className="p-4 rounded-xl bg-[#f8f7f4]">
+                    <div className="rounded-xl bg-[#f8f7f4] p-3.5">
                       <div className="flex items-center gap-2 mb-2">
                         <Calendar className="h-5 w-5 text-primary" />
                         <span className="font-semibold">Check-in / Check-out</span>
@@ -445,7 +524,7 @@ function RouteComponent() {
                       </p>
                     </div>
                   )}
-                  <div className="p-4 rounded-xl bg-[#f8f7f4]">
+                  <div className="rounded-xl bg-[#f8f7f4] p-3.5">
                     <div className="flex items-center gap-2 mb-2">
                       <AlertCircle className="h-5 w-5 text-primary" />
                       <span className="font-semibold">Cancellation Policy</span>
@@ -454,7 +533,7 @@ function RouteComponent() {
                       {listing.cancellationPolicy || 'Free cancellation up to 24 hours before'}
                     </p>
                   </div>
-                  <div className="p-4 rounded-xl bg-[#f8f7f4]">
+                  <div className="rounded-xl bg-[#f8f7f4] p-3.5">
                     <div className="flex items-center gap-2 mb-2">
                       <Shield className="h-5 w-5 text-green-600" />
                       <span className="font-semibold">Secure Payment</span>
@@ -463,7 +542,7 @@ function RouteComponent() {
                       Your payment is protected with escrow
                     </p>
                   </div>
-                  <div className="p-4 rounded-xl bg-[#f8f7f4]">
+                  <div className="rounded-xl bg-[#f8f7f4] p-3.5">
                     <div className="flex items-center gap-2 mb-2">
                       <CheckCircle className="h-5 w-5 text-green-600" />
                       <span className="font-semibold">Instant Confirmation</span>
@@ -474,13 +553,170 @@ function RouteComponent() {
                   </div>
                 </div>
               </Card>
+
+              {/* Reviews */}
+              <Card className="rounded-xl bg-white p-5">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                      <div className="w-1 h-6 bg-primary rounded-full"></div>
+                      Customer Reviews
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {totalReviewCount > 0
+                        ? `${totalReviewCount} review${totalReviewCount > 1 ? 's' : ''} from verified bookings`
+                        : 'No reviews yet for this package'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-full bg-amber-50 border border-amber-100 px-4 py-2">
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <span className="font-semibold">{rating.toFixed(1)}</span>
+                    <span className="text-xs text-muted-foreground">/ 5.0 average</span>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                  <div className="space-y-4 rounded-2xl border border-border/80 bg-[#f8f7f4] p-3.5 sm:p-4">
+                    <div>
+                      <h3 className="text-base font-semibold">Rate this package</h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {reviewEligibilityMessage}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-medium mb-2">Your rating</p>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((value) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => setReviewRating(value)}
+                            disabled={!canReview || createReviewMutation.isPending}
+                            className="rounded-md p-1 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50"
+                            aria-label={`Rate ${value} stars`}
+                          >
+                            <Star
+                              className={`h-5 w-5 ${
+                                value <= reviewRating
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'text-muted-foreground/60'
+                              }`}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <Input
+                        placeholder="Review title (optional)"
+                        value={reviewTitle}
+                        onChange={(event) => setReviewTitle(event.target.value)}
+                        maxLength={120}
+                        disabled={!canReview || createReviewMutation.isPending}
+                      />
+                      <Textarea
+                        placeholder="Share your experience..."
+                        value={reviewComment}
+                        onChange={(event) => setReviewComment(event.target.value)}
+                        rows={4}
+                        maxLength={1000}
+                        disabled={!canReview || createReviewMutation.isPending}
+                      />
+                      <Button
+                        className="w-full rounded-xl"
+                        onClick={handleSubmitReview}
+                        disabled={!canReview || createReviewMutation.isPending}
+                      >
+                        {createReviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-border/80 bg-[#f8f7f4] p-3.5 sm:p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-base font-semibold">Latest comments</h3>
+                      {latestReviews.length > 1 && (
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-full"
+                            onClick={() => reviewsCarouselApi?.scrollPrev()}
+                            disabled={!canScrollReviewPrev}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-full"
+                            onClick={() => reviewsCarouselApi?.scrollNext()}
+                            disabled={!canScrollReviewNext}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    {isReviewsLoading ? (
+                      <div className="grid grid-cols-1 gap-3">
+                        {[1, 2].map((item) => (
+                          <Skeleton key={item} className="h-28 w-full rounded-xl" />
+                        ))}
+                      </div>
+                    ) : latestReviews.length > 0 ? (
+                      <div className="overflow-hidden" ref={reviewsCarouselRef}>
+                        <div className="flex">
+                          {latestReviews.map((entry) => (
+                            <div key={entry.id} className="min-w-0 flex-[0_0_100%] pr-3">
+                              <div className="h-full rounded-xl border border-border/70 bg-white p-4 shadow-sm">
+                                <div className="flex items-center justify-between gap-3">
+                                  <p className="text-sm font-semibold truncate">
+                                    {entry.customer?.name || 'Verified Customer'}
+                                  </p>
+                                  <div className="flex items-center gap-1">
+                                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                                    <span className="text-xs font-medium">
+                                      {entry.overallRating}
+                                    </span>
+                                  </div>
+                                </div>
+                                {entry.title && (
+                                  <p className="text-sm font-medium mt-2 line-clamp-1">
+                                    {entry.title}
+                                  </p>
+                                )}
+                                <p className="text-xs text-muted-foreground mt-2 line-clamp-3">
+                                  {entry.comment}
+                                </p>
+                                <p className="text-[11px] text-muted-foreground mt-3">
+                                  {new Date(entry.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-dashed border-border bg-white p-5 text-center text-sm text-muted-foreground">
+                        No comments yet. Be the first to review this package.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Card>
             </div>
 
             {/* Booking Panel */}
-            <div className="lg:col-span-1">
-              <Card className="p-6 bg-white rounded-xl shadow-lg sticky top-24">
+            <div className="lg:col-span-4">
+              <Card className="sticky top-24 rounded-xl bg-white p-5 shadow-lg">
                 {/* Price Header */}
-                <div className="mb-6">
+                <div className="mb-5">
                   <div className="flex items-baseline gap-2">
                     <span className="text-3xl font-bold text-foreground">
                       ৳{displayPrice.toLocaleString()}
@@ -503,7 +739,7 @@ function RouteComponent() {
                 </div>
 
                 {/* Booking Type Badge */}
-                <div className="mb-6">
+                <div className="mb-5">
                   {listing.groupEligible ? (
                     <Badge className="bg-primary/10 text-primary border-primary/30 rounded-full px-4 py-1.5">
                       <Users className="h-4 w-4 mr-1.5" />
@@ -549,7 +785,7 @@ function RouteComponent() {
                   </div>
                 </div>
 
-                <Separator className="my-6" />
+                <Separator className="my-5" />
 
                 {/* Price Breakdown */}
                 <div className="space-y-3 text-sm">
@@ -573,19 +809,22 @@ function RouteComponent() {
 
                 {/* Reserve Button */}
                 <Button
-                  className="w-full mt-6 rounded-xl h-12 text-base font-semibold"
+                  className="mt-5 h-11 w-full rounded-xl text-base font-semibold"
                   size="lg"
                   onClick={handleReserveClick}
+                  disabled={isSessionPending}
                 >
-                  Reserve Now
+                  {isAuthenticated ? 'Reserve Now' : 'Sign in to Reserve'}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground mt-3">
-                  You won't be charged yet. Review before confirming.
+                  {isAuthenticated
+                    ? "You won't be charged yet. Review before confirming."
+                    : 'Sign in first to continue with reservation.'}
                 </p>
 
                 {/* Trust Badges */}
-                <div className="mt-6 pt-6 border-t border-border">
+                <div className="mt-5 border-t border-border pt-5">
                   <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Shield className="h-4 w-4 text-green-500" />

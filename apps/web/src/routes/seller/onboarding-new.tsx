@@ -243,11 +243,14 @@ function RouteComponent() {
             uploadFormData.append('sellerId', sellerId);
             uploadFormData.append('documentType', documentType);
 
-            const uploadResponse = await fetch('http://localhost:3000/api/seller/documents/upload', {
-              method: 'POST',
-              credentials: 'include',
-              body: uploadFormData,
-            });
+            const uploadResponse = await fetch(
+              'http://localhost:3000/api/seller/documents/upload',
+              {
+                method: 'POST',
+                credentials: 'include',
+                body: uploadFormData,
+              }
+            );
 
             if (!uploadResponse.ok) {
               const uploadError = await uploadResponse.json();

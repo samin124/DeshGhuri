@@ -18,8 +18,8 @@ export default function SpecialOffers({ onListingClick }: SpecialOffersProps) {
   });
 
   return (
-    <section className="relative py-16 bg-primary/10 border-b">
-      <div className="container mx-auto px-4">
+    <section className="relative border-b border-border/40 bg-background-subtle py-16">
+      <div className="mx-auto w-full max-w-7xl px-4 lg:px-6">
         <div className="mb-10 text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
             <Sparkles className="h-7 w-7 text-primary" />
