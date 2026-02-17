@@ -34,6 +34,18 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
       ? listing.location
       : `${listing.location.city}, ${listing.location.district}, ${listing.location.address}`
     : '';
+  const availablePackages =
+    typeof listing?.availablePackages === 'number'
+      ? listing.availablePackages
+      : typeof listing?.capacity === 'number' && typeof listing?.bookedPackages === 'number'
+        ? Math.max(listing.capacity - listing.bookedPackages, 0)
+        : listing?.capacity;
+  const isBookingClosed =
+    typeof listing?.isBookingClosed === 'boolean'
+      ? listing.isBookingClosed
+      : availablePackages !== undefined
+        ? availablePackages <= 0
+        : false;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -314,10 +326,23 @@ export function ListingDetailSheet({ listingId, open, onOpenChange }: ListingDet
                       </div>
                     )}
                     <p className="text-sm text-muted-foreground mt-1">{listing.priceUnit}</p>
+                    <p
+                      className={`text-sm mt-1 ${isBookingClosed ? 'text-destructive font-medium' : 'text-muted-foreground'}`}
+                    >
+                      {isBookingClosed
+                        ? 'Booking Closed'
+                        : `${availablePackages} package${availablePackages === 1 ? '' : 's'} left`}
+                    </p>
                   </div>
-                  <Button size="lg" className="w-full rounded-xl px-8 sm:w-auto" asChild>
-                    <Link to={`/listing/${listing.id}`}>View Details & Book</Link>
-                  </Button>
+                  {isBookingClosed ? (
+                    <Button size="lg" className="w-full rounded-xl px-8 sm:w-auto" disabled>
+                      Booking Closed
+                    </Button>
+                  ) : (
+                    <Button size="lg" className="w-full rounded-xl px-8 sm:w-auto" asChild>
+                      <Link to={`/listing/${listing.id}`}>View Details & Book</Link>
+                    </Button>
+                  )}
                 </div>
                 {listing.groupEligible && (
                   <p className="text-sm text-center text-primary mt-3 font-medium">

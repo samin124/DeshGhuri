@@ -15,6 +15,12 @@ import {
 } from '@DeshGhuri/db';
 import { eq, and, gte, lte, desc, asc, sql, or } from 'drizzle-orm';
 import { getHomepageConfig } from '../lib/homepage-config';
+import {
+  addInventoryToListing,
+  addInventoryToListings,
+  getReservedPackageCountForListing,
+  getReservedPackageCountsForListings,
+} from '../lib/listing-inventory';
 
 const app = new Hono();
 
@@ -76,9 +82,15 @@ app.get('/featured', async (c) => {
       .orderBy(desc(listing.rating))
       .limit(remainingSlots);
 
+    const mergedListings = [...flashDeals, ...featuredListings];
+    const bookedCounts = await getReservedPackageCountsForListings(
+      mergedListings.map((item) => item.id)
+    );
+    const listingsWithInventory = addInventoryToListings(mergedListings, bookedCounts);
+
     return c.json({
       success: true,
-      data: [...flashDeals, ...featuredListings],
+      data: listingsWithInventory,
     });
   } catch (error) {
     console.error('Error fetching featured listings:', error);
@@ -112,9 +124,14 @@ app.get('/flash-deals', async (c) => {
       .orderBy(desc(listing.flashDealEndsAt)) // Show soonest to expire first
       .limit(12);
 
+    const bookedCounts = await getReservedPackageCountsForListings(
+      flashDeals.map((item) => item.id)
+    );
+    const listingsWithInventory = addInventoryToListings(flashDeals, bookedCounts);
+
     return c.json({
       success: true,
-      data: flashDeals,
+      data: listingsWithInventory,
     });
   } catch (error) {
     console.error('Error fetching flash deals:', error);
@@ -149,10 +166,14 @@ app.get('/trending', async (c) => {
       ...l,
       isTrending: true,
     }));
+    const bookedCounts = await getReservedPackageCountsForListings(
+      dataWithTrendingFlag.map((item) => item.id)
+    );
+    const listingsWithInventory = addInventoryToListings(dataWithTrendingFlag, bookedCounts);
 
     return c.json({
       success: true,
-      data: dataWithTrendingFlag,
+      data: listingsWithInventory,
     });
   } catch (error) {
     console.error('Error fetching trending listings:', error);
@@ -194,6 +215,7 @@ app.get('/suggestions', async (c) => {
         title: listing.title,
         category: listing.category,
         basePrice: listing.basePrice,
+        capacity: listing.capacity,
         images: listing.images,
         location: listing.location,
       })
@@ -206,6 +228,11 @@ app.get('/suggestions', async (c) => {
       )
       .orderBy(desc(listing.rating))
       .limit(5);
+
+    const bookedCounts = await getReservedPackageCountsForListings(
+      listingSuggestions.map((item) => item.id)
+    );
+    const listingSuggestionsWithInventory = addInventoryToListings(listingSuggestions, bookedCounts);
 
     // Get unique locations
     const locationSuggestions = await db
@@ -228,7 +255,7 @@ app.get('/suggestions', async (c) => {
     return c.json({
       success: true,
       data: {
-        listings: listingSuggestions,
+        listings: listingSuggestionsWithInventory,
         locations: locationSuggestions
           .filter((l) => l.city)
           .map((l) => ({
@@ -392,10 +419,14 @@ app.get('/', async (c) => {
       .where(eq(listing.status, LISTING_STATUSES.ACTIVE))
       .limit(20);
 
+    const bookedCounts = await getReservedPackageCountsForListings(
+      filteredListings.map((item) => item.listing.id)
+    );
+
     return c.json({
       success: true,
       data: filteredListings.map((l) => ({
-        ...l.listing,
+        ...addInventoryToListing(l.listing, bookedCounts.get(l.listing.id) || 0),
         seller: l.seller
           ? {
               id: l.seller.id,
@@ -749,6 +780,8 @@ app.get('/:id', async (c) => {
     }
 
     const { listing: listingData, seller: sellerData } = result[0];
+    const bookedPackages = await getReservedPackageCountForListing(listingId);
+    const listingWithInventory = addInventoryToListing(listingData, bookedPackages);
 
     // Get recent reviews (top 5)
     const recentReviews = await db
@@ -771,11 +804,15 @@ app.get('/:id', async (c) => {
       )
       .orderBy(desc(listing.rating))
       .limit(4);
+    const similarBookedCounts = await getReservedPackageCountsForListings(
+      similarListings.map((item) => item.id)
+    );
+    const similarListingsWithInventory = addInventoryToListings(similarListings, similarBookedCounts);
 
     return c.json({
       success: true,
       data: {
-        ...listingData,
+        ...listingWithInventory,
         seller: sellerData
           ? {
               id: sellerData.id,
@@ -785,7 +822,7 @@ app.get('/:id', async (c) => {
             }
           : undefined,
         recentReviews,
-        similarListings,
+        similarListings: similarListingsWithInventory,
       },
     });
   } catch (error) {
@@ -863,10 +900,12 @@ app.post('/search', async (c) => {
       .where(and(...conditions))
       .orderBy(desc(listing.createdAt))
       .limit(50);
+    const bookedCounts = await getReservedPackageCountsForListings(results.map((item) => item.id));
+    const resultsWithInventory = addInventoryToListings(results, bookedCounts);
 
     return c.json({
       success: true,
-      data: results,
+      data: resultsWithInventory,
     });
   } catch (error) {
     console.error('Error searching listings:', error);

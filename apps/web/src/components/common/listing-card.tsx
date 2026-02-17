@@ -47,6 +47,18 @@ export function ListingCard({
   // Parse rating
   const rating = listing.rating ? parseFloat(listing.rating) : 0;
   const wishlisted = isWishlisted(listing.id);
+  const availablePackages =
+    typeof listing.availablePackages === 'number'
+      ? listing.availablePackages
+      : typeof listing.capacity === 'number' && typeof listing.bookedPackages === 'number'
+        ? Math.max(listing.capacity - listing.bookedPackages, 0)
+        : undefined;
+  const isBookingClosed =
+    typeof listing.isBookingClosed === 'boolean'
+      ? listing.isBookingClosed
+      : availablePackages !== undefined
+        ? availablePackages === 0
+        : false;
 
   return (
     <div
@@ -145,6 +157,14 @@ export function ListingCard({
             Individual Booking
           </Badge>
         )}
+        {availablePackages !== undefined && (
+          <Badge
+            variant={isBookingClosed ? 'destructive' : 'secondary'}
+            className="text-xs ml-2"
+          >
+            {isBookingClosed ? 'Booking Closed' : `${availablePackages} left`}
+          </Badge>
+        )}
 
         {/* Pricing */}
         <div className="pt-1">
@@ -169,10 +189,12 @@ export function ListingCard({
           className="w-full mt-3"
           onClick={(e) => {
             e.stopPropagation();
+            if (isBookingClosed) return;
             navigate({ to: `/listing/${listing.id}` });
           }}
+          disabled={isBookingClosed}
         >
-          Book Now
+          {isBookingClosed ? 'Booking Closed' : 'Book Now'}
         </Button>
       </div>
     </div>

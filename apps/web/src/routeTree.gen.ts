@@ -29,6 +29,7 @@ import { Route as CustomerBookingsRouteImport } from './routes/customer/bookings
 import { Route as AdminResetPasswordRouteImport } from './routes/admin/reset-password'
 import { Route as AdminAdminRouteImport } from './routes/admin/_admin'
 import { Route as SellerDashboardIndexRouteImport } from './routes/seller/dashboard/index'
+import { Route as SellerDashboardSettingsRouteImport } from './routes/seller/dashboard/settings'
 import { Route as SellerDashboardReviewsRouteImport } from './routes/seller/dashboard/reviews'
 import { Route as SellerDashboardProofCenterRouteImport } from './routes/seller/dashboard/proof-center'
 import { Route as SellerDashboardPayoutsRouteImport } from './routes/seller/dashboard/payouts'
@@ -155,6 +156,11 @@ const AdminAdminRoute = AdminAdminRouteImport.update({
 const SellerDashboardIndexRoute = SellerDashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => SellerDashboardRoute,
+} as any)
+const SellerDashboardSettingsRoute = SellerDashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => SellerDashboardRoute,
 } as any)
 const SellerDashboardReviewsRoute = SellerDashboardReviewsRouteImport.update({
@@ -329,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
   '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
   '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
+  '/seller/dashboard/settings': typeof SellerDashboardSettingsRoute
   '/seller/dashboard/': typeof SellerDashboardIndexRoute
   '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
@@ -375,6 +382,7 @@ export interface FileRoutesByTo {
   '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
   '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
   '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
+  '/seller/dashboard/settings': typeof SellerDashboardSettingsRoute
   '/seller/dashboard': typeof SellerDashboardIndexRoute
   '/admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
@@ -424,6 +432,7 @@ export interface FileRoutesById {
   '/seller/dashboard/payouts': typeof SellerDashboardPayoutsRoute
   '/seller/dashboard/proof-center': typeof SellerDashboardProofCenterRoute
   '/seller/dashboard/reviews': typeof SellerDashboardReviewsRoute
+  '/seller/dashboard/settings': typeof SellerDashboardSettingsRoute
   '/seller/dashboard/': typeof SellerDashboardIndexRoute
   '/admin/_admin/sellers/$sellerId': typeof AdminAdminSellersSellerIdRoute
   '/admin/_admin/sellers/verification-queue': typeof AdminAdminSellersVerificationQueueRoute
@@ -474,6 +483,7 @@ export interface FileRouteTypes {
     | '/seller/dashboard/payouts'
     | '/seller/dashboard/proof-center'
     | '/seller/dashboard/reviews'
+    | '/seller/dashboard/settings'
     | '/seller/dashboard/'
     | '/admin/sellers/$sellerId'
     | '/admin/sellers/verification-queue'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/seller/dashboard/payouts'
     | '/seller/dashboard/proof-center'
     | '/seller/dashboard/reviews'
+    | '/seller/dashboard/settings'
     | '/seller/dashboard'
     | '/admin/sellers/$sellerId'
     | '/admin/sellers/verification-queue'
@@ -568,6 +579,7 @@ export interface FileRouteTypes {
     | '/seller/dashboard/payouts'
     | '/seller/dashboard/proof-center'
     | '/seller/dashboard/reviews'
+    | '/seller/dashboard/settings'
     | '/seller/dashboard/'
     | '/admin/_admin/sellers/$sellerId'
     | '/admin/_admin/sellers/verification-queue'
@@ -751,6 +763,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/seller/dashboard/'
       preLoaderRoute: typeof SellerDashboardIndexRouteImport
+      parentRoute: typeof SellerDashboardRoute
+    }
+    '/seller/dashboard/settings': {
+      id: '/seller/dashboard/settings'
+      path: '/settings'
+      fullPath: '/seller/dashboard/settings'
+      preLoaderRoute: typeof SellerDashboardSettingsRouteImport
       parentRoute: typeof SellerDashboardRoute
     }
     '/seller/dashboard/reviews': {
@@ -985,6 +1004,7 @@ interface SellerDashboardRouteChildren {
   SellerDashboardPayoutsRoute: typeof SellerDashboardPayoutsRoute
   SellerDashboardProofCenterRoute: typeof SellerDashboardProofCenterRoute
   SellerDashboardReviewsRoute: typeof SellerDashboardReviewsRoute
+  SellerDashboardSettingsRoute: typeof SellerDashboardSettingsRoute
   SellerDashboardIndexRoute: typeof SellerDashboardIndexRoute
   SellerDashboardListingsNewRoute: typeof SellerDashboardListingsNewRoute
   SellerDashboardBookingsIndexRoute: typeof SellerDashboardBookingsIndexRoute
@@ -1000,6 +1020,7 @@ const SellerDashboardRouteChildren: SellerDashboardRouteChildren = {
   SellerDashboardPayoutsRoute: SellerDashboardPayoutsRoute,
   SellerDashboardProofCenterRoute: SellerDashboardProofCenterRoute,
   SellerDashboardReviewsRoute: SellerDashboardReviewsRoute,
+  SellerDashboardSettingsRoute: SellerDashboardSettingsRoute,
   SellerDashboardIndexRoute: SellerDashboardIndexRoute,
   SellerDashboardListingsNewRoute: SellerDashboardListingsNewRoute,
   SellerDashboardBookingsIndexRoute: SellerDashboardBookingsIndexRoute,

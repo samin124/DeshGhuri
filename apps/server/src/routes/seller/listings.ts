@@ -4,6 +4,12 @@ import { db, listing } from '@DeshGhuri/db';
 import { eq, and, desc } from 'drizzle-orm';
 import { requireSeller } from '@/middleware/seller-auth';
 import { nanoid } from 'nanoid';
+import {
+  addInventoryToListing,
+  addInventoryToListings,
+  getReservedPackageCountForListing,
+  getReservedPackageCountsForListings,
+} from '@/lib/listing-inventory';
 
 const app = new Hono();
 
@@ -33,11 +39,15 @@ app.get('/', async (c) => {
       where: and(...conditions),
       orderBy: [desc(listing.createdAt)],
     });
+    const bookedCounts = await getReservedPackageCountsForListings(
+      listings.map((listingItem) => listingItem.id)
+    );
+    const listingsWithInventory = addInventoryToListings(listings, bookedCounts);
 
     return c.json({
       success: true,
-      data: listings,
-      count: listings.length,
+      data: listingsWithInventory,
+      count: listingsWithInventory.length,
     });
   } catch (error) {
     console.error('Error fetching seller listings:', error);
@@ -66,10 +76,12 @@ app.get('/:listingId', async (c) => {
         message: "Listing not found or you don't have permission to access it",
       });
     }
+    const bookedPackages = await getReservedPackageCountForListing(listingId);
+    const listingWithInventory = addInventoryToListing(listingRecord, bookedPackages);
 
     return c.json({
       success: true,
-      data: listingRecord,
+      data: listingWithInventory,
     });
   } catch (error) {
     if (error instanceof HTTPException) throw error;

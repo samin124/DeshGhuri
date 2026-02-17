@@ -16,19 +16,33 @@ interface GuestDetailsStepProps {
   onClose: () => void;
 }
 
+const BANGLADESHI_PHONE_REGEX = /^01[3-9]\d{8}$/;
+
+function normalizeBangladeshiPhone(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  const normalized = digitsOnly.startsWith('880') ? `0${digitsOnly.slice(3)}` : digitsOnly;
+  return normalized.slice(0, 11);
+}
+
+function isValidBangladeshiPhone(value: string) {
+  return BANGLADESHI_PHONE_REGEX.test(value);
+}
+
 export function GuestDetailsStep({ onValidationChange, onNext }: GuestDetailsStepProps) {
   const { formData, updateFormData, setBookingId } = useBooking();
   const createBookingMutation = useCreateBooking();
 
   const [name, setName] = useState(formData.guestDetails?.primaryGuest.name || '');
   const [email, setEmail] = useState(formData.guestDetails?.primaryGuest.email || '');
-  const [phone, setPhone] = useState(formData.guestDetails?.primaryGuest.phone || '');
+  const [phone, setPhone] = useState(
+    normalizeBangladeshiPhone(formData.guestDetails?.primaryGuest.phone || '')
+  );
   const [specialRequests, setSpecialRequests] = useState(formData.specialRequests || '');
 
   // Validate form
   useEffect(() => {
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const isValidPhone = /^[\d\s\-\+\(\)]+$/.test(phone) && phone.length >= 10;
+    const isValidPhone = isValidBangladeshiPhone(phone);
     const isValid = !!name && isValidEmail && isValidPhone;
 
     onValidationChange(isValid);
@@ -148,15 +162,24 @@ export function GuestDetailsStep({ onValidationChange, onNext }: GuestDetailsSte
                 id="guestPhone"
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+880 1XXXXXXXXX"
+                onChange={(e) => setPhone(normalizeBangladeshiPhone(e.target.value))}
+                placeholder="01712345678"
                 className="pl-10"
+                inputMode="numeric"
+                maxLength={11}
+                pattern="01[3-9][0-9]{8}"
                 required
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Include country code (e.g., +880 for Bangladesh)
-            </p>
+            {phone && !isValidBangladeshiPhone(phone) ? (
+              <p className="text-xs text-destructive mt-1">
+                Enter a valid 11-digit Bangladeshi number (e.g., 01712345678)
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground mt-1">
+                Use an 11-digit Bangladeshi mobile number
+              </p>
+            )}
           </div>
         </div>
       </Card>

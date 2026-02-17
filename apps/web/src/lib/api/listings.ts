@@ -252,6 +252,8 @@ export function useListings(filters: ListingFilters = {}) {
     queryFn: () => fetchListings(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+    refetchInterval: 5 * 1000,
+    refetchIntervalInBackground: true,
   });
 }
 
@@ -265,6 +267,8 @@ export function useListing(id: string) {
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
     enabled: !!id, // Only run if id is provided
+    refetchInterval: 5 * 1000,
+    refetchIntervalInBackground: true,
   });
 }
 
@@ -288,6 +292,8 @@ export function useFeaturedListings() {
     queryFn: fetchFeaturedListings,
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 1 hour
+    refetchInterval: 5 * 1000,
+    refetchIntervalInBackground: true,
   });
 }
 
@@ -300,6 +306,8 @@ export function useTrendingListings() {
     queryFn: fetchTrendingListings,
     staleTime: 60 * 60 * 1000, // 1 hour
     gcTime: 2 * 60 * 60 * 1000, // 2 hours
+    refetchInterval: 5 * 1000,
+    refetchIntervalInBackground: true,
   });
 }
 
@@ -312,6 +320,8 @@ export function useFlashDeals() {
     queryFn: fetchFlashDeals,
     staleTime: 5 * 60 * 1000, // 5 minutes (shorter because deals expire)
     gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchInterval: 5 * 1000,
+    refetchIntervalInBackground: true,
   });
 }
 

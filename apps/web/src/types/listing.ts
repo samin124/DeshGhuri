@@ -47,6 +47,9 @@ export interface Listing {
   capacity: number;
   minGuests?: number;
   maxGuests: number;
+  bookedPackages?: number;
+  availablePackages?: number;
+  isBookingClosed?: boolean;
 
   // Group Pricing
   groupEligible: boolean;

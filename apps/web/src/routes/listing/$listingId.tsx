@@ -150,6 +150,10 @@ function RouteComponent() {
   // Handle reserve button click with authentication check
   const handleReserveClick = async () => {
     if (isSessionPending) return;
+    if (isBookingClosed) {
+      toast.error('Booking is closed for this package.');
+      return;
+    }
 
     try {
       const session = await authClient.getSession();
@@ -251,6 +255,18 @@ function RouteComponent() {
   const displayPrice = discountedPrice || basePrice;
   const serviceFee = Math.round(displayPrice * 0.05);
   const total = displayPrice + serviceFee;
+  const availablePackages =
+    typeof listing.availablePackages === 'number'
+      ? listing.availablePackages
+      : typeof listing.capacity === 'number' && typeof listing.bookedPackages === 'number'
+        ? Math.max(listing.capacity - listing.bookedPackages, 0)
+        : listing.capacity;
+  const isBookingClosed =
+    typeof listing.isBookingClosed === 'boolean'
+      ? listing.isBookingClosed
+      : availablePackages !== undefined
+        ? availablePackages <= 0
+        : false;
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
@@ -417,11 +433,17 @@ function RouteComponent() {
                 </Card>
 
                 <Card className="rounded-xl bg-white p-3.5 text-center sm:p-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Clock className="h-5 w-5 text-blue-600" />
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 ${
+                      isBookingClosed ? 'bg-red-100' : 'bg-blue-100'
+                    }`}
+                  >
+                    <Clock className={`h-5 w-5 ${isBookingClosed ? 'text-red-600' : 'text-blue-600'}`} />
                   </div>
-                  <p className="text-xs text-muted-foreground">Confirmation</p>
-                  <p className="font-semibold text-sm">Instant</p>
+                  <p className="text-xs text-muted-foreground">Availability</p>
+                  <p className={`font-semibold text-sm ${isBookingClosed ? 'text-destructive' : ''}`}>
+                    {isBookingClosed ? 'Booking Closed' : `${availablePackages} left`}
+                  </p>
                 </Card>
               </div>
 
@@ -753,6 +775,16 @@ function RouteComponent() {
                   )}
                 </div>
 
+                <div className="mb-5">
+                  <p
+                    className={`text-sm font-medium ${isBookingClosed ? 'text-destructive' : 'text-muted-foreground'}`}
+                  >
+                    {isBookingClosed
+                      ? 'Booking Closed'
+                      : `${availablePackages} package${availablePackages === 1 ? '' : 's'} available`}
+                  </p>
+                </div>
+
                 <Separator className="my-4" />
 
                 {/* Booking Form */}
@@ -777,11 +809,16 @@ function RouteComponent() {
                       <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <input
                         type="number"
-                        min="1"
-                        defaultValue="1"
+                        min={listing.minGuests || 1}
+                        max={listing.maxGuests}
+                        defaultValue={listing.minGuests || 1}
+                        step={1}
                         className="w-full pl-11 pr-4 py-3 border border-border rounded-xl bg-[#f8f7f4] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       />
                     </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Allowed: {listing.minGuests || 1} - {listing.maxGuests} guests
+                    </p>
                   </div>
                 </div>
 
@@ -812,9 +849,13 @@ function RouteComponent() {
                   className="mt-5 h-11 w-full rounded-xl text-base font-semibold"
                   size="lg"
                   onClick={handleReserveClick}
-                  disabled={isSessionPending}
+                  disabled={isSessionPending || isBookingClosed}
                 >
-                  {isAuthenticated ? 'Reserve Now' : 'Sign in to Reserve'}
+                  {isBookingClosed
+                    ? 'Booking Closed'
+                    : isAuthenticated
+                      ? 'Reserve Now'
+                      : 'Sign in to Reserve'}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground mt-3">

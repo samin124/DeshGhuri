@@ -271,6 +271,7 @@ function RouteComponent() {
         variables.action === 'approve' ? 'Booking approved successfully!' : 'Booking rejected'
       );
       queryClient.invalidateQueries({ queryKey: ['seller-bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['listings'] });
       setSelectedBooking(null);
     },
     onError: (mutationError: Error) => {

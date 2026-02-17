@@ -5,6 +5,7 @@ import { db, booking, listing, user } from '@DeshGhuri/db';
 import { eq, and, desc, or } from 'drizzle-orm';
 import { requireSeller } from '@/middleware/seller-auth';
 import { HTTPException } from 'hono/http-exception';
+import { getReservedPackageCountForListing } from '@/lib/listing-inventory';
 
 const app = new Hono();
 
@@ -213,7 +214,55 @@ app.post('/:bookingId/approve-payment', zValidator('json', approvalSchema), asyn
       });
     }
 
+    // Expire unpaid holds that have timed out
+    if (
+      bookingData.paymentMethod === null &&
+      bookingData.holdExpiresAt &&
+      new Date(bookingData.holdExpiresAt) < new Date()
+    ) {
+      await db
+        .update(booking)
+        .set({
+          approvalStatus: 'rejected',
+          status: 'expired',
+          rejectionReason: 'Booking hold expired before seller approval',
+        })
+        .where(eq(booking.id, bookingId));
+
+      throw new HTTPException(400, {
+        message: 'Booking hold has expired and inventory has been released.',
+      });
+    }
+
     if (action === 'approve') {
+      // Ensure approving this booking will not exceed listing capacity
+      const [listingData] = await db
+        .select({
+          id: listing.id,
+          title: listing.title,
+          capacity: listing.capacity,
+        })
+        .from(listing)
+        .where(eq(listing.id, bookingData.listingId))
+        .limit(1);
+
+      if (!listingData) {
+        throw new HTTPException(404, {
+          message: 'Listing not found for this booking',
+        });
+      }
+
+      const bookedPackagesExcludingCurrent = await getReservedPackageCountForListing(
+        bookingData.listingId,
+        { excludeBookingId: bookingId }
+      );
+
+      if (bookedPackagesExcludingCurrent >= listingData.capacity) {
+        throw new HTTPException(400, {
+          message: 'Booking closed. This package has no remaining availability.',
+        });
+      }
+
       // Approve the booking
       const [updatedBooking] = await db
         .update(booking)

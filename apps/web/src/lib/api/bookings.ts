@@ -147,6 +147,7 @@ export function useCreateBooking() {
     mutationFn: createBooking,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customer-bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['listings'] });
     },
   });
 }
@@ -157,6 +158,7 @@ export function useSubmitPayment() {
     mutationFn: submitPayment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customer-bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['listings'] });
     },
   });
 }
@@ -182,6 +184,7 @@ export function useCancelBooking() {
     mutationFn: cancelBooking,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customer-bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['listings'] });
     },
   });
 }

@@ -32,6 +32,8 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
 
   const basePrice = parseFloat(listing?.basePrice || '0');
   const totalGuests = adults + children;
+  const minGuests = listing?.minGuests || 1;
+  const maxGuests = listing?.maxGuests || 100;
 
   // Calculate pricing
   const calculatePrice = () => {
@@ -54,7 +56,7 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
 
   // Validate form
   useEffect(() => {
-    let isValid = totalGuests > 0 && totalGuests <= (listing?.maxGuests || 100);
+    let isValid = totalGuests >= minGuests && totalGuests <= maxGuests;
 
     if (needsDates) {
       isValid = isValid && !!checkInDate && !!checkOutDate;
@@ -71,9 +73,10 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
     checkOutDate,
     serviceDate,
     totalGuests,
+    minGuests,
+    maxGuests,
     needsDates,
     needsServiceDate,
-    listing?.maxGuests,
     onValidationChange,
   ]);
 
@@ -201,7 +204,7 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
                 variant="outline"
                 size="icon"
                 onClick={() => setAdults(adults + 1)}
-                disabled={totalGuests >= (listing?.maxGuests || 100)}
+                disabled={totalGuests >= maxGuests}
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -227,16 +230,22 @@ export function DateGuestStep({ listing, onValidationChange }: DateGuestStepProp
                 variant="outline"
                 size="icon"
                 onClick={() => setChildren(children + 1)}
-                disabled={totalGuests >= (listing?.maxGuests || 100)}
+                disabled={totalGuests >= maxGuests}
               >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
-          {totalGuests > (listing?.maxGuests || 100) && (
+          {totalGuests < minGuests && (
             <p className="text-sm text-destructive">
-              Maximum capacity is {listing?.maxGuests} guests
+              Minimum guests is {minGuests}
+            </p>
+          )}
+
+          {totalGuests > maxGuests && (
+            <p className="text-sm text-destructive">
+              Maximum capacity is {maxGuests} guests
             </p>
           )}
         </div>

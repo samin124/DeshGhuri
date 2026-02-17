@@ -7,8 +7,22 @@ import { eq, and, desc } from 'drizzle-orm';
 import { auth } from '@DeshGhuri/auth';
 import { HTTPException } from 'hono/http-exception';
 import { generateTicketPDF, generateReceiptPDF } from '../../lib/pdf-generator';
+import {
+  getListingInventoryState,
+  getReservedPackageCountForListing,
+} from '../../lib/listing-inventory';
 
 const app = new Hono();
+
+const BANGLADESHI_PHONE_REGEX = /^01[3-9]\d{8}$/;
+
+function normalizeBangladeshiPhone(phone: string): string {
+  const digitsOnly = phone.replace(/\D/g, '');
+  if (digitsOnly.startsWith('880') && digitsOnly.length === 13) {
+    return `0${digitsOnly.slice(3)}`;
+  }
+  return digitsOnly;
+}
 
 // Validation schemas
 const createBookingSchema = z.object({
@@ -20,7 +34,13 @@ const createBookingSchema = z.object({
     primaryGuest: z.object({
       name: z.string(),
       email: z.string().email(),
-      phone: z.string(),
+      phone: z
+        .string()
+        .min(1, 'Phone number is required')
+        .transform((value) => normalizeBangladeshiPhone(value))
+        .refine((value) => BANGLADESHI_PHONE_REGEX.test(value), {
+          message: 'Phone number must be a valid 11-digit Bangladeshi mobile number',
+        }),
     }),
     adults: z.number().int().min(1),
     children: z.number().int().min(0).default(0),
@@ -29,6 +49,15 @@ const createBookingSchema = z.object({
   specialRequests: z.string().optional(),
   priceLockEnabled: z.boolean().default(false),
   promoCode: z.string().optional(),
+}).superRefine((value, ctx) => {
+  const calculatedTotal = value.guestDetails.adults + value.guestDetails.children;
+  if (value.guestDetails.totalGuests !== calculatedTotal) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Total guests must equal adults + children',
+      path: ['guestDetails', 'totalGuests'],
+    });
+  }
 });
 
 const submitPaymentSchema = z.object({
@@ -117,10 +146,28 @@ app.post('/', zValidator('json', createBookingSchema), async (c) => {
       throw new HTTPException(400, { message: 'Listing is not available' });
     }
 
-    // Validate guest count
+    const minGuests = listingData.minGuests || 1;
+
+    // Validate guest count range
+    if (data.guestDetails.totalGuests < minGuests) {
+      throw new HTTPException(400, {
+        message: `Minimum guests for this package is ${minGuests}`,
+      });
+    }
+
     if (data.guestDetails.totalGuests > listingData.maxGuests) {
       throw new HTTPException(400, {
         message: `Number of guests exceeds maximum capacity of ${listingData.maxGuests}`,
+      });
+    }
+
+    // Validate package inventory (capacity is treated as total package units)
+    const bookedPackages = await getReservedPackageCountForListing(listingData.id);
+    const currentInventory = getListingInventoryState(listingData.capacity, bookedPackages);
+
+    if (currentInventory.availablePackages <= 0) {
+      throw new HTTPException(400, {
+        message: 'Booking closed. All packages are sold out for this listing.',
       });
     }
 
@@ -191,6 +238,8 @@ app.post('/', zValidator('json', createBookingSchema), async (c) => {
       })
       .returning();
 
+    const inventoryAfterBooking = getListingInventoryState(listingData.capacity, bookedPackages + 1);
+
     console.log('✅ Booking created successfully:', {
       bookingId: newBooking.id,
       sellerId: newBooking.sellerId,
@@ -206,6 +255,8 @@ app.post('/', zValidator('json', createBookingSchema), async (c) => {
           title: listingData.title,
           category: listingData.category,
           images: listingData.images,
+          capacity: listingData.capacity,
+          ...inventoryAfterBooking,
         },
       },
     });
@@ -265,6 +316,7 @@ app.post('/:bookingId/submit-payment', zValidator('json', submitPaymentSchema), 
         paymentStatus: 'pending',
         approvalStatus: 'pending',
         status: 'hold', // Keep in hold until seller approves
+        holdExpiresAt: null, // Keep inventory reserved while waiting for seller decision
       })
       .where(eq(booking.id, bookingId))
       .returning();
